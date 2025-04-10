@@ -1,8 +1,9 @@
 package org.example.languagecommunication.flashcard.services;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.example.languagecommunication.flashcard.models.Card;
-import org.example.languagecommunication.flashcard.models.CardStatus;
+import jakarta.transaction.Transactional;
+import org.example.languagecommunication.flashcard.models.Flashcard;
+import org.example.languagecommunication.flashcard.models.FlashcardStatus;
 import org.example.languagecommunication.flashcard.repositories.FlashcardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,38 +21,46 @@ public class FlashcardService implements IFlashcardService {
     }
 
     @Override
-    public Card addFlashcard(Card card) {
-        return flashcardRepository.save(card);
+    public Flashcard addFlashcard(Flashcard flashcard) {
+        return flashcardRepository.save(flashcard);
     }
 
     @Override
-    public Card editFlashcard(Long id, CardStatus newStatus) {
-        Card card = flashcardRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found."));
-        card.setStatus(newStatus);
-        return flashcardRepository.save(card);
+    @Transactional
+    public Flashcard editFlashcard(Long id, FlashcardStatus newStatus) {
+        Flashcard flashcard = flashcardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Flashcard with id " + id + " not found."));
+        flashcard.setStatus(newStatus);
+        return flashcardRepository.save(flashcard);
     }
 
     @Override
-    public Card deleteFlashcard(Long id) {
-        Card card = flashcardRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found."));
+    @Transactional
+    public void deleteFlashcard(Long id) {
+        flashcardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Flashcard with id " + id + " not found."));
 
         flashcardRepository.deleteById(id);
-        return card;
     }
 
     @Override
-    public List<Card> getCards(UUID userID) {
+    public List<Flashcard> getFlashcardsByUser(UUID userID) {
         return flashcardRepository.findByUserID(userID);
     }
 
     @Override
-    public Card reviewCard(Long id, boolean isCorrect) {
-        Card card = flashcardRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found."));
+    public Flashcard getFlashcard(Long id) {
+        return flashcardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Flashcard with id " + id + " not found."));
+    }
 
-        card.markReviewed(isCorrect);
-        return flashcardRepository.save(card);
+    @Override
+    @Transactional
+    public Flashcard reviewFlashcard(Long id, boolean isCorrect) {
+        Flashcard flashcard = flashcardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Flashcard with id " + id + " not found."));
+
+        flashcard.markReviewed(isCorrect);
+        return flashcardRepository.save(flashcard);
     }
 }

@@ -1,6 +1,6 @@
 package org.example.languagecommunication.flashcard.models;
 
-public enum CardStatus {
+public enum FlashcardStatus {
     ACTIVE,
     LEARNED
 }

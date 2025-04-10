@@ -1,8 +1,8 @@
 package org.example.languagecommunication.flashcard.services;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.example.languagecommunication.flashcard.models.Card;
-import org.example.languagecommunication.flashcard.models.CardStatus;
+import org.example.languagecommunication.flashcard.models.Flashcard;
+import org.example.languagecommunication.flashcard.models.FlashcardStatus;
 import org.example.languagecommunication.flashcard.repositories.FlashcardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,64 +29,63 @@ class FlashcardServiceTest {
     @InjectMocks
     private FlashcardService flashcardService;
 
-    private Card card;
+    private Flashcard flashcard;
 
     @BeforeEach
     void setUp() {
-        card = new Card(UUID.randomUUID(), "Front Content", "Back Content");
+        flashcard = new Flashcard(UUID.randomUUID(), "Front Content", "Back Content");
     }
 
     @Test
     void addFlashcard_shouldSaveAndReturnCard() {
-        when(flashcardRepository.save(any(Card.class))).thenReturn(card);
+        when(flashcardRepository.save(any(Flashcard.class))).thenReturn(flashcard);
 
-        Card result = flashcardService.addFlashcard(card);
+        Flashcard result = flashcardService.addFlashcard(flashcard);
 
-        assertEquals(card, result);
-        verify(flashcardRepository).save(card);
+        assertEquals(flashcard, result);
+        verify(flashcardRepository).save(flashcard);
     }
 
     @Test
     void editFlashcard_shouldUpdateStatus() {
-        when(flashcardRepository.findById(1L)).thenReturn(Optional.of(card));
-        when(flashcardRepository.save(any(Card.class))).thenReturn(card);
+        when(flashcardRepository.findById(1L)).thenReturn(Optional.of(flashcard));
+        when(flashcardRepository.save(any(Flashcard.class))).thenReturn(flashcard);
 
-        Card result = flashcardService.editFlashcard(1L, CardStatus.LEARNED);
+        Flashcard result = flashcardService.editFlashcard(1L, FlashcardStatus.LEARNED);
 
-        assertEquals(CardStatus.LEARNED, result.getStatus());
-        verify(flashcardRepository).save(card);
+        assertEquals(FlashcardStatus.LEARNED, result.getStatus());
+        verify(flashcardRepository).save(flashcard);
     }
 
     @Test
     void deleteFlashcard_shouldReturnDeletedCard() {
-        when(flashcardRepository.findById(1L)).thenReturn(Optional.of(card));
+        when(flashcardRepository.findById(1L)).thenReturn(Optional.of(flashcard));
 
-        Card result = flashcardService.deleteFlashcard(1L);
+        flashcardService.deleteFlashcard(1L);
 
-        assertEquals(card, result);
         verify(flashcardRepository).deleteById(1L);
     }
 
     @Test
     void getCards_shouldReturnList() {
-        UUID userId = card.getUserID();
-        List<Card> cards = List.of(card);
-        when(flashcardRepository.findByUserID(userId)).thenReturn(cards);
+        UUID userId = flashcard.getUserID();
+        List<Flashcard> flashcards = List.of(flashcard);
+        when(flashcardRepository.findByUserID(userId)).thenReturn(flashcards);
 
-        List<Card> result = flashcardService.getCards(userId);
+        List<Flashcard> result = flashcardService.getFlashcardsByUser(userId);
 
         assertEquals(1, result.size());
-        assertEquals(card, result.getFirst());
+        assertEquals(flashcard, result.getFirst());
     }
 
     @Test
     void reviewCardCorrect_shouldMarkReviewed() {
-        when(flashcardRepository.findById(1L)).thenReturn(Optional.of(card));
-        when(flashcardRepository.save(any(Card.class))).thenReturn(card);
+        when(flashcardRepository.findById(1L)).thenReturn(Optional.of(flashcard));
+        when(flashcardRepository.save(any(Flashcard.class))).thenReturn(flashcard);
 
-        Card result = flashcardService.reviewCard(1L, true);
+        Flashcard result = flashcardService.reviewFlashcard(1L, true);
 
-        verify(flashcardRepository).save(card);
+        verify(flashcardRepository).save(flashcard);
 
         assertEquals(1, result.getCorrectResponses());
         assertEquals(0, result.getIncorrectResponses());
@@ -94,12 +93,12 @@ class FlashcardServiceTest {
 
     @Test
     void reviewCardInCorrect_shouldMarkReviewed() {
-        when(flashcardRepository.findById(1L)).thenReturn(Optional.of(card));
-        when(flashcardRepository.save(any(Card.class))).thenReturn(card);
+        when(flashcardRepository.findById(1L)).thenReturn(Optional.of(flashcard));
+        when(flashcardRepository.save(any(Flashcard.class))).thenReturn(flashcard);
 
-        Card result = flashcardService.reviewCard(1L, false);
+        Flashcard result = flashcardService.reviewFlashcard(1L, false);
 
-        verify(flashcardRepository).save(card);
+        verify(flashcardRepository).save(flashcard);
 
         assertEquals(0, result.getCorrectResponses());
         assertEquals(1, result.getIncorrectResponses());
@@ -109,6 +108,6 @@ class FlashcardServiceTest {
     void editFlashcard_shouldThrowWhenNotFound() {
         when(flashcardRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> flashcardService.editFlashcard(1L, CardStatus.LEARNED));
+        assertThrows(EntityNotFoundException.class, () -> flashcardService.editFlashcard(1L, FlashcardStatus.LEARNED));
     }
 }

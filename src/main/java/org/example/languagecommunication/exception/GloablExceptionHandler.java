@@ -5,43 +5,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import software.amazon.awssdk.services.translate.model.DetectedLanguageLowConfidenceException;
-import software.amazon.awssdk.services.translate.model.UnsupportedLanguagePairException;
 
 @RestControllerAdvice
 public class GloablExceptionHandler {
 
-    @ExceptionHandler(UnsupportedLanguagePairException.class)
-    public ResponseEntity<ApiError> handleUnsupportedLanguagePairException
-            (UnsupportedLanguagePairException ex,
+    @ExceptionHandler(TranslationException.class)
+    public ResponseEntity<ApiError> handleTranslationException
+            (TranslationException ex,
              HttpServletRequest request)
     {
         ApiError apiError = ApiError.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .status(ex.getStatus().value())
+                .error(ex.getStatus().getReasonPhrase())
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
                 .build();
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(apiError);
-    }
-
-    @ExceptionHandler(DetectedLanguageLowConfidenceException.class)
-    public ResponseEntity<ApiError> handleDetectedLanguageLowConfidenceException
-            (DetectedLanguageLowConfidenceException ex,
-             HttpServletRequest request)
-    {
-        ApiError apiError = ApiError.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message(ex.getMessage())
-                .path(request.getRequestURI())
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(ex.getStatus())
                 .body(apiError);
     }
 

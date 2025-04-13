@@ -1,7 +1,9 @@
 package org.example.languagecommunication.translation.awtranslation;
 
 import org.example.languagecommunication.exception.LanguageDetectionException;
+import org.example.languagecommunication.exception.TranslationException;
 import org.example.languagecommunication.translation.awtranslation.DTO.DetectedLanguage;
+import org.example.languagecommunication.translation.awtranslation.DTO.LanguageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,9 @@ import software.amazon.awssdk.services.translate.model.TranslateTextResponse;
 import software.amazon.awssdk.services.translate.model.UnsupportedLanguagePairException;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AwsTranslationService {
@@ -31,6 +36,12 @@ public class AwsTranslationService {
 
     public String translateText(String text, String sourceLang, String targetLang) {
         try {
+            SupportedLanguage.valueOf(sourceLang.toUpperCase());
+            SupportedLanguage.valueOf(targetLang.toUpperCase());
+
+            sourceLang = SupportedLanguage.valueOf(sourceLang.toUpperCase()).getLanguageCode();
+            targetLang = SupportedLanguage.valueOf(targetLang.toUpperCase()).getLanguageCode();
+
             TranslateTextRequest request = TranslateTextRequest.builder()
                     .text(text)
                     .sourceLanguageCode(sourceLang)
@@ -39,8 +50,10 @@ public class AwsTranslationService {
 
             TranslateTextResponse response = translateClient.translateText(request);
             return response.translatedText();
-        } catch (UnsupportedLanguagePairException | DetectedLanguageLowConfidenceException e) {
-            throw e;
+        } catch (UnsupportedLanguagePairException | IllegalArgumentException e) {
+            throw new TranslationException("Unsupported language pair: " + sourceLang + " to " + targetLang, HttpStatus.BAD_REQUEST);
+        } catch (DetectedLanguageLowConfidenceException e) {
+            throw new TranslationException("Detected language confidence is too low for translation.", HttpStatus.BAD_REQUEST);
         } catch ( Exception e) {
             throw new RuntimeException("Unexpected translation failed: " + e.getMessage(), e);
         }
@@ -81,5 +94,12 @@ public class AwsTranslationService {
         } catch (Exception e) {
             throw new RuntimeException("Unexpected language detection failed: " + e.getMessage(), e);
         }
-    }
 }
+
+        public List<LanguageDTO> getSupportedLanguages() {
+           return  Arrays.stream(SupportedLanguage.values())
+                    .map(language -> new LanguageDTO(language.name(), language.getLanguageCode()))
+                    .collect(Collectors.toList());
+        }
+    }
+

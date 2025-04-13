@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.comprehend.ComprehendClient;
+import software.amazon.awssdk.services.polly.PollyClient;
 import software.amazon.awssdk.services.translate.TranslateClient;
 
 @Configuration
@@ -22,4 +23,10 @@ public class AWSConfig {
                 .build();
     }
 
+    @Bean
+    public PollyClient pollyClient() {
+        return PollyClient.builder()
+                .region(Region.of("eu-central-1"))
+                .build();
+    }
 }

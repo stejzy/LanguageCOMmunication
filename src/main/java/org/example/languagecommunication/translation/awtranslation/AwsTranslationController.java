@@ -1,11 +1,14 @@
 package org.example.languagecommunication.translation.awtranslation;
 
 import org.example.languagecommunication.translation.awtranslation.DTO.DetectedLanguage;
+import org.example.languagecommunication.translation.awtranslation.DTO.LanguageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 public class AwsTranslationController {
@@ -29,6 +32,12 @@ public class AwsTranslationController {
     public ResponseEntity<DetectedLanguage> detectLanguage(@RequestParam String text) {
         DetectedLanguage detectedLanguage = awsTranslationService.detectLanguage(text);
         return ResponseEntity.ok(detectedLanguage);
+    }
+
+    @GetMapping("/supportedLanguages")
+    public ResponseEntity<List<LanguageDTO>> getSupportedLanguages() {
+        List<LanguageDTO> supportedLanguages = awsTranslationService.getSupportedLanguages();
+        return ResponseEntity.ok(supportedLanguages);
     }
 
 

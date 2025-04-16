@@ -43,9 +43,14 @@ public class User{
     @Column(name = "verification_expiration")
     private LocalDateTime verificationCodeExpiresAt;
 
+    @NotBlank
+    @Column(name = "auth_provider")
+    private String authProvider;
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
+        authProvider = "local";
     }
 }

@@ -33,8 +33,6 @@ public class TextSpeechService {
             SupportedLanguage supportedLanguage = SupportedLanguage.valueOf(language.toUpperCase());
             String voiceId = supportedLanguage.getVoiceId();
 
-            System.out.println(voiceId);
-
             SynthesizeSpeechRequest request = SynthesizeSpeechRequest.builder()
                     .text(text)
                     .voiceId(voiceId)

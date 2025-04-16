@@ -3,6 +3,7 @@ package org.example.languagecommunication.auth.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -41,6 +42,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
+    @ExceptionHandler(IncorrectPasswordException.class)
+    public ResponseEntity<String> handleIncorrectPasswordException(IncorrectPasswordException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
+
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<Object> handleValidationException(ValidationException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
@@ -57,6 +63,11 @@ public class GlobalExceptionHandler {
                 ));
 
         return ResponseEntity.badRequest().body(errorMap);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<String> handleBadCredentials(BadCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
     }
 
     @ExceptionHandler(Exception.class)

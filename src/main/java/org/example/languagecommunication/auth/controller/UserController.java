@@ -1,6 +1,7 @@
 package org.example.languagecommunication.auth.controller;
 
 import jakarta.validation.Valid;
+import org.example.languagecommunication.auth.dto.UserDTO;
 import org.example.languagecommunication.auth.dto.VerificationRequest;
 import org.example.languagecommunication.auth.model.User;
 import org.example.languagecommunication.auth.service.UserService;
@@ -31,5 +32,10 @@ public class UserController {
     public ResponseEntity<String> verifyEmail(@RequestBody VerificationRequest request) {
         userService.verifyUser(request.getEmail(), request.getCode());
         return ResponseEntity.ok("Verification successful!");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody UserDTO user) {
+        return ResponseEntity.ok(userService.login(user));
     }
 }

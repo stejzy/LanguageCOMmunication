@@ -1,29 +1,49 @@
 package org.example.languagecommunication.auth.service;
 
+import io.micrometer.common.util.StringUtils;
+import org.example.languagecommunication.auth.dto.UserDTO;
 import org.example.languagecommunication.auth.exceptions.*;
 import org.example.languagecommunication.auth.model.User;
 import org.example.languagecommunication.auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final AuthenticationManager authManager;
+    private final JwtService jwtService;
     private final EmailService emailService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
 
     @Autowired
-    public UserService(UserRepository userRepository, EmailService emailService) {
+    public UserService(UserRepository userRepository, EmailService emailService, AuthenticationManager authManager, JwtService jwtService) {
         this.userRepository = userRepository;
         this.emailService = emailService;
+        this.authManager = authManager;
+        this.jwtService = jwtService;
     }
 
     public User register(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new EmailAlreadyExistsException("Email " + user.getEmail() + " is already registered.");
+        }
+
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new EmailAlreadyExistsException("Username " + user.getUsername() + " is already taken.");
+        }
+
+        if (!isValidPassword(user.getPassword())) {
+            throw new IncorrectPasswordException("Password must be at least 8 characters long, " +
+                    "contain at least one letter, one digit, and one special character.");
         }
 
         String verificationCode = java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 6);
@@ -60,5 +80,28 @@ public class UserService {
         user.setVerificationCode(null);
         user.setVerificationCodeExpiresAt(null);
         userRepository.save(user);
+    }
+
+    public String login(UserDTO user) {
+        Authentication authentication = authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+
+        if(authentication.isAuthenticated()) {
+            return jwtService.generateToken(user.getUsername());
+        }
+
+        return "Fail";
+    }
+
+    private boolean isValidPassword(String password) {
+        if (StringUtils.isBlank(password) || password.length() < 8) {
+            return false;
+        }
+
+        String regex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};:'\",.<>/?]).{8,}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(password);
+
+        return matcher.matches();
     }
 }

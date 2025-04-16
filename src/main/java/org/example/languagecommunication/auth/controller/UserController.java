@@ -1,9 +1,9 @@
 package org.example.languagecommunication.auth.controller;
 
 import jakarta.validation.Valid;
+import org.example.languagecommunication.auth.dto.RegisterDTO;
 import org.example.languagecommunication.auth.dto.UserDTO;
 import org.example.languagecommunication.auth.dto.VerificationRequest;
-import org.example.languagecommunication.auth.model.User;
 import org.example.languagecommunication.auth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@Valid @RequestBody User user) {
+    public ResponseEntity<Object> register(@Valid @RequestBody RegisterDTO user) {
         return ResponseEntity.ok(userService.register(user));
     }
 

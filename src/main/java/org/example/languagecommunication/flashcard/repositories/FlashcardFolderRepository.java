@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface FlashcardFolderRepository extends JpaRepository<FlashcardFolder, UUID> {
-    List<FlashcardFolder> findByUserID(UUID userID);
+    List<FlashcardFolder> findByUserID(Long userID);
 }

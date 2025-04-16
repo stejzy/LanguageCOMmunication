@@ -12,7 +12,8 @@ import java.util.*;
 @Getter
 @NoArgsConstructor
 public class FlashcardFolder {
-    private UUID userID;
+    @Setter
+    private Long userID;
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -29,8 +30,7 @@ public class FlashcardFolder {
     private String name;
     private final LocalDateTime createdAt = LocalDateTime.now();
 
-    public FlashcardFolder(UUID userID, List<Flashcard> flashcards, String name) {
-        this.userID = userID;
+    public FlashcardFolder(List<Flashcard> flashcards, String name) {
         this.flashcards = flashcards;
         this.name = name;
     }

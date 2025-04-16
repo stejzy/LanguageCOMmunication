@@ -11,10 +11,10 @@ public interface IFlashcardFolderService {
     FlashcardFolder createFlashcardFolder(FlashcardFolder folder);
     FlashcardFolder editFlashcardFolder(UUID id, String newName);
     FlashcardFolder deleteFlashcardFolder(UUID id);
-    List<FlashcardFolder> getFlashcardFoldersByUser(UUID userId);
+    List<FlashcardFolder> getFlashcardFoldersByUser(Long userId);
     FlashcardFolder getFlashcardFolder(UUID id);
     boolean addFlashcardToFolder(UUID id, List<Long> flashcardIds);
     boolean removeFlashcardFromFolder(UUID id, List<Long> flashcardIds);
     byte[] exportFolderToQR(UUID id) throws WriterException, IOException;
-    FlashcardFolder importFolder(UUID userId, UUID id);
+    FlashcardFolder importFolder(Long userId, UUID id);
 }

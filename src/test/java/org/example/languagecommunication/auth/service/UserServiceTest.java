@@ -38,7 +38,7 @@ class UserServiceTest {
 
     @Test
     void register_ShouldSaveUserAndSendEmail() {
-        User user = new User("testuser", "test@example.com", "password");
+        User user = new User("testuser", "test@example.com", "password123!");
 
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));

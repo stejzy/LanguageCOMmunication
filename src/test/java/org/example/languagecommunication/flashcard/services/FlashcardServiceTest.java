@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,7 +32,8 @@ class FlashcardServiceTest {
 
     @BeforeEach
     void setUp() {
-        flashcard = new Flashcard(UUID.randomUUID(), "Front Content", "Back Content");
+        flashcard = new Flashcard("Front Content", "Back Content");
+        flashcard.setUserID(1L);
     }
 
     @Test
@@ -68,7 +68,7 @@ class FlashcardServiceTest {
 
     @Test
     void getCards_shouldReturnList() {
-        UUID userId = flashcard.getUserID();
+        Long userId = flashcard.getUserID();
         List<Flashcard> flashcards = List.of(flashcard);
         when(flashcardRepository.findByUserID(userId)).thenReturn(flashcards);
 

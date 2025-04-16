@@ -2,11 +2,14 @@ package org.example.languagecommunication.flashcard.controllers;
 
 import com.google.zxing.WriterException;
 import jakarta.persistence.EntityNotFoundException;
+import org.example.languagecommunication.common.annotations.CheckOwnership;
+import org.example.languagecommunication.common.utils.SecurityUtils;
 import org.example.languagecommunication.flashcard.dto.FlashcardRequest;
 import org.example.languagecommunication.flashcard.models.FlashcardFolder;
 import org.example.languagecommunication.flashcard.services.FlashcardFolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -25,43 +28,50 @@ public class FlashcardFolderController {
 
     @PostMapping
     public ResponseEntity<FlashcardFolder> createFolder(@RequestBody FlashcardFolder folder) {
+        folder.setUserID(SecurityUtils.getCurrentUserId());
         return ResponseEntity.ok(flashcardFolderService.createFlashcardFolder(folder));
     }
 
+    @CheckOwnership
     @PutMapping("/{id}")
-    public ResponseEntity<FlashcardFolder> editFolder(@PathVariable UUID id, @RequestParam String name) {
+    public ResponseEntity<Object> editFolder(@PathVariable UUID id, @RequestParam String name) {
         return ResponseEntity.ok(flashcardFolderService.editFlashcardFolder(id, name));
     }
 
+    @CheckOwnership
     @DeleteMapping("/{id}")
-    public ResponseEntity<FlashcardFolder> deleteFolder(@PathVariable UUID id) {
+    public ResponseEntity<Object> deleteFolder(@PathVariable UUID id) {
         return ResponseEntity.ok(flashcardFolderService.deleteFlashcardFolder(id));
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<FlashcardFolder>> getUserFolders(@PathVariable UUID userId) {
-        return ResponseEntity.ok(flashcardFolderService.getFlashcardFoldersByUser(userId));
+    @GetMapping("/user")
+    public ResponseEntity<List<FlashcardFolder>> getCurrentUserFolders() {
+        return ResponseEntity.ok(flashcardFolderService.getFlashcardFoldersByUser(SecurityUtils.getCurrentUserId()));
     }
 
+    @CheckOwnership
     @GetMapping("/{id}")
-    public ResponseEntity<FlashcardFolder> getFolder(@PathVariable UUID id) {
+    public ResponseEntity<Object> getFolder(@PathVariable UUID id) {
         return ResponseEntity.ok(flashcardFolderService.getFlashcardFolder(id));
     }
 
+    @CheckOwnership
     @PostMapping("/{id}/flashcards")
-    public ResponseEntity<Void> addFlashcardToFolder(@PathVariable UUID id, @RequestBody FlashcardRequest flashcardRequest) {
+    public ResponseEntity<Object> addFlashcardToFolder(@PathVariable UUID id, @RequestBody FlashcardRequest flashcardRequest) {
         flashcardFolderService.addFlashcardToFolder(id, flashcardRequest.getFlashcardIds());
         return ResponseEntity.ok().build();
     }
 
+    @CheckOwnership
     @DeleteMapping("/{id}/flashcards")
-    public ResponseEntity<Void> removeFlashcardFromFolder(@PathVariable UUID id, @RequestBody FlashcardRequest flashcardRequest) {
+    public ResponseEntity<Object> removeFlashcardFromFolder(@PathVariable UUID id, @RequestBody FlashcardRequest flashcardRequest) {
         flashcardFolderService.removeFlashcardFromFolder(id, flashcardRequest.getFlashcardIds());
         return ResponseEntity.ok().build();
     }
 
+    @CheckOwnership
     @GetMapping("/{id}/export-qr")
-    public ResponseEntity<byte[]> exportToQR(@PathVariable UUID id) throws IOException, WriterException {
+    public ResponseEntity<Object> exportToQR(@PathVariable UUID id) throws IOException, WriterException {
         byte[] qr = flashcardFolderService.exportFolderToQR(id);
 
         HttpHeaders headers = new HttpHeaders();
@@ -73,8 +83,8 @@ public class FlashcardFolderController {
     }
 
     @PostMapping("/{id}/import")
-    public ResponseEntity<FlashcardFolder> importFolder(@RequestParam UUID userId, @PathVariable UUID id) {
-        return ResponseEntity.ok(flashcardFolderService.importFolder(userId, id));
+    public ResponseEntity<Object> importFolder(@PathVariable UUID id) {
+        return ResponseEntity.ok(flashcardFolderService.importFolder(SecurityUtils.getCurrentUserId(), id));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -85,5 +95,10 @@ public class FlashcardFolderController {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegal(IllegalArgumentException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDenied(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
 }

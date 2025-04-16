@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class FlashcardService implements IFlashcardService {
@@ -44,7 +43,7 @@ public class FlashcardService implements IFlashcardService {
     }
 
     @Override
-    public List<Flashcard> getFlashcardsByUser(UUID userID) {
+    public List<Flashcard> getFlashcardsByUser(Long userID) {
         return flashcardRepository.findByUserID(userID);
     }
 

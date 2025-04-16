@@ -8,7 +8,6 @@ import org.example.languagecommunication.auth.exceptions.UserAlreadyExistsExcept
 import org.example.languagecommunication.auth.model.User;
 import org.example.languagecommunication.auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,8 +17,6 @@ import java.util.UUID;
 
 @Service
 public class GoogleAuthService {
-    @Value("${google.client.id}")
-
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final GoogleIdTokenVerifier verifier;

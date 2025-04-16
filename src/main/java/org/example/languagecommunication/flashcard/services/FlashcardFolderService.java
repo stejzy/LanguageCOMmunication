@@ -62,7 +62,7 @@ public class FlashcardFolderService implements IFlashcardFolderService{
     }
 
     @Override
-    public List<FlashcardFolder> getFlashcardFoldersByUser(UUID userId) {
+    public List<FlashcardFolder> getFlashcardFoldersByUser(Long userId) {
         return flashcardFolderRepository.findByUserID(userId);
     }
 
@@ -138,7 +138,7 @@ public class FlashcardFolderService implements IFlashcardFolderService{
 
     @Override
     @Transactional
-    public FlashcardFolder importFolder(UUID userId, UUID id) {
+    public FlashcardFolder importFolder(Long userId, UUID id) {
         FlashcardFolder originalFolder = flashcardFolderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("FlashcardFolder with id " + id + " not found."));
 
@@ -148,13 +148,15 @@ public class FlashcardFolderService implements IFlashcardFolderService{
 
         List<Flashcard> copiedFlashcards = originalFolder.getFlashcards().stream().map(
                 flashcard -> {
-                    Flashcard newFlashcard = new Flashcard(userId, flashcard.getFrontContent(), flashcard.getBackContent());
+                    Flashcard newFlashcard = new Flashcard(flashcard.getFrontContent(), flashcard.getBackContent());
+                    newFlashcard.setUserID(userId);
                     flashcardRepository.save(newFlashcard);
                     return newFlashcard;
                 }
         ).toList();
 
-        FlashcardFolder copiedFolder = new FlashcardFolder(userId, new ArrayList<>(), originalFolder.getName());
+        FlashcardFolder copiedFolder = new FlashcardFolder(new ArrayList<>(), originalFolder.getName());
+        copiedFolder.setUserID(userId);
 
         for (Flashcard copiedFlashcard : copiedFlashcards) {
             copiedFolder.addFlashcard(copiedFlashcard);

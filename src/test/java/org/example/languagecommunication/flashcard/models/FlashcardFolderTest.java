@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +17,8 @@ class FlashcardFolderTest {
     void setUp() {
         flashcard1 = new Flashcard();
         flashcard2 = new Flashcard();
-        folder = new FlashcardFolder(UUID.randomUUID(), new ArrayList<>(), "My Folder");
+        folder = new FlashcardFolder(new ArrayList<>(), "My Folder");
+        folder.setUserID(1L);
     }
 
     @Test

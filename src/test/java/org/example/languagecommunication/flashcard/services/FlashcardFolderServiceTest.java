@@ -46,7 +46,8 @@ class FlashcardFolderServiceTest {
 
     @BeforeEach
     void setUp() {
-        folder = new FlashcardFolder(UUID.randomUUID(), new ArrayList<>(), "Test Folder");
+        folder = new FlashcardFolder(new ArrayList<>(), "Test Folder");
+        folder.setUserID(1L);
         flashcard = new Flashcard();
     }
 
@@ -83,7 +84,7 @@ class FlashcardFolderServiceTest {
 
     @Test
     public void testGetFlashcardFoldersByUser() {
-        UUID userId = folder.getUserID();
+        Long userId = folder.getUserID();
         List<FlashcardFolder> folderList = new ArrayList<>();
         folderList.add(folder);
         when(flashcardFolderRepository.findByUserID(userId)).thenReturn(folderList);
@@ -150,15 +151,18 @@ class FlashcardFolderServiceTest {
 
     @Test
     void testImportFolderSuccessfully() {
-        UUID originalUserId = UUID.randomUUID();
-        UUID importingUserId = UUID.randomUUID();
+        Long originalUserId = 1L;
+        Long importingUserId = 2L;
         UUID originalFolderId = UUID.randomUUID();
 
-        Flashcard originalCard1 = new Flashcard(originalUserId, "Front 1", "Back 1");
-        Flashcard originalCard2 = new Flashcard(originalUserId, "Front 2", "Back 2");
+        Flashcard originalCard1 = new Flashcard("Front 1", "Back 1");
+        originalCard1.setUserID(originalUserId);
+        Flashcard originalCard2 = new Flashcard("Front 2", "Back 2");
+        originalCard2.setUserID(originalUserId);
         List<Flashcard> originalFlashcards = List.of(originalCard1, originalCard2);
 
-        FlashcardFolder originalFolder = new FlashcardFolder(originalUserId, new ArrayList<>(originalFlashcards), "Original Folder");
+        FlashcardFolder originalFolder = new FlashcardFolder(new ArrayList<>(originalFlashcards), "Original Folder");
+        originalFolder.setUserID(originalUserId);
 
         when(flashcardFolderRepository.findById(originalFolderId)).thenReturn(Optional.of(originalFolder));
 
@@ -179,8 +183,9 @@ class FlashcardFolderServiceTest {
 
     @Test
     void testImportOwnFolderThrowsException() {
-        UUID userId = UUID.randomUUID();
-        FlashcardFolder ownFolder = new FlashcardFolder(userId, new ArrayList<>(), "Own Folder");
+        Long userId = 1L;
+        FlashcardFolder ownFolder = new FlashcardFolder(new ArrayList<>(), "Own Folder");
+        ownFolder.setUserID(userId);
 
         when(flashcardFolderRepository.findById(folderId)).thenReturn(Optional.of(ownFolder));
 
@@ -191,7 +196,7 @@ class FlashcardFolderServiceTest {
 
     @Test
     void testImportFolderNotFoundThrowsException() {
-        UUID userId = UUID.randomUUID();
+        Long userId = 1L;
         when(flashcardFolderRepository.findById(folderId)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> flashcardFolderService.importFolder(userId, folderId));

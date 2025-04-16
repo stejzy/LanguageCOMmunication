@@ -14,7 +14,8 @@ import java.util.*;
 @NoArgsConstructor
 @Entity
 public class Flashcard implements Serializable {
-    private UUID userID;
+    @Setter
+    private Long userID;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,8 +34,7 @@ public class Flashcard implements Serializable {
     @ManyToMany(mappedBy = "flashcards")
     private List<FlashcardFolder> folders = new ArrayList<>();
 
-    public Flashcard(UUID userID, String frontContent, String backContent) {
-        this.userID = userID;
+    public Flashcard(String frontContent, String backContent) {
         this.frontContent = frontContent;
         this.backContent = backContent;
     }

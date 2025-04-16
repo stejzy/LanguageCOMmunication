@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,13 +11,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class FlashcardTest {
 
     private Flashcard flashcard;
-    private final UUID userID = UUID.randomUUID();
+    private final Long userID = 1L;
     private final String frontContent = "Front Content";
     private final String backContent = "Back Content";
 
     @BeforeEach
     void setUp() {
-        flashcard = new Flashcard(userID, frontContent, backContent);
+        flashcard = new Flashcard(frontContent, backContent);
+        flashcard.setUserID(userID);
     }
 
     @Test
@@ -62,7 +62,8 @@ class FlashcardTest {
 
     @Test
     void testConstructor() {
-        Flashcard newFlashcard = new Flashcard(userID, "New Front", "New Back");
+        Flashcard newFlashcard = new Flashcard("New Front", "New Back");
+        newFlashcard.setUserID(userID);
         assertEquals("New Front", newFlashcard.getFrontContent());
         assertEquals("New Back", newFlashcard.getBackContent());
         assertEquals(FlashcardStatus.ACTIVE, newFlashcard.getStatus());

@@ -1,7 +1,7 @@
 package org.example.languagecommunication.textspeech;
 
 import org.example.languagecommunication.exception.TextSpeechException;
-import org.example.languagecommunication.translation.awtranslation.SupportedLanguage;
+import org.example.languagecommunication.translation.awstranslation.SupportedLanguage;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseInputStream;

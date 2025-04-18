@@ -1,9 +1,9 @@
-package org.example.languagecommunication.translation.awtranslation;
+package org.example.languagecommunication.translation.awstranslation;
 
 import org.example.languagecommunication.exception.LanguageDetectionException;
 import org.example.languagecommunication.exception.TranslationException;
-import org.example.languagecommunication.translation.awtranslation.DTO.DetectedLanguage;
-import org.example.languagecommunication.translation.awtranslation.DTO.LanguageDTO;
+import org.example.languagecommunication.translation.awstranslation.DTO.DetectedLanguage;
+import org.example.languagecommunication.translation.awstranslation.DTO.LanguageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

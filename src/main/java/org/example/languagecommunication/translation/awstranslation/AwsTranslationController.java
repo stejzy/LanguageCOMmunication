@@ -1,7 +1,7 @@
-package org.example.languagecommunication.translation.awtranslation;
+package org.example.languagecommunication.translation.awstranslation;
 
-import org.example.languagecommunication.translation.awtranslation.DTO.DetectedLanguage;
-import org.example.languagecommunication.translation.awtranslation.DTO.LanguageDTO;
+import org.example.languagecommunication.translation.awstranslation.DTO.DetectedLanguage;
+import org.example.languagecommunication.translation.awstranslation.DTO.LanguageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

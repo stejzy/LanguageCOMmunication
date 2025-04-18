@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-class UserServiceTest {
+class AuthServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -26,7 +26,7 @@ class UserServiceTest {
     private EmailService emailService;
 
     @InjectMocks
-    private UserService userService;
+    private AuthService authService;
 
     @Captor
     private ArgumentCaptor<User> userCaptor;
@@ -43,7 +43,7 @@ class UserServiceTest {
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        User registeredUser = userService.register(user);
+        User registeredUser = authService.register(user);
 
         verify(userRepository).save(userCaptor.capture());
         verify(emailService).sendVerificationEmail(eq("test@example.com"), anyString());
@@ -62,7 +62,7 @@ class UserServiceTest {
         User user = new User("testuser", "test@example.com", "password");
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
 
-        assertThrows(EmailAlreadyExistsException.class, () -> userService.register(user));
+        assertThrows(EmailAlreadyExistsException.class, () -> authService.register(user));
         verify(userRepository, never()).save(any());
     }
 
@@ -75,7 +75,7 @@ class UserServiceTest {
 
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
 
-        userService.verifyUser("test@example.com", "123456");
+        authService.verifyUser("test@example.com", "123456");
 
         assertTrue(user.isEnabled());
         assertNull(user.getVerificationCode());
@@ -92,7 +92,7 @@ class UserServiceTest {
 
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
 
-        assertThrows(VerificationCodeExpiredException.class, () -> userService.verifyUser("test@example.com", "123456"));
+        assertThrows(VerificationCodeExpiredException.class, () -> authService.verifyUser("test@example.com", "123456"));
     }
 
     @Test
@@ -104,7 +104,7 @@ class UserServiceTest {
 
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
 
-        assertThrows(InvalidVerificationCodeException.class, () -> userService.verifyUser("test@example.com", "123456"));
+        assertThrows(InvalidVerificationCodeException.class, () -> authService.verifyUser("test@example.com", "123456"));
     }
 
     @Test
@@ -114,6 +114,6 @@ class UserServiceTest {
 
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
 
-        assertThrows(UserAlreadyVerifiedException.class, () -> userService.verifyUser("test@example.com", "any"));
+        assertThrows(UserAlreadyVerifiedException.class, () -> authService.verifyUser("test@example.com", "any"));
     }
 }

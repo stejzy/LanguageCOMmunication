@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class UserService {
+public class AuthService implements IAuthService {
     private final UserRepository userRepository;
     private final AuthenticationManager authManager;
     private final JwtService jwtService;
@@ -25,13 +25,14 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
 
     @Autowired
-    public UserService(UserRepository userRepository, EmailService emailService, AuthenticationManager authManager, JwtService jwtService) {
+    public AuthService(UserRepository userRepository, EmailService emailService, AuthenticationManager authManager, JwtService jwtService) {
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.authManager = authManager;
         this.jwtService = jwtService;
     }
 
+    @Override
     public User register(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new EmailAlreadyExistsException("Email " + user.getEmail() + " is already registered.");
@@ -60,6 +61,7 @@ public class UserService {
         return savedUser;
     }
 
+    @Override
     public void verifyUser(String email, String code) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -82,6 +84,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Override
     public String login(UserDTO user) {
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));

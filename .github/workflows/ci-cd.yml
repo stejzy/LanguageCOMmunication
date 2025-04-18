@@ -58,7 +58,7 @@ jobs:
 
       - name: Build, tag and push image
         env:
-          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}
           IMAGE_NAME: my-springboot-api
         run: |
           IMAGE_URI=$ECR_REGISTRY/$IMAGE_NAME:latest

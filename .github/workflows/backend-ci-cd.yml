@@ -96,13 +96,13 @@ jobs:
       - name: Get AWS Account ID
         id: account
         run: |
-          id=$(aws sts get-caller-identity --query Account --output text)
-          echo "name=account::$id" >> "$GITHUB_OUTPUT"
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "account_id=$ACCOUNT_ID" >> $GITHUB_OUTPUT
 
       - name: Render task definition
         run: |
           sed \
-            -e "s|<ACCOUNT_ID>|${{ steps.account.outputs.account }}|g" \
+            -e "s|<ACCOUNT_ID>|${{ steps.account.outputs.account_id }}|g" \
             .github/task-definition.template.json > rendered-task-def.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition

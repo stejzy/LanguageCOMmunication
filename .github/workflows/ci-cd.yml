@@ -13,13 +13,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
       - name: Cache Maven packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -45,7 +45,7 @@ jobs:
       id-token: write
       contents: read
     outputs:
-      image-uri: ${{ steps.build-image.outputs.image-uri }}
+      image_uri: ${{ steps.build-image.outputs.image_uri }}
     steps:
       - uses: actions/checkout@v4
 
@@ -69,7 +69,7 @@ jobs:
           IMAGE_URI=$REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
-          echo "image-uri=$IMAGE_URI" >> "$GITHUB_OUTPUT"
+          echo "image_uri=$IMAGE_URI" >> "$GITHUB_OUTPUT"
 
   # 3) Deploy on EC2-based ECS
   deploy:
@@ -88,7 +88,7 @@ jobs:
 
       - name: Debug
         run: |
-          echo "${{ needs.build-and-push.outputs.image-uri}}"
+          echo "${{ needs.build-and-push.outputs.image_uri}}"
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
@@ -96,7 +96,7 @@ jobs:
         with:
           task-definition: .github/task-definition.json
           container-name: ${{ secrets.ECR_REPOSITORY }}
-          image: ${{ needs.build-and-push.outputs.image-uri }}
+          image: ${{ needs.build-and-push.outputs.image_uri }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2

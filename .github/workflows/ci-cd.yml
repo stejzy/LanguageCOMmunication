@@ -63,14 +63,13 @@ jobs:
         id: build-image
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          REPOSITORY: flashlingo-repo
           IMAGE_TAG: latest
         run: |
           IMAGE_URI=$REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
-          echo "$IMAGE_URI"
-          echo "image-uri=$IMAGE_URI" >> $GITHUB_OUTPUT
+          echo "image-uri=$IMAGE_URI" >> "$GITHUB_OUTPUT"
 
   # 3) Deploy on EC2-based ECS
   deploy:

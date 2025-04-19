@@ -9,7 +9,7 @@
         {
           "name": "flashlingo-repo-8080-tcp",
           "containerPort": 8080,
-          "hostPort": 8080,
+          "hostPort": 80,
           "protocol": "tcp",
           "appProtocol": "http"
         }
@@ -72,8 +72,8 @@
   "requiresCompatibilities": [
     "EC2"
   ],
-  "cpu": "512",
-  "memory": "768",
+  "cpu": "256",
+  "memory": "512",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"

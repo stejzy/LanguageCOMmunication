@@ -53,7 +53,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: eu-central-1
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -83,7 +83,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: eu-central-1
 
 
       - name: Debug
@@ -95,7 +95,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: .github/task-definition.json
-          container-name: ${{ secrets.ECR_REPOSITORY }}
+          container-name: flashlingo-repo
           image: ${{ needs.build-and-push.outputs.image }}
 
       - name: Deploy Amazon ECS task definition

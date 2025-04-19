@@ -67,9 +67,9 @@ jobs:
           IMAGE_TAG: latest
         run: |
           IMAGE=$REGISTRY/$REPOSITORY:$IMAGE_TAG
-          docker build -t IMAGE .
-          docker push IMAGE
-          echo "image=IMAGE" >> "$GITHUB_OUTPUT"
+          docker build -t $IMAGE .
+          docker push $IMAGE
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
 
   # 3) Deploy on EC2-based ECS
   deploy:

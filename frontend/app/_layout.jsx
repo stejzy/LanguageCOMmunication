@@ -15,7 +15,7 @@ export default function RootLayout() {
     <GestureHandlerRootView>
       <AuthProvider>
         <SafeAreaProvider>
-          <ThemeProvider>    
+          <ThemeProvider>
             <SafeAreaView style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom }} >
                 <Stack>
                   <Stack.Screen 

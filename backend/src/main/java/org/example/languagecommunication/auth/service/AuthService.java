@@ -1,7 +1,7 @@
 package org.example.languagecommunication.auth.service;
 
 import io.micrometer.common.util.StringUtils;
-import org.example.languagecommunication.auth.dto.TokenPair;
+import org.example.languagecommunication.auth.dto.AuthResponse;
 import org.example.languagecommunication.auth.exceptions.*;
 import org.example.languagecommunication.auth.model.RefreshTokenEntity;
 import org.example.languagecommunication.auth.model.User;
@@ -88,7 +88,7 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public TokenPair refreshTokens(String refreshToken) {
+    public AuthResponse refreshTokens(String refreshToken) {
         if (refreshToken == null) {
             throw new BadCredentialsException("Empty refresh token");
         }
@@ -103,11 +103,13 @@ public class AuthService implements IAuthService {
             throw new CredentialsExpiredException("Refresh token is expired.");
         }
 
+        tokenRepository.delete(entity);
+
         String user = entity.getUsername();
         String newAccess  = jwtService.generateToken(user);
         String newRefresh = jwtService.generateRefreshToken(user);
 
-        return new TokenPair(newAccess, newRefresh);
+        return new AuthResponse(newAccess, newRefresh);
     }
 
     @Override

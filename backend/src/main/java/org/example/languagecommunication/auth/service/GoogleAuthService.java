@@ -48,7 +48,8 @@ public class GoogleAuthService {
             User existingUser = userOpt.get();
             if ("google".equalsIgnoreCase(existingUser.getAuthProvider())) {
                 String jwt = jwtService.generateToken(email);
-                return new AuthResponse(jwt);
+                String refreshJwt = jwtService.generateRefreshToken(email);
+                return new AuthResponse(jwt, refreshJwt);
             } else {
                 throw new UserAlreadyExistsException("There is already user with email " + email + ".");
             }
@@ -64,7 +65,8 @@ public class GoogleAuthService {
             userRepository.save(newUser);
 
             String jwt = jwtService.generateToken(email);
-            return new AuthResponse(jwt);
+            String refreshJwt = jwtService.generateRefreshToken(email);
+            return new AuthResponse(jwt, refreshJwt);
         }
     }
 }

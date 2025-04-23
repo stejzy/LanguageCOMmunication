@@ -1,35 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   Modal,
   View,
   Text,
-  StyleSheet
+  StyleSheet,
+  Pressable,
+  Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Platform } from 'react-native';
-import { GestureHandlerRootView, Pressable } from 'react-native-gesture-handler';
+import { AuthContext } from '@/context/AuthContext';
 
 export default function UserMenuButton() {
   const [open, setOpen] = useState(false);
+  const {authState, onLogin, onRegister, onLogout} = useContext(AuthContext);
 
   const router = useRouter();
 
+  const toggleMenu = () => {
+    setOpen(prev => !prev);
+  };
+
   return (
     <>
-      <Pressable onPress={() => setOpen(!open)} style={styles.trigger}>
-        <Ionicons pointerEvents="none" name="person-circle-outline" size={50} color="black" />
+      <Pressable onPressIn={toggleMenu} style={styles.trigger}>
+        <Ionicons name="person-circle-outline" size={50} color="black" />
+        <></>
       </Pressable>
 
       <Modal
         transparent
         visible={open}
-        animationType="fade"
         hardwareAccelerated
         presentationStyle='overFullScreen'
         onRequestClose={() => setOpen(false)}
       >
-        <GestureHandlerRootView style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>
             <Pressable
               style={[
@@ -38,7 +43,7 @@ export default function UserMenuButton() {
               onPress={() => setOpen(false)}
             />
             <View style={styles.menu}>
-              {!false ? (
+              {!authState?.authenticated ? (
                 <>
                   <Pressable
                     onPress={() => {
@@ -63,6 +68,7 @@ export default function UserMenuButton() {
                 <Pressable
                   onPress={() => {
                     setOpen(false);
+                    onLogout();
                   }}
                   style={styles.menuItem}
                 >
@@ -71,7 +77,6 @@ export default function UserMenuButton() {
               )}
             </View>
           </View>
-        </GestureHandlerRootView>
       </Modal>
     </>
   );

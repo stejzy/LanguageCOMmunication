@@ -1,33 +1,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import * as SecureStore from 'expo-secure-store';
 import * as authService from "@/api/authService";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Platform } from "react-native";
-import Config from 'react-native-config';
-
-const TOKEN_KEY = "jwt_key";
-export const API_URL = Config.REACT_APP_API_URL;
-
-const isWeb = Platform.OS === 'web';
-
-const storage = {
-  getItem: (key) =>
-    isWeb
-      ? AsyncStorage.getItem(key)
-      : SecureStore.getItemAsync(key),
-  setItem: (key, value) =>
-    isWeb
-      ? AsyncStorage.setItem(key, value)
-      : SecureStore.setItemAsync(key, value),
-  deleteItem: (key) =>
-    isWeb
-      ? AsyncStorage.removeItem(key)
-      : SecureStore.deleteItemAsync(key),
-};
+import { refreshToken } from "@/api/config";
 
 export const AuthContext = createContext({
   authState: {
-    token: null,
+    accessToken: null,
+    refreshToken: null,
     authenticated: null,
   },
   onRegister: () => {},
@@ -37,21 +15,30 @@ export const AuthContext = createContext({
 
 export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState({
-    token: null,
+    accessToken: null,
+    refreshToken: null,
     authenticated: null,
   });
 
   useEffect(() => {
-    const checkToken = async () => {
-      const token = await storage.getItem(TOKEN_KEY);
-      if (token) {
+    const doRefresh = async () => {
+      const tokens = await refreshToken();
+
+      if (tokens?.accessToken) {
         setAuthState({
-          token,
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
           authenticated: true,
+        });
+      } else {
+        setAuthState({
+          accessToken: null,
+          refreshToken: null,
+          authenticated: false,
         });
       }
     };
-    checkToken();
+    doRefresh();  
   }, []);
 
   const register = async (username, email, password) => {
@@ -59,13 +46,15 @@ export const AuthProvider = ({ children }) => {
   }
   
   const login = async (username, password) => {
-    const tkn = await authService.login({ username, password });
-    setToken(tkn);
+    const tokens = await authService.login({ username, password });
+    if(tokens?.accessToken && tokens?.refreshToken) {
+      setAuthState({accessToken: tokens.accessToken, refreshToken: tokens.refreshToken, authenticated: true});
+    }
   };
   
   const logout = async () => {
     await authService.logout();
-    setToken(null);
+    setAuthState({accessToken: null, refreshToken: null, authenticated: false});
   };
 
   const value = {

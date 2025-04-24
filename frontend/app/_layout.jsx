@@ -6,41 +6,43 @@ import { Ionicons } from "@expo/vector-icons";
 import UserMenuButton from '@/components/UserMenuButton';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider } from '@/context/AuthContext';
+import { LanguageProvider } from '@/context/LanguageContext';
 
 export default function RootLayout() {
 
   const insets = useSafeAreaInsets();
+
+  const commonHeaderOptions = {
+    headerTitle: () => (
+      <Text style={{ color: 'black', fontSize: 20, fontWeight: 'bold' }}>Flashlingo</Text>
+    ),
+    headerStyle: {
+      backgroundColor: '#169976',
+    },
+    headerTitleAlign: 'center',
+    headerRight: () => (
+      <View style={{ paddingRight: Platform.OS === 'web' ? 16 : 0 }}>
+        <Ionicons name="settings-outline" size={24} color="black" />
+      </View>
+    ),
+    headerLeft: () => <UserMenuButton />,
+    headerShadowVisible: false,
+  };
 
   return (
     <GestureHandlerRootView>
       <AuthProvider>
         <SafeAreaProvider>
           <ThemeProvider>
-            <SafeAreaView style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom }} >
+            <LanguageProvider>
+              <SafeAreaView style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom }} >
                 <Stack>
-                  <Stack.Screen 
-                    name="(tabs)"
-                    options={{
-                      headerTitle: () => (
-                          <Text style={{ color: 'black', fontSize: 20, fontWeight: 'bold' }}>Flashlingo</Text>
-                      ),
-                      headerStyle: {
-                        backgroundColor: '#1DCD9F',
-                      },
-                      headerTitleAlign: 'center',
-                      headerRight: () => (
-                        <View style={{ paddingRight: Platform.OS === 'web' ? 16 : 0 }}>
+                  <Stack.Screen name="(tabs)" options={commonHeaderOptions} />
 
-                            <Ionicons name="settings-outline" size={24} color="black" />
-
-                        </View>
-                    ),
-                      headerLeft: () => <UserMenuButton />,
-                    headerShadowVisible: false
-                    }}
-                  />
+                  <Stack.Screen name="language/selectLanguage" options={commonHeaderOptions} />
                 </Stack>
-            </SafeAreaView>
+              </SafeAreaView>
+            </LanguageProvider>
           </ThemeProvider>
         </SafeAreaProvider>
       </AuthProvider>

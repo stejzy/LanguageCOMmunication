@@ -3,12 +3,12 @@ import { useContext } from "react";
 import { ThemeContext } from "@/context/ThemeContext";
 import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import MenuTranslateBar from "@/components/translation/MenuTranslationBar"; 
+import MenuTranslationBar from "@/components/translation/MenuTranslationBar"; 
 
 export default function TranslationScreen() {
   const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
 
-  const styles = createStyles(theme, colorScheme, setColorScheme);
+  const styles = createStyles(theme);
 
   return (
     <SafeAreaView style={styles.contentContainer}>
@@ -21,13 +21,13 @@ export default function TranslationScreen() {
         <Text style = {styles.textStyle}>Siemano ziomeczki</Text>
       </View>
 
-      <MenuTranslateBar/>
+      <MenuTranslationBar/>
       
     </SafeAreaView>
   );
 }
 
-function createStyles(theme, colorScheme, setColorScheme) {
+function createStyles(theme) {
   return StyleSheet.create({
     contentContainer: {
       flex: 1,

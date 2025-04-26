@@ -4,6 +4,7 @@ import { ThemeContext } from "@/context/ThemeContext";
 import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MenuTranslationBar from "@/components/translation/MenuTranslationBar"; 
+import { TextInput } from "react-native-gesture-handler";
 
 export default function TranslationScreen() {
   const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
@@ -13,12 +14,15 @@ export default function TranslationScreen() {
   return (
     <SafeAreaView style={styles.contentContainer}>
       <StatusBar
-        barStyle={colorScheme === "dark" ? "light-content" : "dark-content"}
-        backgroundColor={colorScheme === "dark" ? "black" : "white"}
+          barStyle={colorScheme === "dark" ? "light-content" : "dark-content"}
+          backgroundColor={colorScheme === "dark" ? "black" : "white"}
       />
 
       <View style={styles.viewStyle}>
-        <Text style = {styles.textStyle}>Siemano ziomeczki</Text>
+        <TextInput style = {styles.textInputStyle}
+         placeholder="Wpisz coś..."
+         placeholderTextColor={theme.text}
+         multiline></TextInput>
       </View>
 
       <MenuTranslationBar/>
@@ -36,14 +40,19 @@ function createStyles(theme) {
     },
     viewStyle: {
       flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: theme.d_gray,
       borderBottomLeftRadius: 25,
       borderBottomRightRadius: 25,
       elevation: 8
     },
-    textStyle: {
+    textInputStyle: {
+      flex: 1,
+      width: "100%",
+      textAlign: "left",
+      textAlignVertical: "top",
+      padding: 20,
+      borderBottomLeftRadius: 25,
+      borderBottomRightRadius: 25,
       fontSize: 32,
       color: theme.text,
     }

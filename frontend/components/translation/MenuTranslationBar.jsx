@@ -1,14 +1,46 @@
-import { View, Text, StyleSheet, Pressable, TouchableHighlight } from "react-native"; 
+import { View, StyleSheet, Pressable, Keyboard } from "react-native"; 
 import { ThemeContext } from "@/context/ThemeContext";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import { LanguageContext } from "@/context/LanguageContext";
 import LanguageSelector from "./LanguageSelector";
 
+
+
 export default function MenuTranslationBar()  {
+    const [keyboardVisible, setKeyboardVisible] = useState(false);
+    useEffect( () => {
+        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+            setKeyboardVisible(true);
+        });
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            setKeyboardVisible(false);
+        });
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    });
+
+    const { sourceLanguage, setSourceLanguage, targetLanguage, setTargetLanguage } = useContext(LanguageContext);
+
+    const handleSwapLanguages = () => {
+        if (sourceLanguage && targetLanguage) {
+          setSourceLanguage(targetLanguage);
+          setTargetLanguage(sourceLanguage);
+        }
+      };
+
     const { theme } = useContext(ThemeContext);
     const styles = createStyles(theme);
+
+    const buttons = [
+        { icon: <Ionicons name="people" size={25} color={theme.d_gray} />, style: styles.talkButton },
+        { icon: <FontAwesome name="microphone" size={30} color={theme.d_gray} />, style: styles.micButton },
+        { icon: <Entypo name="camera" size={25} color={theme.d_gray} />, style: styles.cameraButton },
+      ];
 
     return(
         <View style={styles.background}>
@@ -16,6 +48,7 @@ export default function MenuTranslationBar()  {
                <LanguageSelector type="source"></LanguageSelector>
 
                 <Pressable
+                    onPress={handleSwapLanguages}
                     style={({ pressed }) => (
                         [styles.swapButton, pressed && {backgroundColor: 'rgba(224, 224, 224, 0.5)'}]
                     )}
@@ -25,19 +58,20 @@ export default function MenuTranslationBar()  {
 
                 <LanguageSelector type="target"></LanguageSelector>
             </View>
-            <View style={styles.optionButtonsRow}>
-                <Pressable style={({ pressed }) => [styles.talkButton, pressed && { opacity: 0.75 }]}>
-                    <Ionicons name="people" size={25} color={theme.d_gray} />
-                </Pressable>
+            
+            { !keyboardVisible && (
+                <View style={styles.optionButtonsRow}>
+                    {buttons.map((button, index) => (
+                        <Pressable
+                        key={index}
+                        style={({ pressed }) => [button.style, pressed && { opacity: 0.75 }]}
+                        >
+                        {button.icon}
+                        </Pressable>
+                    ))}
+                </View>
+            )}
 
-                <Pressable style={({ pressed }) => [styles.micButton, pressed && { opacity: 0.75 }]}>
-                    <FontAwesome name="microphone" size={30} color={theme.d_gray} />
-                </Pressable>
-
-                <Pressable style={({ pressed }) => [styles.cameraButton, pressed && { opacity: 0.75 }]}>
-                    <Entypo name="camera" size={25} color={theme.d_gray} />
-                </Pressable>
-            </View>
     </View>
     );
 }
@@ -51,18 +85,9 @@ function createStyles(theme) {
         },
         languageButtonsRow: {
             width: "100%",
-            height: "30%",
             flexDirection: "row",
             justifyContent: "space-evenly",
-            alignItems: "center",
-        },
-        languageButton: {
-            backgroundColor: theme.mint,
-            height: 40,
-            width: 120,
-            borderRadius: 15,
-            justifyContent: "center",
-            alignItems: "center",
+            alignItems: "center"
         },
         swapButton: {
             backgroundColor: "transparent",

@@ -11,9 +11,10 @@ export const Colors = {
     },
     dark: {
       text: "#F5F5F5",
-      torq: "#169976",
-      mint: "#1DCD9F",
-      d_gray: "#222222",
+      info: "#696969", // szary
+      torq: "#169976", // ciemny zielony
+      mint: "#1DCD9F", // jasny zielony
+      d_gray: "#222222", // ciemny szary
       buttonBackground: "#0A84FF",
       buttonText: "#FFFFFF",
       tabBarActive: "#17A679",

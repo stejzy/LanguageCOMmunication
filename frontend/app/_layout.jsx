@@ -39,7 +39,7 @@ export default function RootLayout() {
                 <Stack>
                   <Stack.Screen name="(tabs)" options={commonHeaderOptions} />
 
-                  <Stack.Screen name="language/selectLanguage" options={commonHeaderOptions} />
+                  <Stack.Screen name="language/select" options={commonHeaderOptions} />
                 </Stack>
               </SafeAreaView>
             </LanguageProvider>

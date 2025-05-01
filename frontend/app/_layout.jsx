@@ -9,9 +9,6 @@ import { AuthProvider } from '@/context/AuthContext';
 import { LanguageProvider } from '@/context/LanguageContext';
 
 export default function RootLayout() {
-
-  const insets = useSafeAreaInsets();
-
   const commonHeaderOptions = {
     headerTitle: () => (
       <Text style={{ color: 'black', fontSize: 20, fontWeight: 'bold' }}>Flashlingo</Text>
@@ -29,6 +26,8 @@ export default function RootLayout() {
     headerShadowVisible: false,
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
     <GestureHandlerRootView>
       <AuthProvider>
@@ -40,6 +39,7 @@ export default function RootLayout() {
                   <Stack.Screen name="(tabs)" options={commonHeaderOptions} />
 
                   <Stack.Screen name="language/select" options={commonHeaderOptions} />
+                  <Stack.Screen name="login" options={{...commonHeaderOptions, headerLeft: undefined}} />
                 </Stack>
               </SafeAreaView>
             </LanguageProvider>

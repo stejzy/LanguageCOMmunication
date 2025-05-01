@@ -4,7 +4,7 @@ import { ThemeContext } from "@/context/ThemeContext";
 import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MenuTranslationBar from "@/components/translation/MenuTranslationBar"; 
-import { TextInput } from "react-native-gesture-handler";
+import { TextInput } from "react-native";
 
 export default function TranslationScreen() {
   const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);

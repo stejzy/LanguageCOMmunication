@@ -1,12 +1,11 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 import * as authService from "@/api/authService";
 import { refreshToken } from "@/api/config";
+import { setupInterceptors } from "@/api/config";
 
 export const AuthContext = createContext({
   authState: {
-    accessToken: null,
-    refreshToken: null,
-    authenticated: null,
+    authenticated: false,
   },
   onRegister: () => {},
   onLogin: () => {},
@@ -15,30 +14,28 @@ export const AuthContext = createContext({
 
 export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState({
-    accessToken: null,
-    refreshToken: null,
-    authenticated: null,
+    authenticated: false,
   });
 
   useEffect(() => {
     const doRefresh = async () => {
-      const tokens = await refreshToken();
+      try {
+        const tokens = await refreshToken();
 
-      if (tokens?.accessToken) {
-        setAuthState({
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
-          authenticated: true,
-        });
-      } else {
-        setAuthState({
-          accessToken: null,
-          refreshToken: null,
-          authenticated: false,
-        });
+        if (tokens?.accessToken) {
+          setAuthState({
+            authenticated: true,
+          });
+        }
+      } catch (error) {
+        setAuthState({ authenticated: false });
       }
-    };
+    }
     doRefresh();  
+  }, []);
+
+  useEffect(() => {
+    setupInterceptors(setAuthState);
   }, []);
 
   const register = async (username, email, password) => {
@@ -47,21 +44,22 @@ export const AuthProvider = ({ children }) => {
   
   const login = async (username, password) => {
     const tokens = await authService.login({ username, password });
-    if(tokens?.accessToken && tokens?.refreshToken) {
-      setAuthState({accessToken: tokens.accessToken, refreshToken: tokens.refreshToken, authenticated: true});
+    if(tokens?.accessToken) {
+      setAuthState({authenticated: true});
     }
   };
   
   const logout = async () => {
     await authService.logout();
-    setAuthState({accessToken: null, refreshToken: null, authenticated: false});
+    setAuthState({authenticated: false});
   };
 
   const value = {
     onRegister: register,
     onLogin: login,
     onLogout: logout,
-    authState
+    authState,
+    setAuthState
   };
 
   return <AuthContext.Provider value={value}>

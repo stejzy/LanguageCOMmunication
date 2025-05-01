@@ -1,13 +1,18 @@
-import { View, Text, TextInput, Button } from 'react-native'
+import { View, Text, TextInput, Button, Platform } from 'react-native'
 import React, { useContext } from 'react'
 import { useState } from 'react'
 import { AuthContext } from '@/context/AuthContext';
 import { useRouter } from 'expo-router';
 import { StyleSheet } from 'react-native';
+import { ThemeContext } from '@/context/ThemeContext';
+import { Pressable } from 'react-native';
 
 export default function AuthScreen({ navigation }) {
   const {onLogin} = useContext(AuthContext);
+  const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
+  
   const router = useRouter();
+  const styles = createStyles(theme);
 
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
@@ -23,9 +28,9 @@ export default function AuthScreen({ navigation }) {
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        setError('Błędny login lub hasło')
+        setError('Invalid username or password.')
       } else {
-        setError('Wystąpił błąd. Spróbuj ponownie później.')
+        setError('An error occurred. Please try again.')
         console.error('Login error:', error);
       }
     }
@@ -50,32 +55,51 @@ export default function AuthScreen({ navigation }) {
         onChangeText={text => setPassword(text)} 
         autoCapitalize="none"
         />
-      <Button title="Login" onPress={handleLogin} />
+      <Pressable style={styles.button}onPress={handleLogin} >
+        <Text style={styles.buttonText}>Login</Text>
+      </Pressable>
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    width: '100%',
-    marginBottom: 20,
-    paddingLeft: 10,
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
-  },
-})
+function createStyles(theme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+      backgroundColor: theme.d_gray,
+    },
+    title: {
+      fontSize: 24,
+      marginBottom: 20,
+      color: theme.text,
+    },
+    input: {
+      height: 40,
+      borderColor: 'gray',
+      borderWidth: 1,
+      backgroundColor: theme.torq,
+      width: Platform.OS === 'web' ? '50%' : '100%',
+      marginBottom: 20,
+      paddingLeft: 10,
+      borderRadius: 5,
+    },
+    errorText: {
+      color: 'red',
+      marginBottom: 10,
+    },
+    button: {
+      backgroundColor: theme.mint,
+      padding: 10,
+      borderRadius: 5,
+      width: '20%',
+      alignItems: 'center',
+    },
+    buttonText: {
+      color: 'black',
+      fontSize: 16,
+    }
+  });
+}

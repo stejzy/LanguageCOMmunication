@@ -22,7 +22,11 @@ export default function TranslationScreen() {
         <TextInput style = {styles.textInputStyle}
          placeholder="Wpisz coś..."
          placeholderTextColor={theme.text}
-         multiline></TextInput>
+         multiline
+         onFocus={() => console.log("Focused!")}
+         onBlur={() => console.log("Blurred!")
+        
+         }></TextInput>
       </View>
 
       <MenuTranslationBar/>

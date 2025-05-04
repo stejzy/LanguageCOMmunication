@@ -13,11 +13,6 @@ export default function LanguageSelector({ type }) {
   const { sourceLanguage, targetLanguage } = useContext(LanguageContext);
   const language = type === 'source' ? sourceLanguage : targetLanguage
 
-  if (type === 'source') {
-    console.log("Source: " + sourceLanguage?.languageName ?? "Source language is not selected.");
-    console.log("Target: " + targetLanguage?.languageName ?? "Target language is not selected.");
-  }
-
   const { theme } = useContext(ThemeContext);
   const styles = createStyles(theme);
 

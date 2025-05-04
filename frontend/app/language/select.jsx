@@ -66,6 +66,7 @@ export default function Select() {
               placeholderTextColor={theme.info}
               value={searchText}
               onChangeText={setSearchText}
+              autoFocus={true}
             />
             <Pressable
               onPress={() => {

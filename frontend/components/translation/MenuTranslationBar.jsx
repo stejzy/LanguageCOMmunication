@@ -6,23 +6,13 @@ import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { LanguageContext } from "@/context/LanguageContext";
 import LanguageSelector from "./LanguageSelector";
+import useKeyboard from "@/hooks/useKeyboard";
 
 
 
 export default function MenuTranslationBar()  {
-    const [keyboardVisible, setKeyboardVisible] = useState(false);
-    useEffect( () => {
-        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-            setKeyboardVisible(true);
-        });
-        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-            setKeyboardVisible(false);
-        });
-        return () => {
-            keyboardDidShowListener.remove();
-            keyboardDidHideListener.remove();
-        };
-    });
+    console.log("RENDER MenuTranslationBar")
+    const keyboardVisible = useKeyboard();
 
     const { sourceLanguage, setSourceLanguage, targetLanguage, setTargetLanguage } = useContext(LanguageContext);
 

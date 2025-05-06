@@ -24,7 +24,7 @@ export default function AuthScreen({ navigation }) {
       if (router.canGoBack()) {
         router.back()
       } else {
-        router.push('/')
+        router.push('/(tabs)/translation')
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {

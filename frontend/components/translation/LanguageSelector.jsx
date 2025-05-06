@@ -1,5 +1,4 @@
 import { useEffect, useState, useContext } from "react";
-import { getSupportedLanguages } from "@/api/translationService";
 import { useRouter } from "expo-router";
 import { Text, View, Pressable } from "react-native";
 import { ThemeContext } from "@/context/ThemeContext";
@@ -8,22 +7,11 @@ import { LanguageContext } from "@/context/LanguageContext";
 export default function LanguageSelector({ type }) {
   const router = useRouter();
   
-  const [supportedLanguages, setSupportedLanguages] = useState([]);
-
-  const { sourceLanguage, targetLanguage } = useContext(LanguageContext);
+  const { supportedLanguages ,sourceLanguage, targetLanguage } = useContext(LanguageContext);
   const language = type === 'source' ? sourceLanguage : targetLanguage
 
   const { theme } = useContext(ThemeContext);
   const styles = createStyles(theme);
-
-  useEffect(() => {
-    const fetchSupportedLanguages = async () => {
-        const languages = await getSupportedLanguages();
-        setSupportedLanguages(languages);
-    };
-
-    fetchSupportedLanguages();
-}, []);
 
   const handleOpenLanguageSelect = () => {
     router.push({

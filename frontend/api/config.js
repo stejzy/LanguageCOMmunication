@@ -51,12 +51,13 @@ if (currentAccessToken) {
 return config;
 }, error => Promise.reject(error));
 
+
 export const setupInterceptors = (setAuthState) => {
   api.interceptors.response.use(
     response => response,
     async error => {
       const originalRequest = error.config;
-      
+
       if (error?.response?.status === 401 && originalRequest.url.includes('/api/auth/refresh')) {
         storage.deleteItem(REFRESH_TOKEN_KEY);
         setAccessToken(null);

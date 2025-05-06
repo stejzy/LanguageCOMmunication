@@ -6,22 +6,26 @@ import { Text } from 'react-native'
 import TranslationScreen from '@/app/(tabs)/translation'
 import PhrasesScreen from './phrases'
 import FlashcardScreen from './flashcard'
+import useKeyboard from "@/hooks/useKeyboard"
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
 
 export default function TabLayout() {
   const { colorScheme, theme } = useContext(ThemeContext);
   const insets = useSafeAreaInsets();
+  const keyboardVisible = useKeyboard();
 
   return (
       <SafeAreaView style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.d_gray }}>
         <Navigator
           screenOptions={{
-            tabBarStyle: {
-              backgroundColor: theme.torq,
-              borderRadius: 20,
-              margin: 15,
-            },
+            tabBarStyle: keyboardVisible
+              ? { display: 'none' }
+              : {
+                  backgroundColor: theme.torq,
+                  borderRadius: 20,
+                  margin: 15,
+                },
             tabBarIndicatorStyle: {
               backgroundColor: theme.tabBarActive,
               height: '100%',

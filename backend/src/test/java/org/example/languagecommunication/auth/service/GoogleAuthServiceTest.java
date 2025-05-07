@@ -60,7 +60,7 @@ class GoogleAuthServiceTest {
 
         verify(userRepository).save(any(User.class));
         assertNotNull(authResponse);
-        assertEquals("generatedJwt", authResponse.getJwt());
+        assertEquals("generatedJwt", authResponse.getAccessToken());
     }
 
     @Test
@@ -96,7 +96,7 @@ class GoogleAuthServiceTest {
 
         verify(userRepository, times(0)).save(any(User.class));
         assertNotNull(authResponse);
-        assertEquals("generatedJwt", authResponse.getJwt());
+        assertEquals("generatedJwt", authResponse.getAccessToken());
     }
 
     @Test

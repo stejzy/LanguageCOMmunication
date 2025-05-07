@@ -68,6 +68,7 @@ export default function UserMenuButton() {
                 <Pressable
                   onPress={() => {
                     setOpen(false);
+                    router.push('/login');
                     onLogout();
                   }}
                   style={styles.menuItem}

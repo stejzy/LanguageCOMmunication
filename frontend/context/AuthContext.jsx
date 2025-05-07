@@ -6,6 +6,7 @@ import { setupInterceptors } from "@/api/config";
 export const AuthContext = createContext({
   authState: {
     authenticated: false,
+    loading: true,
   },
   onRegister: () => {},
   onLogin: () => {},
@@ -15,6 +16,7 @@ export const AuthContext = createContext({
 export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState({
     authenticated: false,
+    loading: true,
   });
 
   useEffect(() => {
@@ -25,10 +27,13 @@ export const AuthProvider = ({ children }) => {
         if (tokens?.accessToken) {
           setAuthState({
             authenticated: true,
+            loading: false,
           });
+        } else {
+          setAuthState({ authenticated: false, loading: false });
         }
       } catch (error) {
-        setAuthState({ authenticated: false });
+        setAuthState({ authenticated: false, loading: false });
       }
     }
     doRefresh();  

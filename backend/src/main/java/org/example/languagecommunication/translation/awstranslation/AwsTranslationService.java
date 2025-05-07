@@ -36,12 +36,6 @@ public class AwsTranslationService {
 
     public String translateText(String text, String sourceLang, String targetLang) {
         try {
-            SupportedLanguage.valueOf(sourceLang.toUpperCase());
-            SupportedLanguage.valueOf(targetLang.toUpperCase());
-
-            sourceLang = SupportedLanguage.valueOf(sourceLang.toUpperCase()).getLanguageCode();
-            targetLang = SupportedLanguage.valueOf(targetLang.toUpperCase()).getLanguageCode();
-
             TranslateTextRequest request = TranslateTextRequest.builder()
                     .text(text)
                     .sourceLanguageCode(sourceLang)

@@ -1,6 +1,5 @@
 import api, { setAccessToken } from "./config";
 import storage from "@/utils/storage";
-import { toast } from "react-toastify";
 
 const REFRESH_TOKEN_KEY = process.env.EXPO_PUBLIC_REFRESH_TOKEN_KEY;
 

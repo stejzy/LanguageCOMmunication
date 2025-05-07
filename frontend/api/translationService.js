@@ -26,4 +26,21 @@ export const getSupportedLanguages = async () => {
       return "";
     }
   };
+
+  export const textToSpeech = async (text, langCode) => {
+    try {
+      const response = await api.get('/text-to-speech', {
+        params: {
+          text: text,
+          langCode: langCode
+        },
+        responseType: "arraybuffer"
+      });
+      return response.data;
+    } catch(error) {
+      console.error("Text to speech failed" + error)
+      return ""
+    }
+  };
+
   

@@ -33,7 +33,7 @@ export default function MenuTranslationBar()  {
       ];
 
     return(
-        <View style={styles.background}>
+        <View style={[styles.background, {height: keyboardVisible ? "15%" : "25%"}]}>
             <View style = {styles.languageButtonsRow}>
                <LanguageSelector type="source"></LanguageSelector>
 
@@ -77,7 +77,7 @@ function createStyles(theme) {
             width: "100%",
             flexDirection: "row",
             justifyContent: "space-evenly",
-            alignItems: "center"
+            alignItems: "center",
         },
         swapButton: {
             backgroundColor: "transparent",
@@ -87,6 +87,7 @@ function createStyles(theme) {
             alignItems: 'center',
         },
         optionButtonsRow: {
+            height: "25%",
             flexDirection: "row",
             justifyContent: "space-around",
             alignItems: "center",

@@ -16,6 +16,13 @@ export function LanguageProvider({ children }) {
       const fetchSupportedLanguages = async () => {
         try{
           const languages = await getSupportedLanguages();
+          console.log(languages);
+
+          const polish = languages.find(lang => lang.languageCode === 'pl');
+          const english = languages.find(lang => lang.languageCode === 'en');
+          if (polish) setSourceLanguage(polish);
+          if (english) setTargetLanguage(english);
+
           setSupportedLanguages(languages);
         } catch (error){
           console.error("Failed to fetch languages:", err);

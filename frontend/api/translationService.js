@@ -9,3 +9,21 @@ export const getSupportedLanguages = async () => {
       return [];
     }
   };
+
+
+  export const translate = async (text, sourceLang, targetLang) => {
+    try {
+      const { data } = await api.get('/translate', {
+        params: {
+          text: text,
+          sourceLang: sourceLang,
+          targetLang: targetLang,
+        }
+      });
+      return data;
+    } catch (error) {
+      console.error('Translation failed:', error);
+      return "";
+    }
+  };
+  

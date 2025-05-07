@@ -16,8 +16,8 @@ public class TextSpeechController {
     }
 
     @GetMapping("/text-to-speech")
-    public ResponseEntity<byte[]> convertTextToSpeech(String text, String language) {
-        byte[] audioBytes = textSpeechService.convertTextToSpeech(text, language);
+    public ResponseEntity<byte[]> convertTextToSpeech(String text, String langCode) {
+        byte[] audioBytes = textSpeechService.convertTextToSpeech(text, langCode);
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.valueOf("audio/mpeg"))

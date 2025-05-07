@@ -20,7 +20,7 @@ public class TextSpeechService {
         this.pollyClient = pollyClient;
     }
 
-    public byte[] convertTextToSpeech(String text, String language) {
+    public byte[] convertTextToSpeech(String text, String langCode) {
         try {
             if(text == null || text.isEmpty()) {
                 throw new TextSpeechException("Text cannot be null or empty", HttpStatus.BAD_REQUEST);
@@ -30,14 +30,15 @@ public class TextSpeechService {
                 throw new TextSpeechException("Text length exceeds the limit of 3000 characters", HttpStatus.BAD_REQUEST);
             }
 
-            SupportedLanguage supportedLanguage = SupportedLanguage.valueOf(language.toUpperCase());
+            SupportedLanguage supportedLanguage = SupportedLanguage.fromLanguageCode(langCode);
             String voiceId = supportedLanguage.getVoiceId();
+            String engine = supportedLanguage.getEngine().trim();
 
             SynthesizeSpeechRequest request = SynthesizeSpeechRequest.builder()
                     .text(text)
                     .voiceId(voiceId)
                     .outputFormat(OutputFormat.MP3)
-                    .engine("neural")
+                    .engine(engine)
                     .build();
 
             try (ResponseInputStream<SynthesizeSpeechResponse> response = pollyClient.synthesizeSpeech(request)) {
@@ -53,7 +54,7 @@ public class TextSpeechService {
             }
 
         } catch (IllegalArgumentException e) {
-            throw new TextSpeechException("Unsupported language: " + language, HttpStatus.BAD_REQUEST);
+            throw new TextSpeechException("Unsupported language code: " + langCode, HttpStatus.BAD_REQUEST);
         } catch (TextSpeechException e) {
             throw e;
         } catch (Exception e) {

@@ -59,7 +59,7 @@ export const setupInterceptors = (setAuthState) => {
       const originalRequest = error.config;
 
       if (error?.response?.status === 401 && originalRequest.url.includes('/api/auth/refresh')) {
-        storage.deleteItem(REFRESH_TOKEN_KEY);
+        //storage.deleteItem(REFRESH_TOKEN_KEY);
         setAccessToken(null);
         setAuthState({ authenticated: false });
       }
@@ -97,7 +97,7 @@ export const setupInterceptors = (setAuthState) => {
           return api(originalRequest);
         } catch (err) {
           processQueue(err, null);
-          storage.deleteItem(REFRESH_TOKEN_KEY);
+          //storage.deleteItem(REFRESH_TOKEN_KEY);
           setAccessToken(null);
           setAuthState({ authenticated: false });
           return Promise.reject(err);

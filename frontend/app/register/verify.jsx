@@ -51,7 +51,6 @@ export default function verify() {
   };
 
   const onChangeText = (text, index) => {
-    console.log(text);
     if (text.length > 1) {
       console.log(text);
       const pasteChars = text.slice(0, 6 - index).split("");

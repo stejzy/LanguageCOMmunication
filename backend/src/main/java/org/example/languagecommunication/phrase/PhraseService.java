@@ -48,8 +48,9 @@ public class PhraseService {
                     .bodyValue(requestBody)
                     .retrieve()
                     .bodyToMono(String.class)
-                    .block(); // Zwraca String synchronizacyjnie
+                    .block();
         } catch (Exception e) {
+            System.out.println(e);
             return "Błąd przy komunikacji z Groq: " + e.getMessage();
         }
     }

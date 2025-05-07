@@ -108,6 +108,7 @@ const createStyles = (theme) => {
       justifyContent: "center",
       alignItems: "center",
       backgroundColor: theme.d_gray,
+      padding: 20,
     },
     title: {
       fontSize: 24,
@@ -128,7 +129,7 @@ const createStyles = (theme) => {
       backgroundColor: theme.mint,
       padding: 10,
       borderRadius: 5,
-      width: "20%",
+      width: "30%",
       alignItems: "center",
     },
     registerText: {

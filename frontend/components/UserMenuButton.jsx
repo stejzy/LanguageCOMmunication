@@ -1,24 +1,24 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext } from "react";
 import {
   Modal,
   View,
   Text,
   StyleSheet,
   Pressable,
-  Platform
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { AuthContext } from '@/context/AuthContext';
+  Platform,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { AuthContext } from "@/context/AuthContext";
 
 export default function UserMenuButton() {
   const [open, setOpen] = useState(false);
-  const {authState, onLogin, onRegister, onLogout} = useContext(AuthContext);
+  const { authState, onLogin, onRegister, onLogout } = useContext(AuthContext);
 
   const router = useRouter();
 
   const toggleMenu = () => {
-    setOpen(prev => !prev);
+    setOpen((prev) => !prev);
   };
 
   return (
@@ -32,51 +32,50 @@ export default function UserMenuButton() {
         transparent
         visible={open}
         hardwareAccelerated
-        presentationStyle='overFullScreen'
+        presentationStyle="overFullScreen"
         onRequestClose={() => setOpen(false)}
       >
-          <View style={{ flex: 1 }}>
-            <Pressable
-              style={[
-                styles.overlayTouchable
-              ]}
-              onPress={() => setOpen(false)}
-            />
-            <View style={styles.menu}>
-              {!authState?.authenticated ? (
-                <>
-                  <Pressable
-                    onPress={() => {
-                      setOpen(false);
-                      router.push('/login');
-                    }}
-                    style={styles.menuItem}
-                  >
-                    <Text style={styles.menuText}>Zaloguj</Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => {
-                      setOpen(false);
-                      router.push('/register');
-                    }}
-                    style={styles.menuItem}
-                  >
-                    <Text style={styles.menuText}>Zarejestruj</Text>
-                  </Pressable>
-                </>
-              ) : (
+        <View style={{ flex: 1 }}>
+          <Pressable
+            style={[styles.overlayTouchable]}
+            onPress={() => setOpen(false)}
+          />
+          <View style={styles.menu}>
+            {!authState?.authenticated ? (
+              <>
                 <Pressable
                   onPress={() => {
                     setOpen(false);
-                    onLogout();
+                    router.push("/login");
                   }}
                   style={styles.menuItem}
                 >
-                  <Text style={styles.menuText}>Wyloguj</Text>
+                  <Text style={styles.menuText}>Login</Text>
                 </Pressable>
-              )}
-            </View>
+                <Pressable
+                  onPress={() => {
+                    setOpen(false);
+                    router.push("/register");
+                  }}
+                  style={styles.menuItem}
+                >
+                  <Text style={styles.menuText}>Register</Text>
+                </Pressable>
+              </>
+            ) : (
+              <Pressable
+                onPress={() => {
+                  setOpen(false);
+                  router.push("/login");
+                  onLogout();
+                }}
+                style={styles.menuItem}
+              >
+                <Text style={styles.menuText}>Logout</Text>
+              </Pressable>
+            )}
           </View>
+        </View>
       </Modal>
     </>
   );
@@ -86,25 +85,28 @@ const styles = StyleSheet.create({
   trigger: {
     zIndex: 1,
     elevation: 10,
-    marginLeft: Platform.OS === 'web' ? 16 : 0,
+    marginLeft: Platform.OS === "web" ? 16 : 0,
   },
   cursorDefault: {
-    cursor: 'default',
+    cursor: "default",
   },
   modalOverlay: {
     flex: 1,
   },
   overlayTouchable: {
-    position: 'absolute',
-    top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.25)',
-    cursor: 'default',
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.25)",
+    cursor: "default",
   },
   menu: {
-    position: 'absolute',
+    position: "absolute",
     top: 55,
     left: 16,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 6,
     paddingVertical: 4,
   },

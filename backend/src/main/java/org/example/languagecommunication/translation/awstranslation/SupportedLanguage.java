@@ -88,5 +88,14 @@ public enum SupportedLanguage {
         this.voiceId = voiceId;
         this.engine = engine;
     }
+
+    public static SupportedLanguage fromLanguageCode(String languageCode) {
+        for (SupportedLanguage lang : SupportedLanguage.values()) {
+            if (lang.getLanguageCode().equalsIgnoreCase(languageCode)) {
+                return lang;
+            }
+        }
+        throw new IllegalArgumentException("Unsupported language code: " + languageCode);
+    }
 }
 

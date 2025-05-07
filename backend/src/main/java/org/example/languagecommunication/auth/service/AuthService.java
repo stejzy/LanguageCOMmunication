@@ -9,6 +9,7 @@ import org.example.languagecommunication.auth.repository.RefreshTokenRepository;
 import org.example.languagecommunication.auth.repository.UserRepository;
 import org.example.languagecommunication.common.utils.Hasher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSendException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -56,12 +57,14 @@ public class AuthService implements IAuthService {
         user.setEnabled(false);
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        try {
+            emailService.sendVerificationEmail(user.getEmail(), verificationCode);
+        } catch (MailSendException err) {
+            throw new MailSendFailedException("Mail server connection failed. Couldn't connect to host.");
+        }
 
-        User savedUser = userRepository.save(user);
 
-        emailService.sendVerificationEmail(user.getEmail(), verificationCode);
-
-        return savedUser;
+        return userRepository.save(user);
     }
 
     @Override

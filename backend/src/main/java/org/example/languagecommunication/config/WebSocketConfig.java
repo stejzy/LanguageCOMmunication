@@ -9,7 +9,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
-    private  final TranscriptionHandler transcriptionHandler;
+    private final TranscriptionHandler transcriptionHandler;
 
     public WebSocketConfig(TranscriptionHandler transcriptionHandler) {
         this.transcriptionHandler = transcriptionHandler;
@@ -17,6 +17,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        System.out.println("📡 Rejestracja WebSocket handlera /ws/transcription");
         registry
                 .addHandler(transcriptionHandler, "/ws/transcription")
                 .setAllowedOrigins("*");

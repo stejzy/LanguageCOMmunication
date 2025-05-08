@@ -34,7 +34,9 @@ public class PhraseService {
                 "messages", List.of(
                         Map.of(
                                 "role", "user",
-                                "content", "Generate a simple phrase(in the same language as the word provided) with this word in it(I want only the phrase as the response):" + phrase
+                                "content", "Generate a short and natural phrase (in the same language as the word provided) that includes the given word. \n" +
+                                        "The response must consist of only the phrase — do not include any quotation marks or additional formatting. \n" +
+                                        "If the word is not valid, unknown, or cannot be used in a sentence, respond with exactly the same word.\n The word is: " + phrase
                         )
                 )
         );
@@ -46,8 +48,9 @@ public class PhraseService {
                     .bodyValue(requestBody)
                     .retrieve()
                     .bodyToMono(String.class)
-                    .block(); // Zwraca String synchronizacyjnie
+                    .block();
         } catch (Exception e) {
+            System.out.println(e);
             return "Błąd przy komunikacji z Groq: " + e.getMessage();
         }
     }

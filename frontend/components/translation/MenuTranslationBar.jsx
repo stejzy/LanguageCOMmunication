@@ -1,12 +1,13 @@
-import { View, StyleSheet, Pressable, Keyboard } from "react-native"; 
+import { View, StyleSheet, Pressable } from "react-native"; 
 import { ThemeContext } from "@/context/ThemeContext";
 import { useContext, useEffect, useState } from "react";
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+// import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { LanguageContext } from "@/context/LanguageContext";
 import LanguageSelector from "./LanguageSelector";
 import useKeyboard from "@/hooks/useKeyboard";
+import MicrophoneButton from "./MicrophoneButton";
 
 
 
@@ -15,6 +16,11 @@ export default function MenuTranslationBar()  {
     const keyboardVisible = useKeyboard();
 
     const { sourceLanguage, setSourceLanguage, targetLanguage, setTargetLanguage } = useContext(LanguageContext);
+    const { theme } = useContext(ThemeContext);
+
+    const [isRecording, setIsRecording] = useState(false);
+
+    console.log(isRecording);
 
     const handleSwapLanguages = () => {
         if (sourceLanguage && targetLanguage) {
@@ -23,12 +29,12 @@ export default function MenuTranslationBar()  {
         }
       };
 
-    const { theme } = useContext(ThemeContext);
+    
     const styles = createStyles(theme);
 
     const buttons = [
         { icon: <Ionicons name="people" size={25} color={theme.d_gray} />, style: styles.talkButton },
-        { icon: <FontAwesome name="microphone" size={30} color={theme.d_gray} />, style: styles.micButton },
+        { icon: <MicrophoneButton isRecording={isRecording} setIsRecording={setIsRecording}/>},
         { icon: <Entypo name="camera" size={25} color={theme.d_gray} />, style: styles.cameraButton },
       ];
 
@@ -102,14 +108,14 @@ function createStyles(theme) {
             justifyContent: "center",
             alignItems: "center"
         },
-        micButton: {
-            backgroundColor: theme.mint,
-            height: 75,
-            width: 75,
-            borderRadius: 50,
-            justifyContent: "center",
-            alignItems: "center"
-        },
+        // micButton: {
+        //     backgroundColor: theme.mint,
+        //     height: 75,
+        //     width: 75,
+        //     borderRadius: 50,
+        //     justifyContent: "center",
+        //     alignItems: "center"
+        // },
         cameraButton: {
             backgroundColor: theme.mint,
             height: 50,

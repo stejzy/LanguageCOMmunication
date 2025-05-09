@@ -8,6 +8,8 @@ export function LanguageProvider({ children }) {
   const [supportedLanguages, setSupportedLanguages] = useState([])
   const [sourceLanguage, setSourceLanguage] = useState(null);
   const [targetLanguage, setTargetLanguage] = useState(null);
+  const [textToTranslate, setTextToTranslate] = useState("");
+  const [translatedText, setTranslatedText] = useState("");
 
   const {authState} = useContext(AuthContext)
 
@@ -33,7 +35,7 @@ export function LanguageProvider({ children }) {
   }, [authState.authenticated])
 
   return (
-    <LanguageContext.Provider value={{ supportedLanguages ,sourceLanguage, setSourceLanguage, targetLanguage, setTargetLanguage }}>
+    <LanguageContext.Provider value={{ supportedLanguages ,sourceLanguage, setSourceLanguage, targetLanguage, setTargetLanguage, textToTranslate,  setTextToTranslate, translatedText, setTranslatedText}}>
       {children}
     </LanguageContext.Provider>
   );

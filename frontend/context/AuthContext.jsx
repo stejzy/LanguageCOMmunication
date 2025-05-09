@@ -11,7 +11,7 @@ export const AuthContext = createContext({
   onRegister: () => {},
   onLogin: () => {},
   onLogout: () => {},
-})
+});
 
 export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState({
@@ -35,8 +35,8 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         setAuthState({ authenticated: false, loading: false });
       }
-    }
-    doRefresh();  
+    };
+    doRefresh();
   }, []);
 
   useEffect(() => {
@@ -45,29 +45,35 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (username, email, password) => {
     await authService.register({ username, email, password });
-  }
-  
+  };
+
   const login = async (username, password) => {
     const tokens = await authService.login({ username, password });
-    if(tokens?.accessToken) {
-      setAuthState({authenticated: true});
+    if (tokens?.accessToken) {
+      setAuthState({ authenticated: true });
     }
   };
-  
+
   const logout = async () => {
     await authService.logout();
-    setAuthState({authenticated: false});
+    setAuthState({ authenticated: false });
+  };
+
+  const googleLogin = async (idToken) => {
+    const tokens = await authService.googleLogin(idToken);
+    if (tokens?.accessToken) {
+      setAuthState({ authenticated: true });
+    }
   };
 
   const value = {
     onRegister: register,
     onLogin: login,
     onLogout: logout,
+    onGoogleLogin: googleLogin,
     authState,
-    setAuthState
+    setAuthState,
   };
 
-  return <AuthContext.Provider value={value}>
-    {children}
-  </AuthContext.Provider>;
-}
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};

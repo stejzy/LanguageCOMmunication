@@ -4,10 +4,12 @@ import { ThemeContext } from "@/context/ThemeContext";
 import { Menu } from "react-native-paper";
 import * as flashcardService from "@/api/flashcardService";
 import Toast from "react-native-toast-message";
+import { useRouter } from "expo-router";
 
 export default function FlashcardFolder({ folder, onDelete }) {
   const { colorScheme, theme } = useContext(ThemeContext);
   const styles = createStyles(theme);
+  const router = useRouter();
 
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -32,7 +34,7 @@ export default function FlashcardFolder({ folder, onDelete }) {
   };
 
   const handleOpen = async () => {
-    console.log("open");
+    router.push(`/flashcard/${folder.id}`);
   };
 
   return (

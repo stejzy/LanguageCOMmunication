@@ -8,7 +8,7 @@ import {
   Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Pressable, ScrollView } from "react-native-gesture-handler";
+import { Pressable, ScrollView } from "react-native";
 import { AntDesign, Feather } from "@expo/vector-icons";
 // import Clipboard from "@react-native-clipboard/clipboard";
 

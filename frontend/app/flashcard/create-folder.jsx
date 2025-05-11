@@ -64,7 +64,6 @@ const CreateFolder = () => {
     } catch (error) {
       Toast.show({ type: "error", text1: "Error! Try again later!" });
     }
-    console.log("Creating folder with name:", flashcardName);
   };
 
   const addFlashcard = () => {

@@ -1,5 +1,5 @@
 import api from "./config";
-export const getFlashcardsFolder = async () => {
+export const getFlashcardManyFolder = async () => {
   const { data } = await api.get("/api/flashcard-folders/user");
   return data;
 };
@@ -11,4 +11,9 @@ export const createFlashcardFolder = async (folder) => {
 
 export const deleteFlashcardFolder = async (id) => {
   const { data } = await api.delete(`/api/flashcard-folders/${id}`);
+};
+
+export const getFlashcardOneFolder = async (id) => {
+  const { data } = await api.get(`/api/flashcard-folders/${id}`);
+  return data;
 };

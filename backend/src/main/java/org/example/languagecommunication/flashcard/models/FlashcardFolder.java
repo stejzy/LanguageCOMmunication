@@ -18,7 +18,7 @@ public class FlashcardFolder {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
             name = "flashcard_folder_assignment",
             joinColumns = @JoinColumn(referencedColumnName = "id"),

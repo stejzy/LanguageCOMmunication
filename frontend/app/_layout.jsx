@@ -79,6 +79,14 @@ export default function RootLayout() {
                       title: "Verify",
                     }}
                   />
+                  <Stack.Screen
+                    name="flashcard/create-folder"
+                    options={{
+                      ...commonHeaderOptions,
+                      headerLeft: undefined,
+                      title: "Create Flashcard Folder",
+                    }}
+                  />
                 </Stack>
               </SafeAreaView>
               <Toast />

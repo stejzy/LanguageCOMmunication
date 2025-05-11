@@ -1,4 +1,4 @@
-import { View, Text, Alert } from "react-native";
+import { View, Text } from "react-native";
 import React, { useContext, useState } from "react";
 import { ThemeContext } from "@/context/ThemeContext";
 import { StyleSheet } from "react-native";
@@ -190,7 +190,7 @@ const CreateFolder = () => {
                 onPressIn={() => removeFlashcard(index)}
                 style={styles.iconButton}
               >
-                <Ionicons name="trash" size={24} color="red" />
+                <Ionicons name="trash-outline" size={20} color="#FF5A5F" />
                 <></>
               </Pressable>
             </View>
@@ -248,8 +248,8 @@ const createStyles = (theme, screenWidth) => {
       alignItems: isWide ? "center" : "stretch",
       justifyContent: isWide ? "flex-start" : "center",
       marginBottom: 12,
-      // borderWidth: 1,
-      // borderColor: theme.l_mint,
+      borderWidth: 1,
+      borderColor: theme.l_mint,
       borderRadius: 10,
       padding: 25,
       elevation: 10,
@@ -280,7 +280,7 @@ const createStyles = (theme, screenWidth) => {
       color: theme.text,
     },
     iconButton: {
-      padding: 1,
+      padding: 15,
       justifyContent: "center",
       alignItems: "center",
     },

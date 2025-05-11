@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Pressable, Platform } from "react-native";
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState } from "react";
 import { ThemeContext } from "@/context/ThemeContext";
 import { Menu } from "react-native-paper";
 import * as flashcardService from "@/api/flashcardService";

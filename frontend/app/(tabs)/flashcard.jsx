@@ -1,5 +1,5 @@
 import { View, Text, Pressable, Platform, ScrollView } from "react-native";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { StyleSheet, useWindowDimensions } from "react-native";
 import { ThemeContext } from "@/context/ThemeContext";
 import * as flashcardService from "@/api/flashcardService";

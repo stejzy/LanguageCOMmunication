@@ -12,7 +12,11 @@ import software.amazon.awssdk.services.transcribestreaming.model.*;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class TranscriptionHandler extends BinaryWebSocketHandler {
@@ -28,14 +32,46 @@ public class TranscriptionHandler extends BinaryWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         System.out.println("🔌 WebSocket connected: " + session.getId());
+
+        String transcribeLangCode = "none";
+
+        URI uri = session.getUri();
+        System.out.println(uri.getQuery());
+        if (uri != null && uri.getQuery() != null) {
+            Map<String, String> queryParams = Arrays.stream(uri.getQuery().split("&"))
+                    .map(param -> param.split("="))
+                    .filter(pair -> pair.length == 2)
+                    .collect(Collectors.toMap(pair -> pair[0], pair -> pair[1]));
+
+            transcribeLangCode = queryParams.getOrDefault("transcribeLangCode", "none");
+        }
+
+        System.out.println("Language code from query: " + transcribeLangCode);
+
+        if ("none".equalsIgnoreCase(transcribeLangCode)) {
+            session.sendMessage(new TextMessage("No transcription available for selected language."));
+            session.close(CloseStatus.BAD_DATA);
+            return;
+        }
+
+
+
         audioOutput = new PipedOutputStream();
         audioInput = new PipedInputStream(audioOutput);
 
-        StartStreamTranscriptionRequest request = StartStreamTranscriptionRequest.builder()
-                .languageCode(LanguageCode.EN_US.toString())
-                .mediaEncoding(MediaEncoding.PCM)
-                .mediaSampleRateHertz(16000)
-                .build();
+        StartStreamTranscriptionRequest request = null;
+
+        try {
+             request = StartStreamTranscriptionRequest.builder()
+                    .languageCode(transcribeLangCode)
+                    .mediaEncoding(MediaEncoding.PCM)
+                    .mediaSampleRateHertz(16000)
+                    .build();
+        } catch (IllegalArgumentException e) {
+            session.sendMessage(new TextMessage("Invalid language code: " + transcribeLangCode));
+            session.close(CloseStatus.BAD_DATA); // lub własny CloseStatus
+            return;
+        }
 
         System.out.println("🚀 Starting transcription stream...");
 

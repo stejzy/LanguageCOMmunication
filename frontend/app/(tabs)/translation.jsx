@@ -15,24 +15,29 @@ import useKeyboard from "@/hooks/useKeyboard"
 import { Audio } from 'expo-av';
 import * as FileSystem from "expo-file-system";
 import { AuthContext } from "@/context/AuthContext";
+import {useRecording} from "@/context/RecordingContext"
+
 
 export default function TranslationScreen() {
   const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
   const {sourceLanguage, targetLanguage, textToTranslate, setTextToTranslate, translatedText, setTranslatedText} = useContext(LanguageContext);
   const {authState} = useContext(AuthContext)
+  const {isRecording, setIsRecording} = useRecording();
+
 
   const [disableSrcSpeaker, setDisableSrcSpeaker] = useState(true);
   const [disableTrgtSpeaker, setDisableTrgtSpeaker] = useState(true);
-
+ 
   const keyboardVisible = useKeyboard();
   const styles = createStyles(theme);
 
-  // const [textToTranslate, setTextToTranslate] = useState("");
-  // const [translatedText, setTranslatedText] = useState("");
   let hasText = textToTranslate.trim().length > 0;
 
-  console.log(disableSrcSpeaker);
-  console.log(disableTrgtSpeaker);
+  useEffect(() => {
+    if(!hasText){
+      setTranslatedText("");
+    }
+  }, [hasText])
 
   useEffect(() => {
     if (authState.authenticated) {
@@ -135,13 +140,14 @@ export default function TranslationScreen() {
       />
 
       <View style={styles.viewOuterStyle}>
+          
         <View style = {[styles.viewInnerStyle,
          {flex: hasText ? 0.5 : 1}]}>
           {hasText && !keyboardVisible && (
             <Text style={styles.upperIndexLanguageName}>{sourceLanguage.languageName}</Text>
           )}
           <TextInput style = {styles.textInputStyle}
-          placeholder="Wpisz coś..."
+          placeholder = {isRecording ? "Mów coś..." : "Wpisz coś..."}
           placeholderTextColor={theme.text}
           multiline
           onFocus={() => console.log("Focused!")}

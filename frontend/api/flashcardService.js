@@ -8,3 +8,7 @@ export const createFlashcardFolder = async (folder) => {
   const { data } = await api.post("/api/flashcard-folders", folder);
   return data;
 };
+
+export const deleteFlashcardFolder = async (id) => {
+  const { data } = await api.delete(`/api/flashcard-folders/${id}`);
+};

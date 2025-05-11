@@ -5,11 +5,13 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Platform, Text } from "react-native";
+import { Platform, View, StyleSheet } from "react-native";
 import TranslationScreen from "@/app/(tabs)/translation";
 import PhrasesScreen from "./phrases";
 import FlashcardScreen from "./flashcard";
 import useKeyboard from "@/hooks/useKeyboard";
+// import {useRecording} from "@/context/RecordingContext";
+// import { AntDesign } from "@expo/vector-icons";
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
 
@@ -17,11 +19,18 @@ export default function TabLayout() {
   const { colorScheme, theme } = useContext(ThemeContext);
   const insets = useSafeAreaInsets();
   const keyboardVisible = useKeyboard();
+  // const {isRecording, setIsRecording} = useRecording();
+
+  // const styles = createStyles(theme);
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.d_gray }}
-    >
+   <SafeAreaView style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.d_gray }}>
+      {/* {isRecording && (
+        <View style={styles.topBar}>
+          <AntDesign name="arrowleft" size={32} color={theme.torq} onPress={() => setIsRecording(false)} />
+        </View>
+      )} */}
+
       <Navigator
         screenOptions={{
           tabBarStyle: keyboardVisible
@@ -62,5 +71,17 @@ export default function TabLayout() {
         />
       </Navigator>
     </SafeAreaView>
+
   );
 }
+
+// function createStyles(theme) {
+//   return StyleSheet.create({
+//     topBar: {
+//       height: 78,
+//       width: "100%",
+//       justifyContent: "center",
+//       paddingLeft: 10,
+//     }
+//   });
+// }

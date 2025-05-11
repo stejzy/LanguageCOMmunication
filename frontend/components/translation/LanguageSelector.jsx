@@ -3,15 +3,20 @@ import { useRouter } from "expo-router";
 import { Text, View, Pressable } from "react-native";
 import { ThemeContext } from "@/context/ThemeContext";
 import { LanguageContext } from "@/context/LanguageContext";
+import {useRecording} from "@/context/RecordingContext";
+
 
 export default function LanguageSelector({ type }) {
   const router = useRouter();
   
   const { supportedLanguages ,sourceLanguage, targetLanguage } = useContext(LanguageContext);
+  const {isRecording, setIsRecording} = useRecording();
+
   const language = type === 'source' ? sourceLanguage : targetLanguage
 
+
   const { theme } = useContext(ThemeContext);
-  const styles = createStyles(theme);
+  const styles = createStyles(theme, isRecording);
 
   const handleOpenLanguageSelect = () => {
     router.push({
@@ -27,6 +32,7 @@ export default function LanguageSelector({ type }) {
     <View>
       <Pressable
         onPress={handleOpenLanguageSelect}
+        disabled={isRecording}
         style={({ pressed }) => [
           styles.languageButton,
           pressed && { opacity: 0.75 },
@@ -42,10 +48,10 @@ export default function LanguageSelector({ type }) {
   );
 }
 
-function createStyles(theme) {
+function createStyles(theme, isRecording) {
   return {
     languageButton: {
-      backgroundColor: theme.mint,
+      backgroundColor: isRecording ? theme.info : theme.mint,
       height: 40,
       width: 140,
       borderRadius: 15,

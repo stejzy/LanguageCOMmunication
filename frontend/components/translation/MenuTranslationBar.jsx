@@ -8,6 +8,7 @@ import { LanguageContext } from "@/context/LanguageContext";
 import LanguageSelector from "./LanguageSelector";
 import useKeyboard from "@/hooks/useKeyboard";
 import MicrophoneButton from "./MicrophoneButton";
+import {useRecording} from "@/context/RecordingContext";
 
 
 
@@ -15,27 +16,36 @@ export default function MenuTranslationBar()  {
     console.log("RENDER MenuTranslationBar")
     const keyboardVisible = useKeyboard();
 
-    const { sourceLanguage, setSourceLanguage, targetLanguage, setTargetLanguage } = useContext(LanguageContext);
+    const { sourceLanguage, setSourceLanguage, targetLanguage, setTargetLanguage, textToTranslate,  setTextToTranslate, translatedText, setTranslatedText } = useContext(LanguageContext);
     const { theme } = useContext(ThemeContext);
 
-    const [isRecording, setIsRecording] = useState(false);
+    // const [isRecording, setIsRecording] = useState(false);
+
+    const {isRecording, setIsRecording} = useRecording();
 
     console.log(isRecording);
 
     const handleSwapLanguages = () => {
         if (sourceLanguage && targetLanguage) {
-          setSourceLanguage(targetLanguage);
-          setTargetLanguage(sourceLanguage);
+           const tempSource = sourceLanguage;
+            const tempTarget = targetLanguage;
+            const tempText = textToTranslate;
+            const tempTranslated = translatedText;
+
+            setSourceLanguage(tempTarget);
+            setTargetLanguage(tempSource);
+            setTextToTranslate(tempTranslated);
+            setTranslatedText(tempText);
         }
       };
 
     
-    const styles = createStyles(theme);
+    const styles = createStyles(theme, isRecording);
 
     const buttons = [
-        { icon: <Ionicons name="people" size={25} color={theme.d_gray} />, style: styles.talkButton },
+        !isRecording && { icon: <Ionicons name="people" size={25} color={theme.d_gray} />, style: styles.talkButton },
         { icon: <MicrophoneButton isRecording={isRecording} setIsRecording={setIsRecording}/>},
-        { icon: <Entypo name="camera" size={25} color={theme.d_gray} />, style: styles.cameraButton },
+        !isRecording && { icon: <Entypo name="camera" size={25} color={theme.d_gray} />, style: styles.cameraButton },
       ];
 
     return(
@@ -49,7 +59,7 @@ export default function MenuTranslationBar()  {
                         [styles.swapButton, pressed && {backgroundColor: 'rgba(224, 224, 224, 0.5)'}]
                     )}
                     >
-                    <Entypo name="swap" size={30} color={theme.d_gray} />
+                    <Entypo name={isRecording ? "arrow-long-right" : "swap"} size={30} color={theme.d_gray} />
                 </Pressable>
 
                 <LanguageSelector type="target"></LanguageSelector>
@@ -57,14 +67,17 @@ export default function MenuTranslationBar()  {
             
             { !keyboardVisible && (
                 <View style={styles.optionButtonsRow}>
-                    {buttons.map((button, index) => (
-                        <Pressable
-                        key={index}
-                        style={({ pressed }) => [button.style, pressed && { opacity: 0.75 }]}
-                        >
-                        {button.icon}
-                        </Pressable>
-                    ))}
+                    {buttons.map((button, index) => {
+                        if (!button?.icon) return null;
+                        return (
+                            <Pressable
+                            key={index}
+                            style={({ pressed }) => [button.style, pressed && { opacity: 0.75 }]}
+                            >
+                            {button.icon}
+                            </Pressable>
+                        );
+                    })}
                 </View>
             )}
 
@@ -72,7 +85,7 @@ export default function MenuTranslationBar()  {
     );
 }
 
-function createStyles(theme) {
+function createStyles(theme, isRecording) {
     return StyleSheet.create({
         background: {
             height: "25%",
@@ -106,7 +119,7 @@ function createStyles(theme) {
             width: 50,
             borderRadius: 50,
             justifyContent: "center",
-            alignItems: "center"
+            alignItems: "center",
         },
         // micButton: {
         //     backgroundColor: theme.mint,

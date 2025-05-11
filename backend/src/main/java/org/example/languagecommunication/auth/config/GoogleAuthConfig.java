@@ -8,17 +8,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 public class GoogleAuthConfig {
 
-    @Value("${google.client.id}")
+    @Value("${google.client.web-id}")
     private String googleClientId;
+
+    @Value("${google.client.android-id}")
+    private String androidClientId;
 
     @Bean
     public GoogleIdTokenVerifier googleIdTokenVerifier() {
         return new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), GsonFactory.getDefaultInstance())
-                .setAudience(Collections.singletonList(googleClientId))
+                .setAudience(List.of(googleClientId, androidClientId))
                 .build();
     }
 }

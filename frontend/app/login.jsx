@@ -1,17 +1,25 @@
-import { View, Text, TextInput, Button, Platform } from "react-native";
-import React, { useContext } from "react";
-import { useState } from "react";
-import { AuthContext } from "@/context/AuthContext";
-import { useRouter } from "expo-router";
-import { StyleSheet } from "react-native";
-import { ThemeContext } from "@/context/ThemeContext";
-import { Pressable } from "react-native";
+import React, { useContext, useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Platform,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import Toast from "react-native-toast-message";
+import { useRouter } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
+import { AuthContext } from "@/context/AuthContext";
+import { ThemeContext } from "@/context/ThemeContext";
+import { makeRedirectUri } from "expo-auth-session";
+import { useIdTokenAuthRequest } from "expo-auth-session/providers/google";
 
-export default function AuthScreen({ navigation }) {
-  const { onLogin } = useContext(AuthContext);
-  const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
+WebBrowser.maybeCompleteAuthSession();
 
+export default function AuthScreen() {
+  const { onLogin, onGoogleLogin } = useContext(AuthContext);
+  const { theme } = useContext(ThemeContext);
   const router = useRouter();
   const styles = createStyles(theme);
 
@@ -19,17 +27,57 @@ export default function AuthScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const redirectUri = Platform.select({
+    web: "http://localhost:8081/translation",
+    default: makeRedirectUri({
+      native: "com.lancom.flashlingo:/login",
+      useProxy: false,
+    }),
+  });
+
+  const [request, response, promptAsync] = useIdTokenAuthRequest(
+    {
+      webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_WEB_ID,
+      androidClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ANDROID_ID,
+      scopes: ["openid", "profile", "email"],
+      redirectUri,
+    },
+    {
+      useProxy: true,
+    }
+  );
+
+  useEffect(() => {
+    if (response?.type === "success") {
+      const { id_token } = response.params;
+      handleGoogleLogin(id_token);
+    } else if (response?.type === "error") {
+      Toast.show({ type: "error", text1: "Google sign-in failed." });
+    }
+  }, [response]);
+
+  const handleGoogleLogin = async (idToken) => {
+    try {
+      await onGoogleLogin(idToken);
+      Toast.show({ type: "success", text1: "Logged in with Google!" });
+      router.replace("/(tabs)/translation");
+    } catch (err) {
+      console.error("Google login error:", err);
+      Toast.show({ type: "error", text1: "Backend Google login failed." });
+    }
+  };
+
   const handleLogin = async () => {
     try {
       await onLogin(username, password);
       Toast.show({ type: "success", text1: "Login successful!" });
-      router.push("/(tabs)/translation");
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
+      router.replace("/(tabs)/translation");
+    } catch (err) {
+      if (err.response?.status === 401) {
         setError("Invalid username or password.");
       } else {
         setError("An error occurred. Please try again.");
-        console.error("Login error:", error);
+        console.error("Login error:", err);
       }
     }
   };
@@ -42,25 +90,32 @@ export default function AuthScreen({ navigation }) {
         style={styles.input}
         placeholder="Username"
         value={username}
-        onChangeText={(text) => setUsername(text)}
+        onChangeText={setUsername}
         autoCapitalize="none"
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
-        secureTextEntry={true}
+        secureTextEntry
         value={password}
-        onChangeText={(text) => setPassword(text)}
+        onChangeText={setPassword}
         autoCapitalize="none"
       />
       <Pressable
-        style={styles.register}
         onPress={() => router.push("/register")}
+        style={styles.register}
       >
         <Text style={styles.registerText}>Create new account.</Text>
       </Pressable>
-      <Pressable style={styles.button} onPress={handleLogin}>
+      <Pressable onPress={handleLogin} style={styles.button}>
         <Text style={styles.buttonText}>Login</Text>
+      </Pressable>
+      <Pressable
+        onPress={() => promptAsync()}
+        style={[styles.button, !request && styles.buttonDisabled]}
+        disabled={!request}
+      >
+        <Text style={styles.buttonText}>Sign in with Google</Text>
       </Pressable>
     </View>
   );
@@ -98,22 +153,24 @@ function createStyles(theme) {
       backgroundColor: theme.mint,
       padding: 10,
       borderRadius: 5,
-      width: "20%",
+      width: "80%",
       alignItems: "center",
+      marginVertical: 5,
+    },
+    buttonDisabled: {
+      opacity: 0.5,
     },
     buttonText: {
       color: "black",
       fontSize: 16,
     },
     register: {
-      padding: 0,
+      marginVertical: 10,
     },
     registerText: {
       color: theme.text,
       fontSize: 16,
-      marginBottom: 20,
       textDecorationLine: "underline",
-      padding: 0,
     },
   });
 }

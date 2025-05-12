@@ -52,7 +52,6 @@ export default function RootLayout() {
                 >
                   <Stack>
                     <Stack.Screen name="(tabs)" options={commonHeaderOptions} />
-
                     <Stack.Screen
                       name="language/select"
                       options={commonHeaderOptions}
@@ -79,6 +78,22 @@ export default function RootLayout() {
                         ...commonHeaderOptions,
                         headerLeft: null,
                         title: "Verify",
+                      }}
+                    />
+                    <Stack.Screen
+                      name="flashcard/create-folder"
+                      options={{
+                        ...commonHeaderOptions,
+                        headerLeft: undefined,
+                        title: "Create Flashcard Folder",
+                      }}
+                    />
+                    <Stack.Screen
+                      name="flashcard/[id]"
+                      options={{
+                        ...commonHeaderOptions,
+                        headerLeft: undefined,
+                        title: "Flashcard Folder",
                       }}
                     />
                   </Stack>

@@ -28,9 +28,7 @@ export const verifyEmail = async ({ email, code }) => {
 };
 
 export const googleLogin = async (idToken) => {
-  console.log("Google login with idToken:", idToken);
   const { data } = await api.post("/api/auth/google", { idToken: idToken });
-  console.log("Google login response:", data);
   storage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
   setAccessToken(data.accessToken);
   return { accessToken: data.accessToken, refreshToken: data.refreshToken };

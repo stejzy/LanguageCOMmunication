@@ -49,7 +49,6 @@ export default function register() {
     try {
       await onRegister(username, email, password);
       router.push(`/register/verify?email=${encodeURIComponent(email)}`);
-      console.log("Registered with:", { email, username, password });
     } catch (error) {
       if (error.response?.status === 409) {
         setError("Username or email already exists.");

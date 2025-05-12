@@ -24,7 +24,6 @@ export default function TranslationScreen() {
   const {authState} = useContext(AuthContext)
   const {isRecording, setIsRecording} = useRecording();
 
-
   const [disableSrcSpeaker, setDisableSrcSpeaker] = useState(true);
   const [disableTrgtSpeaker, setDisableTrgtSpeaker] = useState(true);
  
@@ -150,8 +149,6 @@ export default function TranslationScreen() {
           placeholder = {isRecording ? "Mów coś..." : "Wpisz coś..."}
           placeholderTextColor={theme.text}
           multiline
-          onFocus={() => console.log("Focused!")}
-          onBlur={() => console.log("Blurred!")}
           value={textToTranslate}
           onChangeText={setTextToTranslate}/>
           {hasText && (

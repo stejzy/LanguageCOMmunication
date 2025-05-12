@@ -6,8 +6,11 @@ import { LanguageContext } from '@/context/LanguageContext';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { TextInput } from "react-native-gesture-handler";
+import { useTranslation } from 'react-i18next';
 
 export default function Select() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { sourceLanguage, targetLanguage, setSourceLanguage, setTargetLanguage } = useContext(LanguageContext);
   const { languages, type } = useLocalSearchParams();
@@ -56,7 +59,7 @@ export default function Select() {
       <View style={styles.upperBar}>
         <View style={styles.titleWrapper}>
           <AntDesign name="arrowleft" size={24} color={theme.torq} onPress={() => router.back()} />
-          <Text style={styles.title}>Wybierz język:</Text>
+          <Text style={styles.title}>{t("chooseLanguage")}</Text>
         </View>
         {isSearchActive ? (
           <View style={styles.searchWrapper}>
@@ -96,7 +99,7 @@ export default function Select() {
       {noResults && (
        <View style={styles.noResultsView}>
         <AntDesign name="questioncircleo" size={30} color={theme.info} />
-          <Text style={styles.noResultsText}>Brak pasujących języków dla '{searchText}'</Text>
+          <Text style={styles.noResultsText}>{t("notValidChosenLang")} '{searchText}'</Text>
         </View>
       )}
 
@@ -118,7 +121,7 @@ export default function Select() {
               ]}
             >
               <Text style={[styles.languageText, isDisabled && styles.disabledText]}>
-                {item.languageName}
+                {t(`${item.languageCode}`)}
               </Text>
               {isSelected && (
                 <AntDesign name="checkcircle" size={16} color={theme.d_gray} />
@@ -170,7 +173,7 @@ function createStyles(theme) {
       padding: 5,
       width: "85%",
       fontSize: 16,
-      color: theme.text,
+      color: theme.textv2,
     },
     languageButton: {
       padding: 15,

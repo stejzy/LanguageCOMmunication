@@ -10,8 +10,11 @@ import TranslationScreen from "@/app/(tabs)/translation";
 import PhrasesScreen from "./phrases";
 import FlashcardScreen from "./flashcard";
 import useKeyboard from "@/hooks/useKeyboard";
+import i18n from '@/locales/i18n';
 // import {useRecording} from "@/context/RecordingContext";
 // import { AntDesign } from "@expo/vector-icons";
+import { useTranslation } from 'react-i18next';
+
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
 
@@ -20,8 +23,10 @@ export default function TabLayout() {
   const insets = useSafeAreaInsets();
   const keyboardVisible = useKeyboard();
   // const {isRecording, setIsRecording} = useRecording();
-
   // const styles = createStyles(theme);
+
+  const { t } = useTranslation();
+
 
   return (
    <SafeAreaView style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.d_gray }}>
@@ -41,7 +46,7 @@ export default function TabLayout() {
                 margin: 15,
               },
           tabBarIndicatorStyle: {
-            backgroundColor: theme.tabBarActive,
+            backgroundColor: theme.mint,
             height: "100%",
             borderRadius: 20,
           },
@@ -56,17 +61,17 @@ export default function TabLayout() {
       >
         <Screen
           name="translation"
-          options={{ title: "Translation" }}
+          options={{ title: t("translationNavbar") }}
           component={TranslationScreen}
         />
         <Screen
           name="phrases"
-          options={{ title: "Phrases" }}
+          options={{ title: t("phrasesNavbar")  }}
           component={PhrasesScreen}
         />
         <Screen
           name="flashcard"
-          options={{ title: "Flashcard" }}
+          options={{ title: t("flashcardNavbar")  }}
           component={FlashcardScreen}
         />
       </Navigator>

@@ -40,7 +40,8 @@
       ],
       "expo-secure-store",
       "expo-audio",
-      "expo-dev-client"
+      "expo-dev-client",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true
@@ -52,6 +53,7 @@
       "eas": {
         "projectId": "fee1e0a5-4358-4e3d-8a03-6982923f2995"
       }
-    }
+    },
+    "owner": "ioad2_2"
   }
 }

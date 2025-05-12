@@ -4,6 +4,11 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { ThemeContext } from "@/context/ThemeContext";
 import { LanguageContext } from "@/context/LanguageContext";
 import { AuthContext } from "@/context/AuthContext";
+import AudioRecord from 'react-native-audio-record';
+import { Buffer } from 'buffer';
+import { PermissionsAndroid } from 'react-native';
+
+global.Buffer = Buffer;
 
 export default function MicrophoneButton({ isRecording, setIsRecording}) {
     const {sourceLanguage, setTextToTranslate, setTranslatedText} = useContext(LanguageContext);
@@ -100,7 +105,8 @@ export default function MicrophoneButton({ isRecording, setIsRecording}) {
             const transcribeLangCode = sourceLanguage?.transcribeLangCode || "none";
             console.log("Siema:")
             console.log(transcribeLangCode);
-            socket.current = new WebSocket(`ws://localhost:8080/ws/transcription?transcribeLangCode=${transcribeLangCode}`);
+            socket.current = new WebSocket(`ws://localhost:8080/ws/transcription?transcribeLangCode=${sourceLanguage?.transcribeLangCode || "none"}`);
+
             socket.current.binaryType = "arraybuffer";
 
             socket.current.onopen = () => {
@@ -154,13 +160,79 @@ export default function MicrophoneButton({ isRecording, setIsRecording}) {
     
 
     //Do wersji mobilnej
-      const startTranscriptionMobile = () => {
-        console.log("Start mobilki")
-      };
 
-      const stopTranscriptionMobile = () => {
+    const startTranscriptionMobile = async () => {
+        console.log("Start mobilki");
+
+        AudioRecord.init({
+            sampleRate: 16000,
+            channels: 1,
+            bitsPerSample: 16,
+            audioSource: 6,
+            wavFile: 'test.wav',
+        });
+
+        // const granted = await PermissionsAndroid.request(
+        //     PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        //     {
+        //         title: "Microphone Permission",
+        //         message: "This app needs access to your microphone to transcribe speech.",
+        //         buttonNeutral: "Ask Me Later",
+        //         buttonNegative: "Cancel",
+        //         buttonPositive: "OK"
+        //     }
+        // );
+
+        // if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        //     console.log("Microphone permission denied");
+        //     return;
+        // }
+
+        socket.current = new WebSocket(`ws://192.168.100.14:8080/ws/transcription?transcribeLangCode=${sourceLanguage?.transcribeLangCode || "none"}`);
+        socket.current.binaryType = 'arraybuffer';
+
+        socket.current.onopen = () => {
+            console.log('WebSocket connected');
+            AudioRecord.start();
+
+            const currentSocket = socket.current;
+
+            AudioRecord.on('data', data => {
+                const buffer = Buffer.from(data, 'base64');
+
+                if (currentSocket && currentSocket.readyState === WebSocket.OPEN) {
+                    currentSocket.send(buffer);
+                }
+            });
+        };
+
+        socket.current.onmessage = (e) => {
+            console.log("Received:", e.data);
+            setTextToTranslate(prev => prev + " " + e.data);
+        };
+
+        socket.current.onerror = (e) => console.error("WebSocket error:", e);
+        socket.current.onclose = () => console.log("WebSocket closed");
+
+
+    };
+
+    const stopTranscriptionMobile = () => {
         console.log("Stop mobilki");
-      };
+
+        AudioRecord.stop();
+
+        if (socket.current) {
+            console.log("Socket state:", socket.current.readyState);
+            if (socket.current.readyState === WebSocket.OPEN) {
+                socket.current.close();
+            }
+        } else {
+            console.log("Socket was null during stop");
+        }
+
+        socket.current = null;
+    };
 
     //Koniec wersji mobilnej
     //--------------------------------------
@@ -191,7 +263,7 @@ export default function MicrophoneButton({ isRecording, setIsRecording}) {
             <FontAwesome
                 name = {isRecording ? "stop" : "microphone"}
                 size={isRecording ? 26 : 30}
-                color={theme.d_gray}
+                color={theme.text}
             />
         </Pressable>
     );
@@ -207,7 +279,16 @@ function createStyles(theme, disableMic){
             width: 75,
             borderRadius: 50,
             justifyContent: "center",
-            alignItems: "center"
+            alignItems: "center",
+            shadowColor: "#000",
+            shadowOffset: {
+                width: 0,
+                height: 2,
+            },
+            shadowOpacity: 0.5,
+            shadowRadius: 7,
+
+            elevation: 5,
         },
     });
 }

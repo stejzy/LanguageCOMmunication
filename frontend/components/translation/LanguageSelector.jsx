@@ -14,7 +14,6 @@ export default function LanguageSelector({ type }) {
 
   const language = type === 'source' ? sourceLanguage : targetLanguage
 
-
   const { theme } = useContext(ThemeContext);
   const styles = createStyles(theme, isRecording);
 
@@ -57,9 +56,18 @@ function createStyles(theme, isRecording) {
       borderRadius: 15,
       justifyContent: "center",
       alignItems: "center",
+      shadowColor: "#000",
+            shadowOffset: {
+                width: 0,
+                height: 2,
+            },
+            shadowOpacity: 0.5,
+            shadowRadius: 7,
+
+            elevation: 5,
     },
     languageText: {
-      color: theme.d_gray,
+      color: theme.text,
       fontSize: 16,
     },
   };

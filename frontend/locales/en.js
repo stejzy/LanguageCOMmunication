@@ -3,6 +3,7 @@ export default {
   phrasesNavbar: "Phrases",
   flashcardNavbar: "Flaschcard",
   logout: "Logout",
+  genPhrase: "Generate phrase...",
 
   settings: "Settings",
   themeSwitch: "Theme Switch",

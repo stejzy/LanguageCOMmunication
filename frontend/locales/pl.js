@@ -3,6 +3,7 @@ export default {
   phrasesNavbar: "Frazy",
   flashcardNavbar: "Fiszki",
   logout: "Wyloguj się",
+  genPhrase: "Wygeneruj frazę...",
 
   settings: "Ustawienia",
   themeSwitch: "Przełącznik motywu",
@@ -14,7 +15,7 @@ export default {
   chooseLanguage: "Wybierz język:",
   notValidChosenLang: "Brak pasujących języków dla",
 
-  af: "Afrykancki",
+  af: "Afrykański",
   sq: "Albański",
   am: "Amharski",
   ar: "Arabski",

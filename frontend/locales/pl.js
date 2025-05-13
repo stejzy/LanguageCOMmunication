@@ -4,6 +4,12 @@ export default {
   flashcardNavbar: "Fiszki",
   logout: "Wyloguj się",
 
+  settings: "Ustawienia",
+  themeSwitch: "Przełącznik motywu",
+  appLangOpt: "Opcje języka aplikacji",
+  darkMode: "Ciemny motyw",
+  typeSth: "Wpisz coś...",
+  saySth: "Mów coś...",
 
   chooseLanguage: "Wybierz język:",
   notValidChosenLang: "Brak pasujących języków dla",

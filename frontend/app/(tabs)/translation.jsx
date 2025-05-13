@@ -16,9 +16,12 @@ import { Audio } from 'expo-av';
 import * as FileSystem from "expo-file-system";
 import { AuthContext } from "@/context/AuthContext";
 import {useRecording} from "@/context/RecordingContext"
+import { useTranslation } from "react-i18next";
 
 
 export default function TranslationScreen() {
+  const {t} = useTranslation();
+
   const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
   const {sourceLanguage, targetLanguage, textToTranslate, setTextToTranslate, translatedText, setTranslatedText} = useContext(LanguageContext);
   const {authState} = useContext(AuthContext)
@@ -146,7 +149,7 @@ export default function TranslationScreen() {
             <Text style={styles.upperIndexLanguageName}>{sourceLanguage.languageName}</Text>
           )}
           <TextInput style = {styles.textInputStyle}
-          placeholder = {isRecording ? "Mów coś..." : "Wpisz coś..."}
+          placeholder = {isRecording ? t("saySth") : t("typeSth")}
           placeholderTextColor={theme.text}
           multiline
           value={textToTranslate}

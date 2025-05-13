@@ -3,21 +3,18 @@ import { initReactI18next } from 'react-i18next';
 import * as Localization from 'expo-localization';
 
 import en from "./en";
-import pl from "./pl"
+import pl from "./pl";
 
+const fallbackLang = 'en';
+const systemLang = Localization.getLocales()[0]?.languageCode || fallbackLang;
 
-const locales = Localization.getLocales();
-
-const userLang = locales[0]?.languageCode || 'en';
-// const userLang = "en";
-
-
+// Inicjalizacja tylko raz przy starcie — potem można zmieniać przez kontekst
 i18n
   .use(initReactI18next)
   .init({
     compatibilityJSON: "v3",
-    lng: userLang,
-    fallbackLng: "en",
+    lng: systemLang,
+    fallbackLng: fallbackLang,
     resources: {
       en: { translation: en },
       pl: { translation: pl },

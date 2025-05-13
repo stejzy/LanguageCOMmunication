@@ -52,7 +52,7 @@ export default function LanguageSelector({ type }) {
 function createStyles(theme, isRecording) {
   return {
     languageButton: {
-      backgroundColor: isRecording ? theme.info : theme.torq,
+      backgroundColor: isRecording ? theme.transcribeDisable : theme.torq,
       height: 40,
       width: 140,
       borderRadius: 15,

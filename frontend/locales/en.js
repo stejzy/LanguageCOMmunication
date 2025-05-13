@@ -4,6 +4,13 @@ export default {
   flashcardNavbar: "Flaschcard",
   logout: "Logout",
 
+  settings: "Settings",
+  themeSwitch: "Theme Switch",
+  appLangOpt: "App Language Options",
+  darkMode: "Dark mode",
+  typeSth: "Type something...",
+  saySth: "Say something...",
+
 
   chooseLanguage: "Choose language:",
   notValidChosenLang: "No matching languages for",

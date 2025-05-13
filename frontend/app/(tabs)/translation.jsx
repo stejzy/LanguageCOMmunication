@@ -209,7 +209,7 @@ function createStyles(theme) {
     contentContainer: {
       flex: 1,
       flexDirection: "column",
-      backgroundColor: theme.torq,
+      backgroundColor: theme.dark_torq,
     },
     viewOuterStyle: {
       flex: 1,

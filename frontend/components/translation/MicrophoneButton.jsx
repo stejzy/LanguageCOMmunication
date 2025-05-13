@@ -274,7 +274,8 @@ export default function MicrophoneButton({ isRecording, setIsRecording}) {
 function createStyles(theme, disableMic){
     return StyleSheet.create({
         micButton: {
-            backgroundColor: disableMic ? theme.info : theme.mint,
+            backgroundColor: disableMic ? theme.disable : theme.torq,
+            opacity: disableMic ? 0.9 : 1,
             height: 75,
             width: 75,
             borderRadius: 50,

@@ -111,7 +111,7 @@ function createStyles(theme, isRecording) {
             paddingHorizontal: 20
         },
         talkButton: {
-            backgroundColor: theme.mint,
+            backgroundColor: theme.torq,
             height: 50,
             width: 50,
             borderRadius: 50,
@@ -136,7 +136,7 @@ function createStyles(theme, isRecording) {
         //     alignItems: "center"
         // },
         cameraButton: {
-            backgroundColor: theme.mint,
+            backgroundColor: theme.torq,
             height: 50,
             width: 50,
             borderRadius: 50,

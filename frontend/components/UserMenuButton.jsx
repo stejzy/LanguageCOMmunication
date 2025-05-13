@@ -11,9 +11,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { AuthContext } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
+import { ThemeContext } from "@/context/ThemeContext";
 
 export default function UserMenuButton() {
   const { t } = useTranslation();
+  const {theme} = useContext(ThemeContext);
 
   const [open, setOpen] = useState(false);
   const { authState, onLogin, onRegister, onLogout } = useContext(AuthContext);
@@ -27,7 +29,7 @@ export default function UserMenuButton() {
   return (
     <>
       <Pressable onPressIn={toggleMenu} style={styles.trigger}>
-        <Ionicons name="person-circle-outline" size={50} color="black" />
+        <Ionicons name="person-circle-outline" size={50} color={theme.text} />
         <></>
       </Pressable>
 

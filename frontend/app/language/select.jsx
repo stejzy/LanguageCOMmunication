@@ -177,7 +177,7 @@ function createStyles(theme) {
     },
     languageButton: {
       padding: 15,
-      backgroundColor: theme.torq,
+      backgroundColor: theme.dark_torq,
       borderRadius: 10,
       marginBottom: 10,
       flexDirection: 'row',
@@ -186,12 +186,15 @@ function createStyles(theme) {
     selectedButton: {
       backgroundColor: theme.mint,
     },
+    languageText: {
+      color: theme.text
+    },
     disabledButton: {
-      backgroundColor: theme.disabled || '#ccc',
-      opacity: 0.5,
+      backgroundColor: theme.disable,
+      opacity: 0.7,
     },
     disabledText: {
-      color: '#999',
+      color: theme.info,
     },
     noResultsView: {
       marginTop: 20,

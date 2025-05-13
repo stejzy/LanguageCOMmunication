@@ -41,24 +41,29 @@ export default function TabLayout() {
           tabBarStyle: keyboardVisible
             ? { display: "none" }
             : {
-                backgroundColor: theme.torq,
-                borderRadius: 20,
+                backgroundColor: theme.dark_torq,
+                borderRadius: 25,
                 margin: 15,
               },
           tabBarIndicatorStyle: {
-            backgroundColor: theme.mint,
+            backgroundColor: theme.torq,
             height: "100%",
-            borderRadius: 20,
+            borderRadius: 25,
+            borderColor: theme.dark_torq,
+            borderWidth: 6
           },
           tabBarLabelStyle: {
             fontSize: 13,
-            fontWeight: "bold",
+            fontWeight: 'bold',
+            textTransform: 'none',
             color: theme.text,
           },
-          tabBarPressColor: "transparent",
-          swipeEnabled: Platform.OS === "web" ? false : true,
+          tabBarPressColor: 'transparent',
+          swipeEnabled: Platform.OS !== 'web',
         }}
       >
+
+
         <Screen
           name="translation"
           options={{ title: t("translationNavbar") }}

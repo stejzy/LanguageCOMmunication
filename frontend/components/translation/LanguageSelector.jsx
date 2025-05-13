@@ -4,10 +4,12 @@ import { Text, View, Pressable } from "react-native";
 import { ThemeContext } from "@/context/ThemeContext";
 import { LanguageContext } from "@/context/LanguageContext";
 import {useRecording} from "@/context/RecordingContext";
+import { useTranslation } from "react-i18next";
 
 
 export default function LanguageSelector({ type }) {
   const router = useRouter();
+  const {t} = useTranslation()
   
   const { supportedLanguages ,sourceLanguage, targetLanguage } = useContext(LanguageContext);
   const {isRecording, setIsRecording} = useRecording();
@@ -39,7 +41,7 @@ export default function LanguageSelector({ type }) {
       >
         <Text style={styles.languageText}>
           {language
-            ? language.languageName
+            ? t(`${language.languageCode}`)
             : "Wybierz język"}
         </Text>
       </Pressable>
@@ -50,7 +52,7 @@ export default function LanguageSelector({ type }) {
 function createStyles(theme, isRecording) {
   return {
     languageButton: {
-      backgroundColor: isRecording ? theme.info : theme.mint,
+      backgroundColor: isRecording ? theme.info : theme.torq,
       height: 40,
       width: 140,
       borderRadius: 15,

@@ -13,27 +13,10 @@ import { AuthProvider } from "@/context/AuthContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import Toast from "react-native-toast-message";
 import { RecordingProvider } from "@/context/RecordingContext";
+import { ThemeContext } from "@/context/ThemeContext";
+import { useContext } from "react";
 
 export default function RootLayout() {
-  const commonHeaderOptions = {
-    headerTitle: () => (
-      <Text style={{ color: "black", fontSize: 20, fontWeight: "bold" }}>
-        Flashlingo
-      </Text>
-    ),
-    headerStyle: {
-      backgroundColor: "#169976",
-    },
-    headerTitleAlign: "center",
-    headerRight: () => (
-      <View style={{ paddingRight: Platform.OS === "web" ? 16 : 0 }}>
-        <Ionicons name="settings-outline" size={24} color="black" />
-      </View>
-    ),
-    headerLeft: () => <UserMenuButton />,
-    headerShadowVisible: false,
-  };
-
   const insets = useSafeAreaInsets();
 
   return (
@@ -50,53 +33,7 @@ export default function RootLayout() {
                     paddingBottom: insets.bottom,
                   }}
                 >
-                  <Stack>
-                    <Stack.Screen name="(tabs)" options={commonHeaderOptions} />
-                    <Stack.Screen
-                      name="language/select"
-                      options={commonHeaderOptions}
-                    />
-                    <Stack.Screen
-                      name="login"
-                      options={{
-                        ...commonHeaderOptions,
-                        headerLeft: null,
-                        title: "Login",
-                      }}
-                    />
-                    <Stack.Screen
-                      name="register/index"
-                      options={{
-                        ...commonHeaderOptions,
-                        headerLeft: undefined,
-                        title: "Register",
-                      }}
-                    />
-                    <Stack.Screen
-                      name="register/verify"
-                      options={{
-                        ...commonHeaderOptions,
-                        headerLeft: null,
-                        title: "Verify",
-                      }}
-                    />
-                    <Stack.Screen
-                      name="flashcard/create-folder"
-                      options={{
-                        ...commonHeaderOptions,
-                        headerLeft: undefined,
-                        title: "Create Flashcard Folder",
-                      }}
-                    />
-                    <Stack.Screen
-                      name="flashcard/[id]"
-                      options={{
-                        ...commonHeaderOptions,
-                        headerLeft: undefined,
-                        title: "Flashcard Folder",
-                      }}
-                    />
-                  </Stack>
+                  <InnerStack />
                 </SafeAreaView>
                 <Toast />
               </LanguageProvider>
@@ -105,5 +42,40 @@ export default function RootLayout() {
         </SafeAreaProvider>
       </AuthProvider>
     </GestureHandlerRootView>
+  );
+}
+
+function InnerStack() {
+  const { theme } = useContext(ThemeContext);
+
+  const commonHeaderOptions = {
+    headerTitle: () => (
+      <Text style={{ color: theme.text, fontSize: 20, fontWeight: "bold" }}>
+        Flashlingo
+      </Text>
+    ),
+    headerStyle: {
+      backgroundColor: theme.dark_torq,
+    },
+    headerTitleAlign: "center",
+    headerRight: () => (
+      <View style={{ paddingRight: Platform.OS === "web" ? 16 : 0 }}>
+        <Ionicons name="settings-outline" size={24} color={theme.text} />
+      </View>
+    ),
+    headerLeft: () => <UserMenuButton />,
+    headerShadowVisible: false,
+  };
+
+  return (
+    <Stack>
+      <Stack.Screen name="(tabs)" options={commonHeaderOptions} />
+      <Stack.Screen name="language/select" options={commonHeaderOptions} />
+      <Stack.Screen name="login" options={{ ...commonHeaderOptions, headerLeft: null, title: "Login" }} />
+      <Stack.Screen name="register/index" options={{ ...commonHeaderOptions, headerLeft: undefined, title: "Register" }} />
+      <Stack.Screen name="register/verify" options={{ ...commonHeaderOptions, headerLeft: null, title: "Verify" }} />
+      <Stack.Screen name="flashcard/create-folder" options={{ ...commonHeaderOptions, headerLeft: undefined, title: "Create Flashcard Folder" }} />
+      <Stack.Screen name="flashcard/[id]" options={{ ...commonHeaderOptions, headerLeft: undefined, title: "Flashcard Folder" }} />
+    </Stack>
   );
 }

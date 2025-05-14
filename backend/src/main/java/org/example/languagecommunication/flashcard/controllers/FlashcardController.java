@@ -64,6 +64,12 @@ public class FlashcardController {
         return ResponseEntity.ok(flashcardService.reviewFlashcard(id, correct));
     }
 
+    @CheckOwnership
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateFlashcard(@PathVariable Long id, @RequestBody Flashcard updated) {
+        return ResponseEntity.ok(flashcardService.updateFlashcard(id, updated));
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> handleNotFound(EntityNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());

@@ -19,7 +19,9 @@ public class Flashcard implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Setter
     private String frontContent;
+    @Setter
     private String backContent;
     @Setter
     private FlashcardStatus status = FlashcardStatus.ACTIVE;

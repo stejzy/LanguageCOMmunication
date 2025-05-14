@@ -5,11 +5,13 @@ import { Menu } from "react-native-paper";
 import * as flashcardService from "@/api/flashcardService";
 import Toast from "react-native-toast-message";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 export default function FlashcardFolder({ folder, onDelete }) {
   const { colorScheme, theme } = useContext(ThemeContext);
   const styles = createStyles(theme);
   const router = useRouter();
+  const { t } = useTranslation();
 
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -27,7 +29,7 @@ export default function FlashcardFolder({ folder, onDelete }) {
     } catch (error) {
       Toast.show({
         type: "error",
-        text1: "Failed to delete folder. Try again later!",
+        text1: t("flashcardDeleteFolderError"),
       });
       console.error(error);
     }
@@ -59,7 +61,7 @@ export default function FlashcardFolder({ folder, onDelete }) {
           </Pressable>
         }
       >
-        <Menu.Item onPress={handleDelete} title="Delete folder" />
+        <Menu.Item onPress={handleDelete} title={t("flashcardDeleteFolder")} />
       </Menu>
     </>
   );

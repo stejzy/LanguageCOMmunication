@@ -8,6 +8,7 @@ import org.example.languagecommunication.flashcard.repositories.FlashcardReposit
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,8 +37,12 @@ public class FlashcardService implements IFlashcardService {
     @Override
     @Transactional
     public void deleteFlashcard(Long id) {
-        flashcardRepository.findById(id)
+        Flashcard flashcard = flashcardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Flashcard with id " + id + " not found."));
+
+        for (var folder : new ArrayList<>(flashcard.getFolders())) {
+            folder.removeFlashcard(flashcard);
+        }
 
         flashcardRepository.deleteById(id);
     }
@@ -60,6 +65,14 @@ public class FlashcardService implements IFlashcardService {
                 .orElseThrow(() -> new EntityNotFoundException("Flashcard with id " + id + " not found."));
 
         flashcard.markReviewed(isCorrect);
+        return flashcardRepository.save(flashcard);
+    }
+
+    public Flashcard updateFlashcard(Long id, Flashcard updated) {
+        Flashcard flashcard = getFlashcard(id);
+        if (updated.getFrontContent() != null) flashcard.setFrontContent(updated.getFrontContent());
+        if (updated.getBackContent() != null) flashcard.setBackContent(updated.getBackContent());
+        if (updated.getStatus() != null) flashcard.setStatus(updated.getStatus());
         return flashcardRepository.save(flashcard);
     }
 }

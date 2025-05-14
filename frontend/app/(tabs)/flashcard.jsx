@@ -6,12 +6,15 @@ import * as flashcardService from "@/api/flashcardService";
 import { Link, useFocusEffect } from "expo-router";
 import FlashcardFolder from "@/components/flashcard/FlashcardFolder";
 import { AuthContext } from "@/context/AuthContext";
+import { PaperProvider } from "react-native-paper";
+import { useTranslation } from "react-i18next";
 
 export default function FlashcardScreen() {
   const { colorScheme, theme } = useContext(ThemeContext);
   const { width } = useWindowDimensions();
   const { authState } = useContext(AuthContext);
   const styles = createStyles(theme, width);
+  const { t } = useTranslation();
 
   const [flashcardFolder, setFlashcardFolder] = useState([]);
   const [error, setError] = useState("");
@@ -25,7 +28,7 @@ export default function FlashcardScreen() {
           setFlashcardFolder(flashcardsFolder);
         } catch (error) {
           console.error("Error fetching flashcards:", error);
-          setError("Error while downloading flashcard folders.");
+          setError(t("flashcardFolderDownloadError"));
         }
       };
       if (!authState.loading && authState.authenticated) {
@@ -41,27 +44,31 @@ export default function FlashcardScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      <ScrollView contentContainerStyle={[styles.flashcardGrid]}>
-        {flashcardFolder.length == 0 ? (
-          <Text style={styles.emptyText}>You have no flashcard folders.</Text>
-        ) : undefined}
-        {flashcardFolder.map((folder, index) => (
-          <FlashcardFolder
-            key={index}
-            folder={folder}
-            style={styles.flashcardFolder}
-            onDelete={removeFolderFromState}
-          />
-        ))}
-      </ScrollView>
-      <Link href="/flashcard/create-folder" asChild>
-        <Pressable style={styles.addButton}>
-          <Text style={styles.addText}>+</Text>
-        </Pressable>
-      </Link>
-    </View>
+    <PaperProvider>
+      <View style={styles.container}>
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        <ScrollView contentContainerStyle={[styles.flashcardGrid]}>
+          {flashcardFolder.length == 0 ? (
+            <Text style={styles.emptyText}>
+              {t("flashcardNoFoldersMessage")}
+            </Text>
+          ) : undefined}
+          {flashcardFolder.map((folder, index) => (
+            <FlashcardFolder
+              key={index}
+              folder={folder}
+              style={styles.flashcardFolder}
+              onDelete={removeFolderFromState}
+            />
+          ))}
+        </ScrollView>
+        <Link href="/flashcard/create-folder" asChild>
+          <Pressable style={styles.addButton}>
+            <Text style={styles.addText}>+</Text>
+          </Pressable>
+        </Link>
+      </View>
+    </PaperProvider>
   );
 }
 

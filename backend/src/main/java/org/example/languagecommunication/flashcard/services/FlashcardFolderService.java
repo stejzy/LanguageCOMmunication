@@ -34,6 +34,13 @@ public class FlashcardFolderService implements IFlashcardFolderService{
 
     @Override
     public FlashcardFolder createFlashcardFolder(FlashcardFolder folder) {
+        if (folder.getFlashcards() != null) {
+            for (Flashcard flashcard : folder.getFlashcards()) {
+                if (flashcard.getUserID() == null) {
+                    flashcard.setUserID(folder.getUserID());
+                }
+            }
+        }
         return flashcardFolderRepository.save(folder);
     }
 

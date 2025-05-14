@@ -235,6 +235,7 @@ function createStyles(theme) {
       paddingTop: 5,
       borderBottomLeftRadius: 25,
       borderBottomRightRadius: 25,
+      outlineWidth: 0,
       fontSize: 20,
       color: theme.text,
       // backgroundColor: "blue",

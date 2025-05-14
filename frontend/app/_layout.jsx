@@ -90,6 +90,7 @@ function InnerStack() {
       <Stack.Screen name="flashcard/create-folder" options={{ ...commonHeaderOptions, headerLeft: undefined, title: "Create Flashcard Folder" }} />
       <Stack.Screen name="flashcard/[id]" options={{ ...commonHeaderOptions, headerLeft: undefined, title: "Flashcard Folder" }} />
       <Stack.Screen name="settings/index"  options={{ headerShown: false }}/>
+      <Stack.Screen name="conversation/index"  options={{ ...commonHeaderOptions, headerLeft: undefined, title: "Conversation" }} />
     </Stack>
   );
 }

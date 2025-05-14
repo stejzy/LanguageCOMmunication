@@ -146,7 +146,7 @@ export default function TranslationScreen() {
         <View style = {[styles.viewInnerStyle,
          {flex: hasText ? 0.5 : 1}]}>
           {hasText && !keyboardVisible && (
-            <Text style={styles.upperIndexLanguageName}>{sourceLanguage.languageName}</Text>
+            <Text style={styles.upperIndexLanguageName}>{t(sourceLanguage.languageCode).toUpperCase()}</Text>
           )}
           <TextInput style = {styles.textInputStyle}
           placeholder = {isRecording ? t("saySth") : t("typeSth")}
@@ -176,7 +176,7 @@ export default function TranslationScreen() {
         hasText && (
             <View style = {[styles.viewInnerStyle, {flex: hasText ? 0.5 : 1}]}>
               {hasText && !keyboardVisible && (
-                <Text style={styles.upperIndexLanguageName}>{targetLanguage.languageName}</Text>
+                <Text style={styles.upperIndexLanguageName}>{t(targetLanguage.languageCode).toUpperCase()}</Text>
               )}
               <ScrollView style={{borderBottomLeftRadius: 25, borderBottomRightRadius: 25, marginBottom: 20}}>
                 <Text style = {[styles.textInputStyle]}>

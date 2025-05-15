@@ -18,21 +18,12 @@ import { AuthContext } from "@/context/AuthContext";
 import { useRecording } from "@/context/RecordingContext";
 import { useTranslation } from "react-i18next";
 import { TranslationHistoryContext } from "@/context/TranslationHistoryContext";
-import { useAddFlashcardModal } from "@/hooks/useAddFlashcardModal";
+import { useGlobalAddFlashcardModal } from "@/context/AddFlashcardModalContext";
 
 export default function TranslationScreen() {
   const { t } = useTranslation();
 
-  const { openModal: openAddFlashcardModal, AddFlashcardModal } =
-    useAddFlashcardModal();
-
-  const handleAddToFlashcard = (original, translated) => {
-      openAddFlashcardModal({
-        frontContent: original,
-        backContent: translated,
-      });
-  };
-
+  const { openModal } = useGlobalAddFlashcardModal();
 
   const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
   const {
@@ -211,11 +202,12 @@ export default function TranslationScreen() {
                 <AntDesign name="rightcircleo" size={33} color={theme.torq} />
               </Pressable>
 
-              <AddFlashcardModal />
-
               <Pressable
                 onPress={() => {
-                  handleAddToFlashcard(textToTranslate, translatedText)
+                  openModal({
+                    frontContent: textToTranslate,
+                    backContent: translatedText,
+                  });
                 }}
                 style={[
                   styles.iconSendStyle,

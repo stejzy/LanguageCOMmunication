@@ -107,7 +107,7 @@ export default function TranslationHistoryScreen() {
         const lastItemIndex = sections[lastSectionIndex].data.length - 1;
 
         setTimeout(() => {
-          sectionListRef.current.scrollToLocation({
+          sectionListRef?.current?.scrollToLocation({
           sectionIndex: lastSectionIndex,
           itemIndex: lastItemIndex,
           animated: false,
@@ -124,7 +124,7 @@ export default function TranslationHistoryScreen() {
         <Pressable style={styles.arrow} onPress={() => router.back()}>
           <Ionicons name="arrow-back-outline" size={24} color={theme.text} />
         </Pressable>
-        <Text style={styles.headerTitle}>History</Text>
+        <Text style={styles.headerTitle}>{t("history")}</Text>
         <Pressable style={styles.home} onPress={() => navigation.pop(2)}>
           <Entypo name="home" size={24} color={theme.text} />
         </Pressable>

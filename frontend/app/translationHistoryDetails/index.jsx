@@ -16,6 +16,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import { useRouter } from "expo-router";
 import { useAddFlashcardModal } from "@/hooks/useAddFlashcardModal";
+import { Audio } from "expo-av";
+import * as FileSystem from "expo-file-system";
 
 export default function TranslationHistoryDetailsScreen() {
   const { translation } = useLocalSearchParams();

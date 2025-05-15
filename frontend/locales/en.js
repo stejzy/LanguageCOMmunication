@@ -15,6 +15,10 @@ export default {
   saySth: "Say something...",
   helloMessage: "Hello, ",
 
+  translationHistory: "Translation History",
+  showTranslationHistory: "Show",
+  history: "History",
+
   flashcardAdd: "Add Flashcard",
   flashcardEdit: "Edit Flashcard",
   flashcardFrontContent: "Front content",

@@ -114,13 +114,13 @@ export default function SettingsScreen() {
         ))}
 
         <Animated.Text style={[styles.themeSwitchText, torqColorAnimation, { marginTop: 30 }]}>  
-          Translation History
+          {t("translationHistory")}
         </Animated.Text>
 
         <View style={{ alignItems: "center" }}>
           <Pressable style={{ width: "100%" }} onPress={() => router.push("/translationHistory")}>
             <Animated.View style={[styles.translationHistoryButton, torqBackColorAnimation]}>
-              <Animated.Text style={[styles.italicLabel, textAnimation]}>Show</Animated.Text>
+              <Animated.Text style={[styles.italicLabel, textAnimation]}> {t("showTranslationHistory")}</Animated.Text>
             </Animated.View>
           </Pressable>
         </View>

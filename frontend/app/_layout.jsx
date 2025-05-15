@@ -95,6 +95,7 @@ function InnerStack() {
       <Stack.Screen name="settings/index"  options={{ headerShown: false }}/>
       <Stack.Screen name="translationHistory/index"  options={{ headerShown: false }}/>
       <Stack.Screen name="translationHistoryDetails/index"  options={{ headerShown: false }}/>
+      <Stack.Screen name="conversation/index"  options={{ ...commonHeaderOptions, headerLeft: undefined, title: "Conversation" }} />
     </Stack>
   );
 }

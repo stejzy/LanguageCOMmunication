@@ -68,3 +68,10 @@ export const importFlashcardFolder = async (id) => {
   const { data } = await api.post(`/api/flashcard-folders/${id}/import`);
   return data;
 };
+
+export const reviewFlashcard = async (id, correct) => {
+  const { data } = await api.post(
+    `/api/flashcards/${id}/review?correct=${correct}`
+  );
+  return data;
+};

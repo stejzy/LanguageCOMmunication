@@ -1,5 +1,5 @@
 import { ThemeContext } from "@/context/ThemeContext";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, router } from "expo-router";
 import React, {
   useContext,
   useEffect,
@@ -31,7 +31,7 @@ import * as Clipboard from "expo-clipboard";
 function FlashcardFolderDetail() {
   const { id } = useLocalSearchParams();
   const { colorScheme, theme } = useContext(ThemeContext);
-  const styles = createStyles(theme);
+  const styles = createStyles(theme, colorScheme);
   const { authState } = useContext(AuthContext);
   const { t } = useTranslation();
 
@@ -48,6 +48,7 @@ function FlashcardFolderDetail() {
   const [editFolderModalVisible, setEditFolderModalVisible] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const folderNameInputRef = useRef(null);
+  const frontContentInputRef = useRef(null);
   const [exportModalVisible, setExportModalVisible] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -56,7 +57,6 @@ function FlashcardFolderDetail() {
 
   const handleAddFlashcardSuccess = useCallback(
     async (newFlashcard) => {
-      await flashcardService.addFlashcardToFolder(id, newFlashcard.id);
       const folder = await flashcardService.getFlashcardOneFolder(id);
       setFlashcards(folder.flashcards);
     },
@@ -100,6 +100,7 @@ function FlashcardFolderDetail() {
       backContent: flashcard.backContent,
       status: flashcard.status || "ACTIVE",
     });
+    setTimeout(() => frontContentInputRef.current?.focus(), 100);
     setEditModalVisible(true);
   };
 
@@ -169,6 +170,23 @@ function FlashcardFolderDetail() {
           <Ionicons name="create-outline" size={22} color={theme.torq} />
         </Pressable>
       </View>
+      <Pressable
+        style={[
+          styles.addButton,
+          {
+            marginBottom: 10,
+            backgroundColor: theme.mint,
+            alignSelf: "center",
+          },
+        ]}
+        onPress={() => {
+          router.push(`/flashcard/${id}/test`);
+        }}
+      >
+        <Text style={[styles.addButtonText, { color: theme.d_gray }]}>
+          {t("flashcardTestButton") || "Testuj fiszki"}
+        </Text>
+      </Pressable>
       <Text style={styles.createdAt}>
         {t("flashcardCreatedAt")} {new Date(createdAt).toLocaleDateString()}
       </Text>
@@ -181,6 +199,20 @@ function FlashcardFolderDetail() {
               </Text>
               <View style={styles.separator} />
               <Text style={styles.flashcardBack}>{flashcard.backContent}</Text>
+              <View style={styles.statsRow}>
+                <View style={[styles.statBadge, styles.statCorrect]}>
+                  <Text style={styles.statIcon}>✓</Text>
+                  <Text style={styles.statText}>
+                    {flashcard.correctResponses || 0}
+                  </Text>
+                </View>
+                <View style={[styles.statBadge, styles.statWrong]}>
+                  <Text style={styles.statIcon}>✗</Text>
+                  <Text style={styles.statText}>
+                    {flashcard.incorrectResponses || 0}
+                  </Text>
+                </View>
+              </View>
             </View>
             <View style={styles.actions}>
               <Pressable
@@ -199,24 +231,26 @@ function FlashcardFolderDetail() {
           </View>
         ))}
       </ScrollView>
-      <Pressable
-        style={styles.addButton}
-        onPress={() =>
-          openAddFlashcardModal({
-            defaultFolderId: id,
-            onSuccess: handleAddFlashcardSuccess,
-            hideFolderPicker: true,
-          })
-        }
-      >
-        <Text style={styles.addButtonText}>{t("flashcardAdd")}</Text>
-      </Pressable>
-      <Pressable
-        style={[styles.addButton, { marginBottom: 8 }]}
-        onPress={() => setExportModalVisible(true)}
-      >
-        <Text style={styles.addButtonText}>{t("flashcardExport")}</Text>
-      </Pressable>
+      <View style={styles.buttonContainer}>
+        <Pressable
+          style={styles.addButton}
+          onPress={() =>
+            openAddFlashcardModal({
+              defaultFolderId: id,
+              onSuccess: handleAddFlashcardSuccess,
+              hideFolderPicker: true,
+            })
+          }
+        >
+          <Text style={styles.addButtonText}>{t("flashcardAdd")}</Text>
+        </Pressable>
+        <Pressable
+          style={[styles.addButton]}
+          onPress={() => setExportModalVisible(true)}
+        >
+          <Text style={styles.addButtonText}>{t("flashcardExport")}</Text>
+        </Pressable>
+      </View>
       <AddFlashcardModal />
 
       {/* Edit Flashcard Folder Modal */}
@@ -289,6 +323,7 @@ function FlashcardFolderDetail() {
                   {t("flashcardEdit")}
                 </Text>
                 <TextInput
+                  ref={frontContentInputRef}
                   style={[
                     styles.modalTextInput,
                     { backgroundColor: theme.dark_torq, color: theme.text },
@@ -368,7 +403,7 @@ function FlashcardFolderDetail() {
                 <QRCode
                   value={`com.lancom.flashlingo://import?folder=${id}`}
                   size={180}
-                  color={theme.torq}
+                  color={theme.text}
                   backgroundColor={theme.d_gray}
                 />
                 <Text
@@ -405,12 +440,13 @@ function FlashcardFolderDetail() {
                   <Text
                     selectable
                     style={{
-                      color: theme.torq,
-                      fontSize: 14,
+                      color: theme.text,
+                      fontSize: 15,
                       marginRight: 8,
                       maxWidth: 180,
+                      padding: 10,
                     }}
-                    numberOfLines={1}
+                    numberOfLines={2}
                     ellipsizeMode="middle"
                   >
                     {`${id}`}
@@ -433,7 +469,7 @@ function FlashcardFolderDetail() {
                       color={theme.d_gray}
                     />
                   </Pressable>
-                  {copied && (
+                  {copied && Platform.OS == "web" && (
                     <Text
                       style={{
                         color: theme.torq,
@@ -464,13 +500,12 @@ function FlashcardFolderDetail() {
   );
 }
 
-const createStyles = (theme) => {
+const createStyles = (theme, colorScheme) => {
   return StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.d_gray,
       paddingTop: 24,
-      paddingHorizontal: 16,
     },
     folderNameRow: {
       flexDirection: "row",
@@ -499,11 +534,12 @@ const createStyles = (theme) => {
       justifyContent: "center",
       marginTop: 16,
       marginBottom: 20,
+      width: "46%",
     },
     addButtonText: {
-      color: theme.d_gray,
+      color: theme.text,
       fontWeight: "bold",
-      fontSize: 18,
+      fontSize: 16,
     },
     modalAvoidingView: {
       flex: 1,
@@ -590,7 +626,7 @@ const createStyles = (theme) => {
       textAlign: "center",
     },
     flashcardsContainer: {
-      paddingBottom: 32,
+      paddingHorizontal: 16,
     },
     flashcard: {
       flex: 1,
@@ -623,7 +659,8 @@ const createStyles = (theme) => {
     flashcardBack: {
       fontSize: 18,
       fontWeight: "400",
-      color: theme.l_mint,
+      fontStyle: "italic",
+      color: colorScheme === "light" ? theme.text : theme.text,
       textAlign: "center",
     },
     actions: {
@@ -668,6 +705,48 @@ const createStyles = (theme) => {
       fontSize: 15,
       marginBottom: 10,
       textAlign: "center",
+    },
+    buttonContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      backgroundColor: theme.dark_torq,
+      paddingHorizontal: 20,
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
+    },
+    statsRow: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 10,
+      gap: 12,
+    },
+    statBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      borderRadius: 12,
+      paddingVertical: 4,
+      paddingHorizontal: 10,
+      marginHorizontal: 2,
+      minWidth: 38,
+      justifyContent: "center",
+    },
+    statCorrect: {
+      backgroundColor: theme.l_mint,
+    },
+    statWrong: {
+      backgroundColor: "#FF5A5F",
+    },
+    statIcon: {
+      color: theme.d_gray,
+      fontWeight: "bold",
+      fontSize: 16,
+      marginRight: 4,
+    },
+    statText: {
+      color: theme.d_gray,
+      fontWeight: "bold",
+      fontSize: 16,
     },
   });
 };

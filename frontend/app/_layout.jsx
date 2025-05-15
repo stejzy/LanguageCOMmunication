@@ -8,10 +8,7 @@ import {
 import { router, Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import UserMenuButton from "@/components/UserMenuButton";
-import {
-  GestureHandlerRootView,
-  Pressable,
-} from "react-native-gesture-handler";
+import { Pressable } from "react-native";
 import { AuthProvider } from "@/context/AuthContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import Toast from "react-native-toast-message";
@@ -21,43 +18,89 @@ import { useContext } from "react";
 import { useRouter } from "expo-router";
 import { AppLangProvider } from "@/context/AppLangContext";
 import { TranslationHistoryProvider } from "@/context/TranslationHistoryContext";
+import { useTranslation } from "react-i18next";
+import Animated from "react-native-reanimated";
+import { StyleSheet } from "react-native";
+import { useAnimatedStyle, interpolateColor } from "react-native-reanimated";
+import { useSharedValue, withTiming } from "react-native-reanimated";
+import { useEffect } from "react";
+import { Colors } from "@/constans/Colors";
 
 export default function RootLayout() {
   const insets = useSafeAreaInsets();
 
   return (
-    <GestureHandlerRootView>
-      <AuthProvider>
-        <SafeAreaProvider>
-          <ThemeProvider>
-            <RecordingProvider>
-              <AppLangProvider>
-                <TranslationHistoryProvider>
-                  <LanguageProvider>
-                    <SafeAreaView
-                      style={{
-                        flex: 1,
-                        paddingTop: insets.top,
-                        paddingBottom: insets.bottom,
-                      }}
-                    >
-                      <InnerStack />
-                    </SafeAreaView>
-                    <Toast />
-                  </LanguageProvider>
-                </TranslationHistoryProvider>
-              </AppLangProvider>
-            </RecordingProvider>
-          </ThemeProvider>
-        </SafeAreaProvider>
-      </AuthProvider>
-    </GestureHandlerRootView>
+    <AuthProvider>
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <RecordingProvider>
+            <AppLangProvider>
+              <TranslationHistoryProvider>
+                <LanguageProvider>
+                  <SafeAreaView
+                    style={{
+                      flex: 1,
+                      paddingTop: insets.top,
+                      paddingBottom: insets.bottom,
+                    }}
+                  >
+                    <InnerStack />
+                  </SafeAreaView>
+                  <Toast />
+                </LanguageProvider>
+              </TranslationHistoryProvider>
+            </AppLangProvider>
+          </RecordingProvider>
+        </ThemeProvider>
+      </SafeAreaProvider>
+    </AuthProvider>
   );
 }
 
 function InnerStack() {
-  const { theme } = useContext(ThemeContext);
+  const { colorScheme, theme } = useContext(ThemeContext);
   const router = useRouter();
+  const { t } = useTranslation();
+  const styles = StyleSheet.create({
+    header: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      height: 60,
+    },
+    arrow: {
+      position: "absolute",
+      left: 15,
+    },
+    headerTitle: {
+      fontSize: 20,
+      fontWeight: "bold",
+    },
+  });
+  const light = Colors.light;
+  const dark = Colors.dark;
+
+  const progress = useSharedValue(colorScheme === "dark" ? 1 : 0);
+  useEffect(() => {
+    progress.value = withTiming(colorScheme === "dark" ? 1 : 0, {
+      duration: 500,
+    });
+  }, [colorScheme]);
+
+  const dark_torqAnimation = useAnimatedStyle(() => {
+    const backgroundColor = interpolateColor(
+      progress.value,
+      [0, 1],
+      [light.dark_torq, dark.dark_torq]
+    );
+    return {
+      backgroundColor,
+    };
+  });
+
+  const textAnimation = useAnimatedStyle(() => ({
+    color: interpolateColor(progress.value, [0, 1], [light.text, dark.text]),
+  }));
 
   const commonHeaderOptions = {
     headerTitle: () => (
@@ -71,7 +114,7 @@ function InnerStack() {
     headerTitleAlign: "center",
     headerRight: () => (
       <Pressable
-        onPress={() => {
+        onPressIn={() => {
           router.push({
             pathname: "settings",
           });
@@ -80,6 +123,7 @@ function InnerStack() {
         <View style={{ paddingRight: Platform.OS === "web" ? 16 : 0 }}>
           <Ionicons name="settings-outline" size={24} color={theme.text} />
         </View>
+        <></>
       </Pressable>
     ),
     headerLeft: () => <UserMenuButton />,
@@ -96,10 +140,14 @@ function InnerStack() {
           ...commonHeaderOptions,
           headerLeft: () => (
             <Pressable
-              onPress={() => router.push("/(tabs)/translation")}
-              style={{ paddingLeft: 16 }}
+              onPressIn={() => router.push("/(tabs)/translation")}
+              style={{ paddingLeft: Platform.OS === "web" ? 16 : 0 }}
             >
-              <Ionicons name="arrow-back-outline" size={24} color="#fff" />
+              <Ionicons
+                name="arrow-back-outline"
+                size={24}
+                color={theme.text}
+              />
             </Pressable>
           ),
           title: "Login",
@@ -111,10 +159,14 @@ function InnerStack() {
           ...commonHeaderOptions,
           headerLeft: () => (
             <Pressable
-              onPress={() => router.push("/login")}
+              onPressIn={() => router.push("/login")}
               style={{ paddingLeft: 16 }}
             >
-              <Ionicons name="arrow-back-outline" size={24} color="#fff" />
+              <Ionicons
+                name="arrow-back-outline"
+                size={24}
+                color={theme.text}
+              />
             </Pressable>
           ),
           title: "Register",
@@ -126,10 +178,14 @@ function InnerStack() {
           ...commonHeaderOptions,
           headerLeft: () => (
             <Pressable
-              onPress={() => router.push("/login")}
+              onPressIn={() => router.push("/login")}
               style={{ paddingLeft: 16 }}
             >
-              <Ionicons name="arrow-back-outline" size={24} color="#fff" />
+              <Ionicons
+                name="arrow-back-outline"
+                size={24}
+                color={theme.text}
+              />
             </Pressable>
           ),
           title: "Verify",
@@ -141,10 +197,14 @@ function InnerStack() {
           ...commonHeaderOptions,
           headerLeft: () => (
             <Pressable
-              onPress={() => router.push("/flashcard")}
-              style={{ paddingLeft: 16 }}
+              onPressIn={() => router.push("/flashcard")}
+              style={{ paddingLeft: Platform.OS === "web" ? 16 : 0 }}
             >
-              <Ionicons name="arrow-back-outline" size={24} color="#fff" />
+              <Ionicons
+                name="arrow-back-outline"
+                size={24}
+                color={theme.text}
+              />
             </Pressable>
           ),
           title: "Create Flashcard Folder",
@@ -156,10 +216,14 @@ function InnerStack() {
           ...commonHeaderOptions,
           headerLeft: () => (
             <Pressable
-              onPress={() => router.push("/(tabs)/translation")}
+              onPressIn={() => router.push("/(tabs)/translation")}
               style={{ paddingLeft: 16 }}
             >
-              <Ionicons name="arrow-back-outline" size={24} color="#fff" />
+              <Ionicons
+                name="arrow-back-outline"
+                size={24}
+                color={theme.text}
+              />
             </Pressable>
           ),
           title: "Import Flashcard Folder",
@@ -171,19 +235,66 @@ function InnerStack() {
           ...commonHeaderOptions,
           headerLeft: () => (
             <Pressable
-              onPress={() => router.push("/flashcard")}
-              style={{ paddingLeft: 16 }}
+              onPressIn={() => router.push("/flashcard")}
+              style={{ paddingLeft: Platform.OS === "web" ? 16 : 0 }}
             >
-              <Ionicons name="arrow-back-outline" size={24} color="#fff" />
+              <Ionicons
+                name="arrow-back-outline"
+                size={24}
+                color={theme.text}
+              />
             </Pressable>
           ),
           title: "Flashcard Folder",
         }}
       />
-      <Stack.Screen name="settings/index" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="flashcard/[id]/test"
+        options={{
+          ...commonHeaderOptions,
+          headerLeft: () => (
+            <Pressable
+              onPressIn={() => router.back() || router.push("/flashcard")}
+              style={{ paddingLeft: Platform.OS === "web" ? 16 : 0 }}
+            >
+              <Ionicons
+                name="arrow-back-outline"
+                size={24}
+                color={theme.text}
+              />
+            </Pressable>
+          ),
+          title: "Flashcard Test",
+        }}
+      />
+      <Stack.Screen
+        name="settings/index"
+        options={{
+          header: ({ navigation }) => (
+            <Animated.View style={[styles.header, dark_torqAnimation]}>
+              <Pressable
+                style={styles.arrow}
+                onPressIn={() => navigation.goBack()}
+              >
+                <Ionicons
+                  name="arrow-back-outline"
+                  size={24}
+                  color={theme.text}
+                />
+              </Pressable>
+              <Animated.Text style={[styles.headerTitle, textAnimation]}>
+                {t("settings")}
+              </Animated.Text>
+            </Animated.View>
+          ),
+          headerTransparent: true,
+        }}
+      />
       <Stack.Screen
         name="translationHistory/index"
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen
         name="translationHistoryDetails/index"

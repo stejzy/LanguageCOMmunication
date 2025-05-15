@@ -6,6 +6,7 @@ import * as flashcardService from "@/api/flashcardService";
 import Toast from "react-native-toast-message";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { Colors } from "@/constans/Colors";
 
 export default function FlashcardFolder({ folder, onDelete }) {
   const { colorScheme, theme } = useContext(ThemeContext);
@@ -69,11 +70,12 @@ export default function FlashcardFolder({ folder, onDelete }) {
 
 const createStyles = (theme) => {
   const scaling = Platform.OS === "web" ? 1 : 0.55;
+  const dark = Colors.dark;
   return StyleSheet.create({
     flashcardFolder: {
       width: "100%",
       height: "80%",
-      backgroundColor: theme.torq,
+      backgroundColor: dark.torq,
       borderRadius: 8 * scaling,
       position: "relative",
     },
@@ -86,7 +88,7 @@ const createStyles = (theme) => {
     },
     folderName: {
       textAlign: "left",
-      color: theme.l_mint,
+      color: theme.text,
       textAlign: "center",
       fontSize: 24 * scaling,
       marginTop: 5 * scaling,
@@ -97,7 +99,7 @@ const createStyles = (theme) => {
       top: 0,
       left: 0,
       elevation: 1,
-      boxShadow: "0px 4px 6px rgba(0,0,0,1)",
+      boxShadow: "5px 5px 6px rgba(0,0,0,1)",
     },
     tabBottom: {
       width: 180 * scaling,

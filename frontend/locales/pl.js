@@ -4,6 +4,9 @@ export default {
   flashcardNavbar: "Fiszki",
   logout: "Wyloguj się",
   genPhrase: "Wygeneruj frazę...",
+  helloMessage: "Witaj, ",
+  login: "Zaloguj się",
+  register: "Zarejestruj się",
 
   settings: "Ustawienia",
   themeSwitch: "Przełącznik motywu",
@@ -66,6 +69,10 @@ export default {
   flashcardImportButton: "Importuj",
   flashcardImportSuccess: "Folder zaimportowany!",
   flashcardImportError: "Nie udało się zaimportować folderu.",
+  flashcardNewFolderOption: "➕ Nowy folder",
+  flashcardTestButton: "Ćwicz fiszki",
+  flashcardTestResult: "Wynik testu",
+  flashcardTestReturn: "Powrót do folderu",
 
   chooseLanguage: "Wybierz język:",
   notValidChosenLang: "Brak pasujących języków dla",

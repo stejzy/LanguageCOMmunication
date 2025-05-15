@@ -15,12 +15,15 @@ import { ThemeContext } from "@/context/ThemeContext";
 
 export default function UserMenuButton() {
   const { t } = useTranslation();
-  const {theme} = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
 
   const [open, setOpen] = useState(false);
   const { authState, onLogin, onRegister, onLogout } = useContext(AuthContext);
+  const username = authState?.username;
 
   const router = useRouter();
+
+  const styles = createStyles(theme);
 
   const toggleMenu = () => {
     setOpen((prev) => !prev);
@@ -29,8 +32,17 @@ export default function UserMenuButton() {
   return (
     <>
       <Pressable onPressIn={toggleMenu} style={styles.trigger}>
-        <Ionicons name="person-circle-outline" size={50} color={theme.text} />
-        <></>
+        {authState?.authenticated && username ? (
+          <View style={styles.userInfoRow}>
+            <View style={[styles.avatar, { backgroundColor: theme.mint }]}>
+              <Text style={styles.avatarText}>
+                {username[0]?.toUpperCase() || "?"}
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <Ionicons name="person-circle-outline" size={50} color={theme.text} />
+        )}
       </Pressable>
 
       <Modal
@@ -55,7 +67,7 @@ export default function UserMenuButton() {
                   }}
                   style={styles.menuItem}
                 >
-                  <Text style={styles.menuText}>Login</Text>
+                  <Text style={styles.menuText}>{t("login")}</Text>
                 </Pressable>
                 <Pressable
                   onPress={() => {
@@ -64,20 +76,27 @@ export default function UserMenuButton() {
                   }}
                   style={styles.menuItem}
                 >
-                  <Text style={styles.menuText}>Register</Text>
+                  <Text style={styles.menuText}>{t("register")}</Text>
                 </Pressable>
               </>
             ) : (
-              <Pressable
-                onPress={() => {
-                  setOpen(false);
-                  router.push("/login");
-                  onLogout();
-                }}
-                style={styles.menuItem}
-              >
-                <Text style={styles.menuText}>{t("logout")}</Text>
-              </Pressable>
+              <>
+                <Text style={styles.greeting}>
+                  {t("helloMessage")}
+                  {"\n"}
+                  <Text style={styles.username}>{username}</Text>
+                </Text>
+                <Pressable
+                  onPress={() => {
+                    setOpen(false);
+                    router.push("/login");
+                    onLogout();
+                  }}
+                  style={styles.menuItem}
+                >
+                  <Text style={styles.menuText}>{t("logout")}</Text>
+                </Pressable>
+              </>
             )}
           </View>
         </View>
@@ -86,40 +105,75 @@ export default function UserMenuButton() {
   );
 }
 
-const styles = StyleSheet.create({
-  trigger: {
-    zIndex: 1,
-    elevation: 10,
-    marginLeft: Platform.OS === "web" ? 16 : 0,
-  },
-  cursorDefault: {
-    cursor: "default",
-  },
-  modalOverlay: {
-    flex: 1,
-  },
-  overlayTouchable: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.25)",
-    cursor: "default",
-  },
-  menu: {
-    position: "absolute",
-    top: 55,
-    left: 16,
-    backgroundColor: "white",
-    borderRadius: 6,
-    paddingVertical: 4,
-  },
-  menuItem: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  menuText: {
-    fontSize: 16,
-  },
-});
+const createStyles = (theme) => {
+  return StyleSheet.create({
+    trigger: {
+      zIndex: 1,
+      elevation: 10,
+      marginLeft: Platform.OS === "web" ? 16 : 0,
+    },
+    cursorDefault: {
+      cursor: "default",
+    },
+    modalOverlay: {
+      flex: 1,
+    },
+    overlayTouchable: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: "rgba(0,0,0,0.25)",
+      cursor: "default",
+    },
+    menu: {
+      backgroundColor: theme.d_gray,
+      position: "absolute",
+      top: 55,
+      left: 16,
+      borderRadius: 6,
+      padding: 10,
+    },
+    menuItem: {
+      paddingVertical: 10,
+    },
+    menuText: {
+      fontSize: 20,
+      color: theme.text,
+    },
+    userInfoRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    avatar: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: "#52C7A8",
+      alignItems: "center",
+      justifyContent: "center",
+      marginRight: 8,
+    },
+    avatarText: {
+      marginTop: Platform.OS === "web" ? -2 : 0,
+      color: "#fff",
+      fontWeight: "bold",
+      fontSize: 20,
+    },
+    username: {
+      fontSize: 18,
+      fontWeight: "bold",
+    },
+    greeting: {
+      fontSize: 16,
+      color: theme.text,
+    },
+    username: {
+      fontWeight: "bold",
+      fontSize: 18,
+      color: theme.torq,
+    },
+  });
+};

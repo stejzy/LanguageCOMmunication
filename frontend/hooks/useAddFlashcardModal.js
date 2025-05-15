@@ -191,6 +191,7 @@ export function useAddFlashcardModal() {
                     padding: 12,
                     marginBottom: 18,
                     fontSize: 18,
+                    width: 280,
                   }}
                   value={frontContent}
                   onChangeText={setFrontContent}
@@ -207,6 +208,7 @@ export function useAddFlashcardModal() {
                     padding: 12,
                     marginBottom: 18,
                     fontSize: 18,
+                    width: 280,
                   }}
                   value={backContent}
                   onChangeText={setBackContent}

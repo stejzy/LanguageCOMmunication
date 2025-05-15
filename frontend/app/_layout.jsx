@@ -89,25 +89,61 @@ function InnerStack() {
       <Stack.Screen name="language/select" options={commonHeaderOptions} />
       <Stack.Screen
         name="login"
-        options={{ ...commonHeaderOptions, headerLeft: null, title: "Login" }}
+        options={{
+          ...commonHeaderOptions,
+          headerLeft: () => (
+            <Pressable
+              onPress={() => router.push("/(tabs)/translation")}
+              style={{ paddingLeft: 16 }}
+            >
+              <Ionicons name="arrow-back-outline" size={24} color="#fff" />
+            </Pressable>
+          ),
+          title: "Login",
+        }}
       />
       <Stack.Screen
         name="register/index"
         options={{
           ...commonHeaderOptions,
-          headerLeft: undefined,
+          headerLeft: () => (
+            <Pressable
+              onPress={() => router.push("/login")}
+              style={{ paddingLeft: 16 }}
+            >
+              <Ionicons name="arrow-back-outline" size={24} color="#fff" />
+            </Pressable>
+          ),
           title: "Register",
         }}
       />
       <Stack.Screen
         name="register/verify"
-        options={{ ...commonHeaderOptions, headerLeft: null, title: "Verify" }}
+        options={{
+          ...commonHeaderOptions,
+          headerLeft: () => (
+            <Pressable
+              onPress={() => router.push("/login")}
+              style={{ paddingLeft: 16 }}
+            >
+              <Ionicons name="arrow-back-outline" size={24} color="#fff" />
+            </Pressable>
+          ),
+          title: "Verify",
+        }}
       />
       <Stack.Screen
         name="flashcard/create-folder"
         options={{
           ...commonHeaderOptions,
-          headerLeft: undefined,
+          headerLeft: () => (
+            <Pressable
+              onPress={() => router.push("/flashcard")}
+              style={{ paddingLeft: 16 }}
+            >
+              <Ionicons name="arrow-back-outline" size={24} color="#fff" />
+            </Pressable>
+          ),
           title: "Create Flashcard Folder",
         }}
       />
@@ -115,11 +151,26 @@ function InnerStack() {
         name="flashcard/[id]"
         options={{
           ...commonHeaderOptions,
-          headerLeft: undefined,
+          headerLeft: () => (
+            <Pressable
+              onPress={() => router.push("/flashcard")}
+              style={{ paddingLeft: 16 }}
+            >
+              <Ionicons name="arrow-back-outline" size={24} color="#fff" />
+            </Pressable>
+          ),
           title: "Flashcard Folder",
         }}
       />
       <Stack.Screen name="settings/index" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="import"
+        options={{
+          ...commonHeaderOptions,
+          headerLeft: undefined,
+          title: "Import Flashcard Folder",
+        }}
+      />
     </Stack>
   );
 }

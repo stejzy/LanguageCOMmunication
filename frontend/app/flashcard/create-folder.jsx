@@ -11,6 +11,7 @@ import Toast from "react-native-toast-message";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constans/Colors";
+import { Keyboard, Animated } from "react-native";
 
 import * as flashcardService from "@/api/flashcardService";
 
@@ -103,134 +104,171 @@ const CreateFolder = () => {
   const isBackError = (i) =>
     flashcards[i].touchedBack && flashcards[i].backContent.trim() === "";
 
+  const footerBottom = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    const showSub = Keyboard.addListener("keyboardDidShow", (e) => {
+      Animated.timing(footerBottom, {
+        toValue: e.endCoordinates.height,
+        duration: 0,
+        useNativeDriver: false,
+      }).start();
+    });
+    const hideSub = Keyboard.addListener("keyboardDidHide", () => {
+      Animated.timing(footerBottom, {
+        toValue: 0,
+        duration: 0,
+        useNativeDriver: false,
+      }).start();
+    });
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [footerBottom]);
+
   return (
     <PaperProvider>
-      <View style={styles.container}>
-        <Text style={styles.title}>{t("flashcardCreateFolder")}</Text>
-        <Text style={styles.description}>{t("flashcardCreateFolderDesc")}</Text>
-        <TextInput
-          mode="flat"
-          label={t("flashcardFolderName")}
-          placeholder={t("flashcardFolderNamePlaceholder")}
-          value={flashcardName}
-          onChangeText={(text) => setFlashcardName(text)}
-          onBlur={() => setTouchedName(true)}
-          outlineColor={theme.text}
-          underlineColor="transparent"
-          activeOutlineColor="transparent"
-          selectionColor={theme.l_mint}
-          theme={{
-            colors: {
-              primary: theme.l_mint,
-              placeholder: theme.l_mint,
-              text: theme.l_mint,
-            },
-          }}
-          style={styles.input}
-        />
-        <HelperText
-          type="error"
-          visible={touchedName && isNameError}
-          style={styles.helperText}
-        >
-          {t("flashcardFieldRequired")}
-        </HelperText>
-        <ScrollView
-          contentContainerStyle={styles.flashcardsContainer}
-          style={{ width: "100%" }}
-        >
-          {flashcards.map((card, index) => (
-            <View key={index} style={styles.cardBox}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.flashcardRowTitle}>
-                  {t("flashcardAddCard")} {index + 1}
-                </Text>
-                {flashcards.length > 1 && (
-                  <Pressable
-                    onPressIn={() => removeFlashcard(index)}
-                    style={styles.removeButton}
-                  >
-                    <Ionicons name="trash-outline" size={22} color="#FF5A5F" />
-                  </Pressable>
-                )}
-              </View>
-              <TextInput
-                label={t("flashcardFrontContent")}
-                placeholder={t("flashcardFrontContentPlaceholder")}
-                style={styles.flashcardInput}
-                value={card.frontContent}
-                onChangeText={(text) =>
-                  updateFlashcard(index, "frontContent", text)
-                }
-                outlineColor={theme.text}
-                underlineColor="transparent"
-                activeOutlineColor="transparent"
-                selectionColor={theme.l_mint}
-                theme={{
-                  colors: {
-                    primary: theme.l_mint,
-                    placeholder: theme.l_mint,
-                    text: theme.l_mint,
-                  },
-                }}
-              />
-              <HelperText
-                type="error"
-                visible={card.touchedFront && isFrontError(index)}
-                style={styles.helperText}
-              >
-                {t("flashcardFieldRequired")}
-              </HelperText>
-              <TextInput
-                label={t("flashcardBackContent")}
-                placeholder={t("flashcardBackContentPlaceholder")}
-                style={styles.flashcardInput}
-                value={card.backContent}
-                onChangeText={(text) =>
-                  updateFlashcard(index, "backContent", text)
-                }
-                outlineColor={theme.text}
-                underlineColor="transparent"
-                activeOutlineColor="transparent"
-                selectionColor={theme.l_mint}
-                theme={{
-                  colors: {
-                    primary: theme.l_mint,
-                    placeholder: theme.l_mint,
-                    text: theme.l_mint,
-                  },
-                }}
-              />
-              <HelperText
-                type="error"
-                visible={card.touchedBack && isBackError(index)}
-                style={styles.helperText}
-              >
-                {t("flashcardFieldRequired")}
-              </HelperText>
-            </View>
-          ))}
-        </ScrollView>
-        <Pressable onPressIn={addFlashcard} style={styles.addButton}>
-          <Ionicons
-            name="add-circle"
-            size={28}
-            color={Colors[colorScheme].torq}
-            style={{ marginRight: 8 }}
-          />
-          <Text style={styles.addButtonText}>
-            {t("flashcardAddCardButton")}
+      <View style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <Text style={styles.title}>{t("flashcardCreateFolder")}</Text>
+          <Text style={styles.description}>
+            {t("flashcardCreateFolderDesc")}
           </Text>
-        </Pressable>
-        <Pressable
-          style={[
-            styles.createButton,
-            !isFormValid && styles.createButtonDisabled,
-          ]}
-          onPress={handleCreate}
-        >
-          <Text style={styles.createText}>{t("flashcardCreate")}</Text>
-        </Pressable>
+          <TextInput
+            mode="flat"
+            label={t("flashcardFolderName")}
+            placeholder={t("flashcardFolderNamePlaceholder")}
+            value={flashcardName}
+            onChangeText={(text) => setFlashcardName(text)}
+            onBlur={() => setTouchedName(true)}
+            outlineColor={theme.text}
+            underlineColor="transparent"
+            activeOutlineColor="transparent"
+            selectionColor={theme.l_mint}
+            theme={{
+              colors: {
+                primary: theme.l_mint,
+                placeholder: theme.l_mint,
+                text: theme.l_mint,
+              },
+            }}
+            style={styles.input}
+          />
+          <HelperText
+            type="error"
+            visible={touchedName && isNameError}
+            style={styles.helperText}
+          >
+            {t("flashcardFieldRequired")}
+          </HelperText>
+          <ScrollView
+            contentContainerStyle={[
+              styles.flashcardsContainer,
+              { paddingBottom: 120 },
+            ]}
+            style={{ width: "100%" }}
+            keyboardShouldPersistTaps="handled"
+          >
+            {flashcards.map((card, index) => (
+              <View key={index} style={styles.cardBox}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.flashcardRowTitle}>
+                    {t("flashcardAddCard")} {index + 1}
+                  </Text>
+                  {flashcards.length > 1 && (
+                    <Pressable
+                      onPressIn={() => removeFlashcard(index)}
+                      style={styles.removeButton}
+                    >
+                      <Ionicons
+                        name="trash-outline"
+                        size={22}
+                        color="#FF5A5F"
+                      />
+                    </Pressable>
+                  )}
+                </View>
+                <TextInput
+                  label={t("flashcardFrontContent")}
+                  placeholder={t("flashcardFrontContentPlaceholder")}
+                  style={styles.flashcardInput}
+                  value={card.frontContent}
+                  onChangeText={(text) =>
+                    updateFlashcard(index, "frontContent", text)
+                  }
+                  outlineColor={theme.text}
+                  underlineColor="transparent"
+                  activeOutlineColor="transparent"
+                  selectionColor={theme.l_mint}
+                  theme={{
+                    colors: {
+                      primary: theme.l_mint,
+                      placeholder: theme.l_mint,
+                      text: theme.l_mint,
+                    },
+                  }}
+                />
+                <HelperText
+                  type="error"
+                  visible={card.touchedFront && isFrontError(index)}
+                  style={styles.helperText}
+                >
+                  {t("flashcardFieldRequired")}
+                </HelperText>
+                <TextInput
+                  label={t("flashcardBackContent")}
+                  placeholder={t("flashcardBackContentPlaceholder")}
+                  style={styles.flashcardInput}
+                  value={card.backContent}
+                  onChangeText={(text) =>
+                    updateFlashcard(index, "backContent", text)
+                  }
+                  outlineColor={theme.text}
+                  underlineColor="transparent"
+                  activeOutlineColor="transparent"
+                  selectionColor={theme.l_mint}
+                  theme={{
+                    colors: {
+                      primary: theme.l_mint,
+                      placeholder: theme.l_mint,
+                      text: theme.l_mint,
+                    },
+                  }}
+                />
+                <HelperText
+                  type="error"
+                  visible={card.touchedBack && isBackError(index)}
+                  style={styles.helperText}
+                >
+                  {t("flashcardFieldRequired")}
+                </HelperText>
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+        <Animated.View style={[styles.footer, { bottom: footerBottom }]}>
+          <Pressable onPressIn={addFlashcard} style={styles.addButton}>
+            <Ionicons
+              name="add-circle"
+              size={28}
+              color={Colors[colorScheme].torq}
+              style={{ marginRight: 8 }}
+            />
+            <Text style={styles.addButtonText}>
+              {t("flashcardAddCardButton")}
+            </Text>
+          </Pressable>
+          <Pressable
+            style={[
+              styles.createButton,
+              !isFormValid && styles.createButtonDisabled,
+            ]}
+            onPress={handleCreate}
+          >
+            <Text style={styles.createText}>{t("flashcardCreate")}</Text>
+          </Pressable>
+        </Animated.View>
       </View>
     </PaperProvider>
   );
@@ -239,6 +277,20 @@ const CreateFolder = () => {
 const createStyles = (theme, colorScheme, screenWidth) => {
   const isWide = screenWidth > 600;
   return StyleSheet.create({
+    footer: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      backgroundColor: theme.d_gray,
+      borderTopWidth: 1,
+      borderTopColor: theme.shadow,
+      zIndex: 10,
+    },
     container: {
       flex: 1,
       justifyContent: "center",
@@ -273,22 +325,17 @@ const createStyles = (theme, colorScheme, screenWidth) => {
       borderRadius: 12,
       fontSize: 17,
       alignSelf: "center",
+      minWidth: 220,
     },
     createButton: {
-      marginVertical: 20,
+      flex: 1,
+      marginLeft: 8,
       borderRadius: 16,
-      paddingVertical: 14,
-      paddingHorizontal: 40,
+      paddingVertical: 10,
       alignItems: "center",
       backgroundColor: theme.torq,
-      shadowColor: theme.torq,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.18,
-      shadowRadius: 10,
-      elevation: 4,
-      minWidth: 220,
-      alignSelf: "center",
-      transform: [{ scale: 1 }],
+      minWidth: 0,
+      justifyContent: "center",
     },
     createButtonDisabled: {
       backgroundColor: theme.l_mint,
@@ -344,6 +391,7 @@ const createStyles = (theme, colorScheme, screenWidth) => {
       width: "100%",
       borderRadius: 10,
       fontSize: 16,
+      minWidth: 220,
     },
     flashcardRowTitle: {
       textAlign: "center",
@@ -353,20 +401,16 @@ const createStyles = (theme, colorScheme, screenWidth) => {
       letterSpacing: 0.2,
     },
     addButton: {
+      flex: 1,
       flexDirection: "row",
       alignItems: "center",
-      alignSelf: "center",
-      marginVertical: 10,
+      marginRight: 8,
       backgroundColor: theme.mint,
       borderRadius: 20,
-      paddingHorizontal: 22,
+      paddingHorizontal: 0,
       paddingVertical: 10,
-      shadowColor: theme.mint,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.13,
-      shadowRadius: 6,
-      elevation: 2,
-      minWidth: 180,
+      minWidth: 0,
+      justifyContent: "center",
     },
     addButtonText: {
       color: theme.d_gray,

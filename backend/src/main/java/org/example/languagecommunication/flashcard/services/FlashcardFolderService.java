@@ -149,9 +149,9 @@ public class FlashcardFolderService implements IFlashcardFolderService{
         FlashcardFolder originalFolder = flashcardFolderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("FlashcardFolder with id " + id + " not found."));
 
-        if (originalFolder.getUserID().equals(userId)) {
-            throw new IllegalArgumentException("Cannot import your own folder.");
-        }
+//        if (originalFolder.getUserID().equals(userId)) {
+//            throw new IllegalArgumentException("Cannot import your own folder.");
+//        }
 
         List<Flashcard> copiedFlashcards = originalFolder.getFlashcards().stream().map(
                 flashcard -> {

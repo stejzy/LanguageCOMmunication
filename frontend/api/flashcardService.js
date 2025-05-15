@@ -63,3 +63,8 @@ export const editFolderName = async (id, name) => {
   );
   return data;
 };
+
+export const importFlashcardFolder = async (id) => {
+  const { data } = await api.post(`/api/flashcard-folders/${id}/import`);
+  return data;
+};

@@ -68,7 +68,7 @@ export default function FlashcardFolder({ folder, onDelete }) {
 }
 
 const createStyles = (theme) => {
-  const scaling = Platform.OS === "web" ? 1 : 0.7;
+  const scaling = Platform.OS === "web" ? 1 : 0.55;
   return StyleSheet.create({
     flashcardFolder: {
       width: "100%",

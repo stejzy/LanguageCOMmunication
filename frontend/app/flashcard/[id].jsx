@@ -24,6 +24,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "@/context/AuthContext";
 import { useAddFlashcardModal } from "@/hooks/useAddFlashcardModal";
 import { useTranslation } from "react-i18next";
+import QRCode from "react-native-qrcode-svg";
+import * as Clipboard from "expo-clipboard";
 
 function FlashcardFolderDetail() {
   const { id } = useLocalSearchParams();
@@ -45,6 +47,8 @@ function FlashcardFolderDetail() {
   const [editFolderModalVisible, setEditFolderModalVisible] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const folderNameInputRef = useRef(null);
+  const [exportModalVisible, setExportModalVisible] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const { openModal: openAddFlashcardModal, AddFlashcardModal } =
     useAddFlashcardModal();
@@ -146,6 +150,12 @@ function FlashcardFolderDetail() {
     }
   };
 
+  const handleCopyCode = async () => {
+    await Clipboard.setStringAsync(id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1200);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.folderNameRow}>
@@ -196,6 +206,12 @@ function FlashcardFolderDetail() {
       >
         <Text style={styles.addButtonText}>{t("flashcardAdd")}</Text>
       </Pressable>
+      <Pressable
+        style={[styles.addButton, { marginBottom: 8 }]}
+        onPress={() => setExportModalVisible(true)}
+      >
+        <Text style={styles.addButtonText}>{t("flashcardExport")}</Text>
+      </Pressable>
       <AddFlashcardModal />
 
       {/* Edit Flashcard Folder Modal */}
@@ -207,7 +223,6 @@ function FlashcardFolderDetail() {
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === "android" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "android" ? 60 : 0}
           style={styles.modalAvoidingView}
         >
           <View style={styles.modalOverlay}>
@@ -254,7 +269,7 @@ function FlashcardFolderDetail() {
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === "android" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "android" ? 60 : 0}
+          keyboardVerticalOffset={Platform.OS === "android" ? 0 : 0}
           style={styles.modalAvoidingView}
         >
           <View style={styles.modalOverlay}>
@@ -325,6 +340,121 @@ function FlashcardFolderDetail() {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
+      {/* Export Folder Modal */}
+      <Modal
+        visible={exportModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setExportModalVisible(false)}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "android" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "android" ? 60 : 0}
+          style={styles.modalAvoidingView}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>{t("flashcardExport")}</Text>
+              <Text style={[styles.modalDesc, { color: theme.text }]}>
+                {t("flashcardExportDesc")}
+              </Text>
+              <View style={{ alignItems: "center", marginVertical: 18 }}>
+                <QRCode
+                  value={`com.lancom.flashlingo://import?folder=${id}`}
+                  size={180}
+                  color={theme.torq}
+                  backgroundColor={theme.d_gray}
+                />
+                <Text
+                  style={{
+                    color: theme.text,
+                    marginTop: 10,
+                    fontSize: 15,
+                    fontStyle: "italic",
+                  }}
+                >
+                  {t("flashcardExportQrLabel")}
+                </Text>
+                {/* Export link for copy */}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginTop: 12,
+                    backgroundColor: theme.dark_torq,
+                    borderRadius: 10,
+                    padding: 10,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: theme.text,
+                      fontSize: 15,
+                      fontWeight: "bold",
+                      marginRight: 8,
+                    }}
+                  >
+                    {t("flashcardExportCopy")}:
+                  </Text>
+                  <Text
+                    selectable
+                    style={{
+                      color: theme.torq,
+                      fontSize: 14,
+                      marginRight: 8,
+                      maxWidth: 180,
+                    }}
+                    numberOfLines={1}
+                    ellipsizeMode="middle"
+                  >
+                    {`${id}`}
+                  </Text>
+                  <Pressable
+                    onPress={async () => {
+                      await Clipboard.setStringAsync(`${id}`);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 1200);
+                    }}
+                    style={{
+                      padding: 6,
+                      borderRadius: 8,
+                      backgroundColor: theme.torq,
+                    }}
+                  >
+                    <Ionicons
+                      name="copy-outline"
+                      size={18}
+                      color={theme.d_gray}
+                    />
+                  </Pressable>
+                  {copied && (
+                    <Text
+                      style={{
+                        color: theme.torq,
+                        marginLeft: 8,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {t("flashcardExportCopied")}
+                    </Text>
+                  )}
+                </View>
+              </View>
+              <View style={styles.modalButtonRow}>
+                <Pressable
+                  onPress={() => setExportModalVisible(false)}
+                  style={styles.modalCancelButton}
+                >
+                  <Text style={styles.modalCancelText}>
+                    {t("flashcardCancel")}
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 }
@@ -379,14 +509,22 @@ const createStyles = (theme) => {
       alignItems: "center",
       backgroundColor: "rgba(0,0,0,0.5)",
       padding: 16,
+      width: "100%",
     },
     modalContent: {
       backgroundColor: theme.d_gray,
       padding: 28,
       borderRadius: 18,
-      width: Platform.OS === "web" ? 400 : "95%",
-      maxWidth: 500,
-      alignSelf: "center",
+      width:
+        Platform.OS === "android"
+          ? "100%"
+          : Platform.OS === "web"
+          ? 400
+          : "95%",
+      maxWidth: Platform.OS === "android" ? "100%" : 500,
+      left: Platform.OS === "android" ? 0 : undefined,
+      margin: Platform.OS === "android" ? 0 : undefined,
+      alignSelf: Platform.OS === "android" ? undefined : "center",
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.3,
@@ -407,6 +545,7 @@ const createStyles = (theme) => {
       padding: 12,
       marginBottom: 18,
       fontSize: 18,
+      width: 280,
     },
     modalButtonRow: {
       flexDirection: "row",
@@ -518,6 +657,12 @@ const createStyles = (theme) => {
       borderRadius: 10,
       marginBottom: 18,
       fontSize: 18,
+    },
+    modalDesc: {
+      color: "#888",
+      fontSize: 15,
+      marginBottom: 10,
+      textAlign: "center",
     },
   });
 };

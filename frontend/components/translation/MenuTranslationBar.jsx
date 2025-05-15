@@ -47,26 +47,8 @@ export default function MenuTranslationBar() {
 
   const styles = createStyles(theme, isRecording);
 
-  const buttons = [
-    { icon: <ConversationButton /> },
-    {
-      icon: (
-        <MicrophoneButton
-          isRecording={isRecording}
-          setIsRecording={setIsRecording}
-        />
-      ),
-    },
-    !isRecording && {
-      icon: <Entypo name="camera" size={25} color={theme.text} />,
-      style: styles.cameraButton,
-    },
-  ];
   // const buttons = [
-  //   !isRecording && {
-  //     icon: <ConversationButton />,
-  //     style: styles.talkButton,
-  //   },
+  //   { icon: <ConversationButton /> },
   //   {
   //     icon: (
   //       <MicrophoneButton
@@ -75,8 +57,26 @@ export default function MenuTranslationBar() {
   //       />
   //     ),
   //   },
-  //   !isRecording && { icon: <CameraButton size={25} color={theme.text} /> },
+  //   !isRecording && {
+  //     icon: <Entypo name="camera" size={25} color={theme.text} />,
+  //     style: styles.cameraButton,
+  //   },
   // ];
+  const buttons = [
+    !isRecording && {
+      icon: <ConversationButton />,
+      style: styles.talkButton,
+    },
+    {
+      icon: (
+        <MicrophoneButton
+          isRecording={isRecording}
+          setIsRecording={setIsRecording}
+        />
+      ),
+    },
+    !isRecording && { icon: <CameraButton size={25} color={theme.text} /> },
+  ];
 
   return (
     <View

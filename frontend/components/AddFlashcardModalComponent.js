@@ -173,6 +173,7 @@ export default function AddFlashcardModalComponent({
             <Text style={styles.title}>{t("flashcardAdd")}</Text>
             <Text style={styles.label}>{t("flashcardFrontContent")}</Text>
             <TextInput
+              multiline={true}
               style={styles.input}
               value={frontContent}
               onChangeText={setFrontContent}
@@ -188,6 +189,7 @@ export default function AddFlashcardModalComponent({
             )}
             <Text style={styles.label}>{t("flashcardBackContent")}</Text>
             <TextInput
+              multiline={true}
               style={styles.input}
               value={backContent}
               onChangeText={setBackContent}
@@ -238,6 +240,7 @@ export default function AddFlashcardModalComponent({
             )}
             {selectedFolderId === "__new__" && (
               <TextInput
+                multiline={true}
                 value={newFolderName}
                 onChangeText={setNewFolderName}
                 placeholder={t("flashcardFolderName")}

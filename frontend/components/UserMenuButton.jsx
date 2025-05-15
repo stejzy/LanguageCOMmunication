@@ -67,7 +67,7 @@ export default function UserMenuButton() {
                   }}
                   style={styles.menuItem}
                 >
-                  <Text style={styles.menuText}>{t("login")}</Text>
+                  <Text style={styles.menuText}>{t("login.button")}</Text>
                 </Pressable>
                 <Pressable
                   onPress={() => {
@@ -76,7 +76,7 @@ export default function UserMenuButton() {
                   }}
                   style={styles.menuItem}
                 >
-                  <Text style={styles.menuText}>{t("register")}</Text>
+                  <Text style={styles.menuText}>{t("register.button")}</Text>
                 </Pressable>
               </>
             ) : (

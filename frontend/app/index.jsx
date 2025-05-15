@@ -10,7 +10,7 @@ export default function Index() {
   }
 
   return authState?.authenticated ? (
-    <Redirect href="/(tabs)/translation" />
+    <Redirect href="/(tabs)/phrases" />
   ) : (
     <Redirect href="/login" />
   );

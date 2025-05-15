@@ -5,12 +5,14 @@ import { useContext, useState } from "react";
 import { Platform, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { AuthContext } from "@/context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function register() {
   const router = useRouter();
   const { onRegister } = useContext(AuthContext);
   const { colorScheme, theme } = useContext(ThemeContext);
   const styles = createStyles(theme);
+  const { t } = useTranslation();
 
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -28,19 +30,17 @@ export default function register() {
 
   const handleRegister = async () => {
     if (!passwordRegex.test(password)) {
-      setError(
-        "Password must be at least 8 characters long and include letters, numbers and a special character."
-      );
+      setError(t("register.passwordRequirements"));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t("register.passwordsNoMatch"));
       return;
     }
 
     if (!isValidEmail(email)) {
-      setError("Invalid email address.");
+      setError(t("register.invalidEmail"));
       return;
     }
 
@@ -51,11 +51,16 @@ export default function register() {
       router.push(`/register/verify?email=${encodeURIComponent(email)}`);
     } catch (error) {
       if (error.response?.status === 409) {
-        setError("Username or email already exists.");
+        setError(t("register.exists"));
+        return;
+      }
+      if (error.response?.status === 400) {
+        setError(error.response.data);
+        console.error(error);
         return;
       }
       console.error("Registration error:", error);
-      setError("An error occurred. Please try again.");
+      setError(t("register.unknownError"));
     }
   };
 
@@ -65,21 +70,21 @@ export default function register() {
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder={t("register.email")}
         value={email}
         onChangeText={(text) => setEmail(text)}
         autoCapitalize="none"
       />
       <TextInput
         style={styles.input}
-        placeholder="Username"
+        placeholder={t("register.username")}
         value={username}
         onChangeText={(text) => setUsername(text)}
         autoCapitalize="none"
       />
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder={t("register.password")}
         value={password}
         onChangeText={(text) => setPassword(text)}
         secureTextEntry={true}
@@ -87,14 +92,14 @@ export default function register() {
       />
       <TextInput
         style={styles.input}
-        placeholder="Confirm password"
+        placeholder={t("register.confirmPassword")}
         value={confirmPassword}
         onChangeText={(text) => setConfirmPassword(text)}
         secureTextEntry={true}
         autoCapitalize="none"
       />
       <Pressable style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.registerText}>Register</Text>
+        <Text style={styles.registerText}>{t("register.button")}</Text>
       </Pressable>
     </View>
   );
@@ -128,7 +133,7 @@ const createStyles = (theme) => {
       backgroundColor: theme.mint,
       padding: 10,
       borderRadius: 5,
-      width: "30%",
+      width: "60%",
       alignItems: "center",
     },
     registerText: {

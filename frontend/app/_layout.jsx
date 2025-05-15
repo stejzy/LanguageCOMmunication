@@ -25,6 +25,7 @@ import { useAnimatedStyle, interpolateColor } from "react-native-reanimated";
 import { useSharedValue, withTiming } from "react-native-reanimated";
 import { useEffect } from "react";
 import { Colors } from "@/constans/Colors";
+import { AddFlashcardModalProvider } from "@/context/AddFlashcardModalContext";
 
 export default function RootLayout() {
   const insets = useSafeAreaInsets();
@@ -36,18 +37,20 @@ export default function RootLayout() {
           <RecordingProvider>
             <AppLangProvider>
               <TranslationHistoryProvider>
-                <LanguageProvider>
-                  <SafeAreaView
-                    style={{
-                      flex: 1,
-                      paddingTop: insets.top,
-                      paddingBottom: insets.bottom,
-                    }}
-                  >
-                    <InnerStack />
-                  </SafeAreaView>
-                  <Toast />
-                </LanguageProvider>
+                <AddFlashcardModalProvider>
+                  <LanguageProvider>
+                    <SafeAreaView
+                      style={{
+                        flex: 1,
+                        paddingTop: insets.top,
+                        paddingBottom: insets.bottom,
+                      }}
+                    >
+                      <InnerStack />
+                    </SafeAreaView>
+                    <Toast />
+                  </LanguageProvider>
+                </AddFlashcardModalProvider>
               </TranslationHistoryProvider>
             </AppLangProvider>
           </RecordingProvider>

@@ -9,6 +9,7 @@ import LanguageSelector from "./LanguageSelector";
 import useKeyboard from "@/hooks/useKeyboard";
 import MicrophoneButton from "./MicrophoneButton";
 import {useRecording} from "@/context/RecordingContext";
+import CameraButton from "@/components/translation/CameraButton";
 
 
 
@@ -42,7 +43,7 @@ export default function MenuTranslationBar()  {
     const buttons = [
         !isRecording && { icon: <Ionicons name="people" size={25} color={theme.text} />, style: styles.talkButton },
         { icon: <MicrophoneButton isRecording={isRecording} setIsRecording={setIsRecording}/>},
-        !isRecording && { icon: <Entypo name="camera" size={25} color={theme.text} />, style: styles.cameraButton },
+        !isRecording && { icon: <CameraButton size={25} color={theme.text} /> },
       ];
 
     return(

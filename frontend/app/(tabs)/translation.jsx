@@ -17,6 +17,7 @@ import * as FileSystem from "expo-file-system";
 import { AuthContext } from "@/context/AuthContext";
 import {useRecording} from "@/context/RecordingContext"
 import { useTranslation } from "react-i18next";
+import {TranslationHistoryContext} from "@/context/TranslationHistoryContext";
 
 
 export default function TranslationScreen() {
@@ -26,6 +27,7 @@ export default function TranslationScreen() {
   const {sourceLanguage, targetLanguage, textToTranslate, setTextToTranslate, translatedText, setTranslatedText} = useContext(LanguageContext);
   const {authState} = useContext(AuthContext)
   const {isRecording, setIsRecording} = useRecording();
+  const {history, addAndRefresh, refreshHistory} = useContext(TranslationHistoryContext);
 
   const [disableSrcSpeaker, setDisableSrcSpeaker] = useState(true);
   const [disableTrgtSpeaker, setDisableTrgtSpeaker] = useState(true);
@@ -54,12 +56,21 @@ export default function TranslationScreen() {
 
 
   const handleTranslatePress = async () => {
-    console.log("Parametry: " + textToTranslate + " " + sourceLanguage?.languageCode + " " + targetLanguage?.languageCode);
+    console.log(
+      "Parametry: " +
+        textToTranslate +
+        " " +
+        sourceLanguage?.languageCode +
+        " " +
+        targetLanguage?.languageCode
+    );
+
     try {
       const response = await translate(
         textToTranslate,
         sourceLanguage?.languageCode,
-        targetLanguage?.languageCode
+        targetLanguage?.languageCode,
+        addAndRefresh
       );
       setTranslatedText(response);
     } catch (error) {

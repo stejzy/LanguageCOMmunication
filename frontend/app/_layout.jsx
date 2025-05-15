@@ -17,6 +17,7 @@ import { ThemeContext } from "@/context/ThemeContext";
 import { useContext } from "react";
 import { useRouter } from "expo-router"; 
 import {AppLangProvider} from "@/context/AppLangContext"
+import {TranslationHistoryProvider} from "@/context/TranslationHistoryContext";
 
 export default function RootLayout() {
   const insets = useSafeAreaInsets();
@@ -28,18 +29,20 @@ export default function RootLayout() {
           <ThemeProvider>
             <RecordingProvider>
               <AppLangProvider>
-                <LanguageProvider>
-                  <SafeAreaView
-                    style={{
-                      flex: 1,
-                      paddingTop: insets.top,
-                      paddingBottom: insets.bottom,
-                    }}
-                  >
-                    <InnerStack />
-                  </SafeAreaView>
-                  <Toast />
-                </LanguageProvider>
+                <TranslationHistoryProvider>
+                  <LanguageProvider>
+                    <SafeAreaView
+                      style={{
+                        flex: 1,
+                        paddingTop: insets.top,
+                        paddingBottom: insets.bottom,
+                      }}
+                    >
+                      <InnerStack />
+                    </SafeAreaView>
+                    <Toast />
+                  </LanguageProvider>
+                </TranslationHistoryProvider>
               </AppLangProvider>
             </RecordingProvider>
           </ThemeProvider>
@@ -90,6 +93,8 @@ function InnerStack() {
       <Stack.Screen name="flashcard/create-folder" options={{ ...commonHeaderOptions, headerLeft: undefined, title: "Create Flashcard Folder" }} />
       <Stack.Screen name="flashcard/[id]" options={{ ...commonHeaderOptions, headerLeft: undefined, title: "Flashcard Folder" }} />
       <Stack.Screen name="settings/index"  options={{ headerShown: false }}/>
+      <Stack.Screen name="translationHistory/index"  options={{ headerShown: false }}/>
+      <Stack.Screen name="translationHistoryDetails/index"  options={{ headerShown: false }}/>
     </Stack>
   );
 }

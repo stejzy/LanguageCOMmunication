@@ -4,6 +4,8 @@ export default {
   flashcardNavbar: "Flaschcard",
   logout: "Logout",
   genPhrase: "Generate phrase...",
+  login: "Login",
+  register: "Register",
 
   settings: "Settings",
   themeSwitch: "Theme Switch",
@@ -11,6 +13,7 @@ export default {
   darkMode: "Dark mode",
   typeSth: "Type something...",
   saySth: "Say something...",
+  helloMessage: "Hello, ",
 
   flashcardAdd: "Add Flashcard",
   flashcardEdit: "Edit Flashcard",
@@ -64,6 +67,10 @@ export default {
   flashcardImportButton: "Import",
   flashcardImportSuccess: "Folder imported!",
   flashcardImportError: "Failed to import folder.",
+  flashcardNewFolderOption: "➕ New folder",
+  flashcardTestButton: "Practice flashcards",
+  flashcardTestResult: "Test result",
+  flashcardTestReturn: "Return to folder",
 
   chooseLanguage: "Choose language:",
   notValidChosenLang: "No matching languages for",

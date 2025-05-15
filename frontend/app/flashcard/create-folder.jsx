@@ -12,6 +12,7 @@ import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constans/Colors";
 import { Keyboard, Animated } from "react-native";
+import { Platform } from "react-native";
 
 import * as flashcardService from "@/api/flashcardService";
 
@@ -128,7 +129,20 @@ const CreateFolder = () => {
   }, [footerBottom]);
 
   return (
-    <PaperProvider>
+    <PaperProvider
+      theme={{
+        colors: {
+          primary: colorScheme === "light" ? theme.mint : theme.mint,
+          onSurface: colorScheme === "light" ? theme.text : theme.l_mint,
+          onSurfaceVariant:
+            colorScheme === "light" ? theme.l_mint : theme.l_mint,
+          background: theme.d_gray,
+          elevation: {
+            level1: theme.shadow,
+          },
+        },
+      }}
+    >
       <View style={{ flex: 1 }}>
         <View style={styles.container}>
           <Text style={styles.title}>{t("flashcardCreateFolder")}</Text>
@@ -140,20 +154,15 @@ const CreateFolder = () => {
             label={t("flashcardFolderName")}
             placeholder={t("flashcardFolderNamePlaceholder")}
             value={flashcardName}
-            onChangeText={(text) => setFlashcardName(text)}
-            onBlur={() => setTouchedName(true)}
-            outlineColor={theme.text}
-            underlineColor="transparent"
-            activeOutlineColor="transparent"
-            selectionColor={theme.l_mint}
             theme={{
               colors: {
-                primary: theme.l_mint,
-                placeholder: theme.l_mint,
-                text: theme.l_mint,
+                onSurfaceVariant:
+                  colorScheme === "light" ? theme.torq : theme.l_mint,
               },
             }}
-            style={styles.input}
+            onChangeText={setFlashcardName}
+            onBlur={() => setTouchedName(true)}
+            style={[styles.input]}
           />
           <HelperText
             type="error"
@@ -192,22 +201,11 @@ const CreateFolder = () => {
                 <TextInput
                   label={t("flashcardFrontContent")}
                   placeholder={t("flashcardFrontContentPlaceholder")}
-                  style={styles.flashcardInput}
                   value={card.frontContent}
                   onChangeText={(text) =>
                     updateFlashcard(index, "frontContent", text)
                   }
-                  outlineColor={theme.text}
-                  underlineColor="transparent"
-                  activeOutlineColor="transparent"
-                  selectionColor={theme.l_mint}
-                  theme={{
-                    colors: {
-                      primary: theme.l_mint,
-                      placeholder: theme.l_mint,
-                      text: theme.l_mint,
-                    },
-                  }}
+                  style={[styles.flashcardInput]}
                 />
                 <HelperText
                   type="error"
@@ -219,22 +217,11 @@ const CreateFolder = () => {
                 <TextInput
                   label={t("flashcardBackContent")}
                   placeholder={t("flashcardBackContentPlaceholder")}
-                  style={styles.flashcardInput}
                   value={card.backContent}
                   onChangeText={(text) =>
                     updateFlashcard(index, "backContent", text)
                   }
-                  outlineColor={theme.text}
-                  underlineColor="transparent"
-                  activeOutlineColor="transparent"
-                  selectionColor={theme.l_mint}
-                  theme={{
-                    colors: {
-                      primary: theme.l_mint,
-                      placeholder: theme.l_mint,
-                      text: theme.l_mint,
-                    },
-                  }}
+                  style={[styles.flashcardInput]}
                 />
                 <HelperText
                   type="error"
@@ -252,7 +239,7 @@ const CreateFolder = () => {
             <Ionicons
               name="add-circle"
               size={28}
-              color={Colors[colorScheme].torq}
+              color={Colors[colorScheme].d_gray}
               style={{ marginRight: 8 }}
             />
             <Text style={styles.addButtonText}>
@@ -286,9 +273,11 @@ const createStyles = (theme, colorScheme, screenWidth) => {
       alignItems: "center",
       paddingVertical: 12,
       paddingHorizontal: 16,
-      backgroundColor: theme.d_gray,
+      backgroundColor: theme.dark_torq,
       borderTopWidth: 1,
-      borderTopColor: theme.shadow,
+      borderBottomWidth: Platform.OS === "web" ? 0 : 1,
+      borderTopColor: theme.l_mint,
+      borderBottomColor: theme.l_mint,
       zIndex: 10,
     },
     container: {
@@ -321,7 +310,6 @@ const createStyles = (theme, colorScheme, screenWidth) => {
       paddingHorizontal: 14,
       marginVertical: 10,
       backgroundColor: theme.dark_torq,
-      color: theme.text,
       borderRadius: 12,
       fontSize: 17,
       alignSelf: "center",
@@ -338,7 +326,7 @@ const createStyles = (theme, colorScheme, screenWidth) => {
       justifyContent: "center",
     },
     createButtonDisabled: {
-      backgroundColor: theme.l_mint,
+      backgroundColor: colorScheme === "light" ? theme.disable : theme.l_mint,
       opacity: 0.6,
     },
     createText: {
@@ -387,17 +375,17 @@ const createStyles = (theme, colorScheme, screenWidth) => {
       paddingHorizontal: 12,
       marginVertical: 8,
       backgroundColor: theme.d_gray,
-      color: theme.text,
       width: "100%",
       borderRadius: 10,
       fontSize: 16,
       minWidth: 220,
+      maxHeight: 60,
     },
     flashcardRowTitle: {
       textAlign: "center",
       fontWeight: "bold",
       fontSize: 18,
-      color: theme.torq,
+      color: colorScheme === "light" ? theme.text : theme.l_mint,
       letterSpacing: 0.2,
     },
     addButton: {
@@ -420,9 +408,10 @@ const createStyles = (theme, colorScheme, screenWidth) => {
       letterSpacing: 0.2,
     },
     helperText: {
-      marginTop: 2,
-      marginBottom: 6,
+      marginTop: 0,
+      marginBottom: 4,
       fontSize: 14,
+      color: "red",
     },
   });
 };

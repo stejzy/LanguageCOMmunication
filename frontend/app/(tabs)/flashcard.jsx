@@ -81,7 +81,7 @@ export default function FlashcardScreen() {
         setImportCode("");
         setTimeout(() => {
           closeImportModal();
-        }, 400);
+        }, 100);
       } else {
         setImportError(t("flashcardImportError"));
       }
@@ -111,25 +111,39 @@ export default function FlashcardScreen() {
             />
           ))}
         </ScrollView>
-        <Pressable
-          style={[
-            styles.addButton,
-            { left: 24, right: undefined, backgroundColor: theme.torq },
-          ]}
-          onPress={() => {
-            setImportModalVisible(true);
-            setImportCode("");
-            setImportError("");
-            setImportSuccess("");
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            backgroundColor: theme.dark_torq,
+            width: "100%",
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
+            padding: 50,
+            shadowColor: colorScheme === "light" ? "#000" : "#fff",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            elevation: 100,
           }}
         >
-          <Text style={[styles.addText, { color: theme.d_gray }]}>↓</Text>
-        </Pressable>
-        <Link href="/flashcard/create-folder" asChild>
-          <Pressable style={styles.addButton}>
-            <Text style={styles.addText}>+</Text>
+          <Pressable
+            style={[styles.addButton, { left: 24, right: undefined }]}
+            onPress={() => {
+              setImportModalVisible(true);
+              setImportCode("");
+              setImportError("");
+              setImportSuccess("");
+            }}
+          >
+            <Text style={[styles.addText, { marginTop: -10 }]}>↓</Text>
           </Pressable>
-        </Link>
+          <Link href="/flashcard/create-folder" asChild>
+            <Pressable style={styles.addButton}>
+              <Text style={styles.addText}>+</Text>
+            </Pressable>
+          </Link>
+        </View>
         {/* Import Folder Modal */}
         <Modal
           visible={importModalVisible}
@@ -300,12 +314,10 @@ const createStyles = (theme, screenWidth) => {
       alignItems: "center",
       shadowRadius: 4,
       elevation: 3,
-      borderWidth: 1,
-      borderColor: theme.d_gray,
     },
     addText: {
       fontSize: 40,
-      color: theme.d_gray,
+      color: theme.text,
       textAlign: "center",
       justifyContent: "center",
       textAlignVertical: "center",

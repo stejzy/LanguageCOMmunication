@@ -57,11 +57,12 @@ export function useAddFlashcardModal() {
     const { t } = useTranslation();
     const [frontContent, setFrontContent] = useState("");
     const [backContent, setBackContent] = useState("");
-    const [selectedFolderId, setSelectedFolderId] = useState(null);
+    const [selectedFolderId, setSelectedFolderId] = useState("");
     const [folders, setFolders] = useState([]);
     const [loadingFolders, setLoadingFolders] = useState(false);
     const [saving, setSaving] = useState(false);
     const [hideFolderPicker, setHideFolderPicker] = useState(false);
+    const [newFolderName, setNewFolderName] = useState("");
 
     useEffect(() => {
       if (visible) {
@@ -70,19 +71,20 @@ export function useAddFlashcardModal() {
         setSaving(false);
         setHideFolderPicker(!!modalProps.hideFolderPicker);
         setLoadingFolders(true);
+        setNewFolderName("");
         (async () => {
           try {
             const userFolders = await flashcardService.getFlashcardManyFolder();
             setFolders(userFolders);
-            if (
+            if (userFolders.length === 0) {
+              setSelectedFolderId("__new__");
+            } else if (
               modalProps.defaultFolderId &&
               userFolders.some((f) => f.id === modalProps.defaultFolderId)
             ) {
               setSelectedFolderId(modalProps.defaultFolderId);
-            } else if (userFolders.length > 0) {
-              setSelectedFolderId(userFolders[0].id);
             } else {
-              setSelectedFolderId(null);
+              setSelectedFolderId(userFolders[0].id);
             }
           } catch (e) {
             Toast.show({
@@ -90,7 +92,7 @@ export function useAddFlashcardModal() {
               text1: t("flashcardLoadFoldersError"),
             });
             setFolders([]);
-            setSelectedFolderId(null);
+            setSelectedFolderId("__new__");
           } finally {
             setLoadingFolders(false);
           }
@@ -107,12 +109,40 @@ export function useAddFlashcardModal() {
     }, [visible]);
 
     const handleSave = async () => {
-      if (!frontContent.trim() || !backContent.trim() || !selectedFolderId) {
+      if (
+        !frontContent.trim() ||
+        !backContent.trim() ||
+        (!selectedFolderId && selectedFolderId !== "__new__")
+      ) {
         Toast.show({ type: "error", text1: t("flashcardFillAllFields") });
         return;
       }
       setSaving(true);
       try {
+        if (selectedFolderId === "__new__") {
+          if (!newFolderName.trim()) {
+            Toast.show({ type: "error", text1: t("flashcardFillAllFields") });
+            setSaving(false);
+            return;
+          }
+          // Tworzenie nowego folderu z fiszką
+          const res = await flashcardService.createFlashcardFolder({
+            name: newFolderName.trim(),
+            flashcards: [
+              {
+                frontContent: frontContent.trim(),
+                backContent: backContent.trim(),
+                status: "ACTIVE",
+              },
+            ],
+          });
+          Toast.show({ type: "success", text1: t("flashcardAddSuccess") });
+          if (onSuccessRef.current && res.flashcards && res.flashcards[0])
+            onSuccessRef.current(res.flashcards[0]);
+          closeModal();
+          return;
+        }
+
         const newFlashcard = await flashcardService.addFlashcard({
           frontContent: frontContent.trim(),
           backContent: backContent.trim(),
@@ -182,6 +212,16 @@ export function useAddFlashcardModal() {
                 >
                   {t("flashcardAdd")}
                 </Text>
+                <Text
+                  style={{
+                    color: theme.text,
+                    fontSize: 15,
+                    marginBottom: 4,
+                    marginLeft: 2,
+                  }}
+                >
+                  {t("flashcardFrontContent")}
+                </Text>
                 <TextInput
                   style={{
                     backgroundColor: theme.dark_torq,
@@ -199,6 +239,16 @@ export function useAddFlashcardModal() {
                   editable={!saving}
                   maxLength={200}
                 />
+                <Text
+                  style={{
+                    color: theme.text,
+                    fontSize: 15,
+                    marginBottom: 4,
+                    marginLeft: 2,
+                  }}
+                >
+                  {t("flashcardBackContent")}
+                </Text>
                 <TextInput
                   style={{
                     backgroundColor: theme.dark_torq,
@@ -216,12 +266,25 @@ export function useAddFlashcardModal() {
                   editable={!saving}
                   maxLength={200}
                 />
-                {!hideFolderPicker && (
+                {!hideFolderPicker && folders.length > 0 && (
+                  <Text
+                    style={{
+                      color: theme.text,
+                      fontSize: 15,
+                      marginBottom: 4,
+                      marginLeft: 2,
+                    }}
+                  >
+                    {t("flashcardFolderName")}
+                  </Text>
+                )}
+                {!hideFolderPicker && folders.length > 0 && (
                   <Picker
                     selectedValue={selectedFolderId}
                     style={{
                       color: theme.text,
-                      backgroundColor: theme.l_mint,
+                      backgroundColor: theme.dark_torq,
+                      padding: 12,
                       borderRadius: 10,
                       marginBottom: 18,
                       fontSize: 18,
@@ -229,21 +292,52 @@ export function useAddFlashcardModal() {
                     onValueChange={setSelectedFolderId}
                     enabled={!loadingFolders && !saving}
                   >
-                    {folders.length === 0 ? (
+                    {folders.map((folder) => (
                       <Picker.Item
-                        label={t("flashcardNoFolders")}
-                        value={null}
+                        key={folder.id}
+                        label={folder.name}
+                        value={folder.id}
                       />
-                    ) : (
-                      folders.map((folder) => (
-                        <Picker.Item
-                          key={folder.id}
-                          label={folder.name}
-                          value={folder.id}
-                        />
-                      ))
-                    )}
+                    ))}
+                    <Picker.Item
+                      label={
+                        t("flashcardNewFolderOption") ||
+                        "➕ " + t("flashcardFolderName")
+                      }
+                      value="__new__"
+                    />
                   </Picker>
+                )}
+                {selectedFolderId === "__new__" && (
+                  <Text
+                    style={{
+                      color: theme.text,
+                      fontSize: 15,
+                      marginBottom: 4,
+                      marginLeft: 2,
+                    }}
+                  >
+                    {t("flashcardFolderName")}
+                  </Text>
+                )}
+                {selectedFolderId === "__new__" && (
+                  <TextInput
+                    value={newFolderName}
+                    onChangeText={setNewFolderName}
+                    placeholder={t("flashcardFolderName")}
+                    placeholderTextColor={theme.text}
+                    style={{
+                      backgroundColor: theme.dark_torq,
+                      color: theme.text,
+                      borderRadius: 10,
+                      padding: 12,
+                      marginBottom: 18,
+                      fontSize: 18,
+                      width: 280,
+                    }}
+                    editable={!saving}
+                    maxLength={40}
+                  />
                 )}
                 <View
                   style={{

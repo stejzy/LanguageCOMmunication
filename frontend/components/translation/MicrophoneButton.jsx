@@ -164,6 +164,24 @@ export default function MicrophoneButton({ isRecording, setIsRecording}) {
     const startTranscriptionMobile = async () => {
         console.log("Start mobilki");
 
+        
+
+        const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+            {
+                title: "Microphone Permission",
+                message: "This app needs access to your microphone to transcribe speech.",
+                buttonNeutral: "Ask Me Later",
+                buttonNegative: "Cancel",
+                buttonPositive: "OK"
+            }
+        );
+
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+            console.log("Microphone permission denied");
+            return;
+        }
+
         AudioRecord.init({
             sampleRate: 16000,
             channels: 1,
@@ -171,22 +189,6 @@ export default function MicrophoneButton({ isRecording, setIsRecording}) {
             audioSource: 6,
             wavFile: 'test.wav',
         });
-
-        // const granted = await PermissionsAndroid.request(
-        //     PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-        //     {
-        //         title: "Microphone Permission",
-        //         message: "This app needs access to your microphone to transcribe speech.",
-        //         buttonNeutral: "Ask Me Later",
-        //         buttonNegative: "Cancel",
-        //         buttonPositive: "OK"
-        //     }
-        // );
-
-        // if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        //     console.log("Microphone permission denied");
-        //     return;
-        // }
 
         socket.current = new WebSocket(`ws://192.168.100.14:8080/ws/transcription?transcribeLangCode=${sourceLanguage?.transcribeLangCode || "none"}`);
         socket.current.binaryType = 'arraybuffer';
@@ -246,7 +248,6 @@ export default function MicrophoneButton({ isRecording, setIsRecording}) {
     };
 
     
-
     const stopTranscription = async () => {
       if (Platform.OS === "web") {
           await stopTranscriptionWeb();

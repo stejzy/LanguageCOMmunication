@@ -18,9 +18,21 @@ import { AuthContext } from "@/context/AuthContext";
 import { useRecording } from "@/context/RecordingContext";
 import { useTranslation } from "react-i18next";
 import { TranslationHistoryContext } from "@/context/TranslationHistoryContext";
+import { useAddFlashcardModal } from "@/hooks/useAddFlashcardModal";
 
 export default function TranslationScreen() {
   const { t } = useTranslation();
+
+  const { openModal: openAddFlashcardModal, AddFlashcardModal } =
+    useAddFlashcardModal();
+
+  const handleAddToFlashcard = (original, translated) => {
+      openAddFlashcardModal({
+        frontContent: original,
+        backContent: translated,
+      });
+  };
+
 
   const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
   const {
@@ -154,7 +166,7 @@ export default function TranslationScreen() {
       />
 
       <View style={styles.viewOuterStyle}>
-        <View style={[styles.viewInnerStyle, { flex: hasText ? 0.5 : 1 }]}>
+        <View style={[styles.viewInnerStyle, { flex: hasText ? 0.49 : 1 }]}>
           {hasText && !keyboardVisible && (
             <Text style={styles.upperIndexLanguageName}>
               {t(sourceLanguage.languageCode).toUpperCase()}
@@ -198,6 +210,20 @@ export default function TranslationScreen() {
               >
                 <AntDesign name="rightcircleo" size={33} color={theme.torq} />
               </Pressable>
+
+              <AddFlashcardModal />
+
+              <Pressable
+                onPress={() => {
+                  handleAddToFlashcard(textToTranslate, translatedText)
+                }}
+                style={[
+                  styles.iconSendStyle,
+                  { position: "absolute", right: 75 },
+                ]}
+              >
+                <FontAwesome name="bookmark-o" size={33} color={theme.torq} />
+              </Pressable>
             </View>
           )}
         </View>
@@ -205,7 +231,7 @@ export default function TranslationScreen() {
         {hasText && <View style={styles.lineStyle} />}
 
         {hasText && (
-          <View style={[styles.viewInnerStyle, { flex: hasText ? 0.5 : 1 }]}>
+          <View style={[styles.viewInnerStyle, { flex: hasText ? 0.51 : 1 }]}>
             {hasText && !keyboardVisible && (
               <Text style={styles.upperIndexLanguageName}>
                 {t(targetLanguage.languageCode).toUpperCase()}

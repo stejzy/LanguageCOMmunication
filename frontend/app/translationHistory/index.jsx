@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useEffect } from "react";
 import { View, Text, StyleSheet, Pressable, SectionList } from "react-native";
 import { TranslationHistoryContext } from "@/context/TranslationHistoryContext";
 import { ThemeContext } from "@/context/ThemeContext";
@@ -80,9 +80,11 @@ export default function TranslationHistoryScreen() {
     return acc;
   }, {});
 
-  const sections = Object.keys(groupedByDate).map((date) => ({
-    title: date,
-    data: groupedByDate[date],
+  const sections = Object.keys(groupedByDate)
+    .sort((a, b) => new Date(a) - new Date(b))
+    .map((date) => ({
+      title: date,
+      data: groupedByDate[date].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)),
   }));
 
   console.log(groupedByDate)
@@ -96,13 +98,33 @@ export default function TranslationHistoryScreen() {
     });
   };
 
+
+   const sectionListRef = useRef(null);
+
+    useEffect(() => {
+      if (sections.length > 0 && sectionListRef.current) {
+        const lastSectionIndex = sections.length - 1;
+        const lastItemIndex = sections[lastSectionIndex].data.length - 1;
+
+        setTimeout(() => {
+          sectionListRef?.current?.scrollToLocation({
+          sectionIndex: lastSectionIndex,
+          itemIndex: lastItemIndex,
+          animated: false,
+          viewPosition: 1,
+          viewOffset: -500,
+          });
+        }, 100);
+      }
+    }, [sections]);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Pressable style={styles.arrow} onPress={() => router.back()}>
           <Ionicons name="arrow-back-outline" size={24} color={theme.text} />
         </Pressable>
-        <Text style={styles.headerTitle}>History</Text>
+        <Text style={styles.headerTitle}>{t("history")}</Text>
         <Pressable style={styles.home} onPress={() => navigation.pop(2)}>
           <Entypo name="home" size={24} color={theme.text} />
         </Pressable>
@@ -110,6 +132,7 @@ export default function TranslationHistoryScreen() {
 
       <View style={styles.flatList}>
         <SectionList
+          ref={sectionListRef}
           sections={sections}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
@@ -146,10 +169,12 @@ function createStyles(theme) {
     arrow: {
       position: "absolute",
       left: 15,
+      top: 19
     },
     home: {
       position: "absolute",
       right: 15,
+      top: 19
     },
     headerTitle: {
       fontSize: 20,

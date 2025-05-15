@@ -22,17 +22,19 @@ export const getSupportedLanguages = async () => {
       });
 
       const newEntry = {
-        sourceText: text,
-        translatedText: data,
-        sourceLanguage: sourceLang,
-        targetLanguage: targetLang,
-        success: true,
-        timestamp: new Date().toISOString(),
+        id: data.id,
+        sourceText: data.sourceText,
+        translatedText: data.translatedText,
+        sourceLanguage: data.sourceLanguage,
+        targetLanguage: data.targetLanguage,
+        success: data.success,
+        errorMessage: data.errorMessage,
+        timestamp: data.timestamp,
       };
 
       await addAndRefresh(newEntry);
 
-      return data;
+      return  data.translatedText;
     } catch (error) {
       console.error('Translation failed:', error);
       return "";

@@ -24,11 +24,11 @@ public class AwsTranslationController {
     }
 
     @GetMapping("/translate")
-    public ResponseEntity<String> translateText(@RequestParam String text,
-                                                @RequestParam String sourceLang,
-                                                @RequestParam String targetLang) {
-        String translatedText = awsTranslationService.translateText(text, sourceLang, targetLang);
-        return ResponseEntity.ok(translatedText);
+    public ResponseEntity<TranslationDTO> translateText(@RequestParam String text,
+                                                        @RequestParam String sourceLang,
+                                                        @RequestParam String targetLang) {
+        TranslationDTO translationDTO = awsTranslationService.translateText(text, sourceLang, targetLang);
+        return ResponseEntity.ok(translationDTO);
     }
 
     @GetMapping("/detectLanguage")

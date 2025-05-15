@@ -4,6 +4,8 @@ import org.example.languagecommunication.exception.LanguageDetectionException;
 import org.example.languagecommunication.exception.TranslationException;
 import org.example.languagecommunication.translation.awstranslation.DTO.DetectedLanguage;
 import org.example.languagecommunication.translation.awstranslation.DTO.LanguageDTO;
+import org.example.languagecommunication.translation.awstranslation.DTO.Translation;
+import org.example.languagecommunication.translation.awstranslation.DTO.TranslationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -37,7 +39,7 @@ public class AwsTranslationService {
         this.translationHistoryService = translationHistoryService;
     }
 
-    public String translateText(String text, String sourceLang, String targetLang) {
+    public TranslationDTO translateText(String text, String sourceLang, String targetLang) {
         try {
             TranslateTextRequest request = TranslateTextRequest.builder()
                     .text(text)
@@ -47,19 +49,59 @@ public class AwsTranslationService {
 
             TranslateTextResponse response = translateClient.translateText(request);
             String translated = response.translatedText();
-            translationHistoryService.saveSuccess(text, translated, sourceLang, targetLang);
-            return translated;
+            Translation savedTranslation = translationHistoryService.saveSuccess(text, translated, sourceLang, targetLang);
+
+            return new TranslationDTO(
+                    savedTranslation.getId(),
+                    savedTranslation.getSourceText(),
+                    savedTranslation.getTranslatedText(),
+                    savedTranslation.getSourceLanguage(),
+                    savedTranslation.getTargetLanguage(),
+                    savedTranslation.isSuccess(),
+                    savedTranslation.getErrorMessage(),
+                    savedTranslation.getTimestamp()
+            );
         } catch (UnsupportedLanguagePairException | IllegalArgumentException e) {
-            translationHistoryService.saveError(text, sourceLang, targetLang, e.getMessage());
-            throw new TranslationException("Unsupported language pair: " + sourceLang + " to " + targetLang, HttpStatus.BAD_REQUEST);
+            Translation savedError = translationHistoryService.saveError(text, sourceLang, targetLang, e.getMessage());
+            return new TranslationDTO(
+                    savedError.getId(),
+                    savedError.getSourceText(),
+                    savedError.getTranslatedText(),
+                    savedError.getSourceLanguage(),
+                    savedError.getTargetLanguage(),
+                    savedError.isSuccess(),
+                    savedError.getErrorMessage(),
+                    savedError.getTimestamp()
+            );
+            // Możesz też rzucić wyjątek jeśli chcesz, np.:
+            // throw new TranslationException(...);
         } catch (DetectedLanguageLowConfidenceException e) {
-            translationHistoryService.saveError(text, sourceLang, targetLang, e.getMessage());
-            throw new TranslationException("Detected language confidence is too low for translation.", HttpStatus.BAD_REQUEST);
-        } catch ( Exception e) {
-            translationHistoryService.saveError(text, sourceLang, targetLang, e.getMessage());
-            throw new RuntimeException("Unexpected translation failed: " + e.getMessage(), e);
+            Translation savedError = translationHistoryService.saveError(text, sourceLang, targetLang, e.getMessage());
+            return new TranslationDTO(
+                    savedError.getId(),
+                    savedError.getSourceText(),
+                    savedError.getTranslatedText(),
+                    savedError.getSourceLanguage(),
+                    savedError.getTargetLanguage(),
+                    savedError.isSuccess(),
+                    savedError.getErrorMessage(),
+                    savedError.getTimestamp()
+            );
+        } catch (Exception e) {
+            Translation savedError = translationHistoryService.saveError(text, sourceLang, targetLang, e.getMessage());
+            return new TranslationDTO(
+                    savedError.getId(),
+                    savedError.getSourceText(),
+                    savedError.getTranslatedText(),
+                    savedError.getSourceLanguage(),
+                    savedError.getTargetLanguage(),
+                    savedError.isSuccess(),
+                    savedError.getErrorMessage(),
+                    savedError.getTimestamp()
+            );
         }
     }
+
 
     public DetectedLanguage detectLanguage(String text) {
         try {

@@ -46,7 +46,7 @@ export const TranslationHistoryProvider = ({ children }) => {
 
   const addAndRefresh = async (entry) => {
     setHistory((prev) => [entry, ...prev]);
-    await refreshHistory();
+    // await refreshHistory();
   };
 
   const deleteAndRefresh = async (id) => {

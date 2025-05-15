@@ -46,6 +46,11 @@ export default {
   typeSth: "Wpisz coś...",
   saySth: "Mów coś...",
 
+  translationHistory: "Historia tłumaczeń",
+  showTranslationHistory: "Pokaż",
+  history: "Historia",
+
+
   flashcardAdd: "Dodaj fiszkę",
   flashcardEdit: "Edytuj fiszkę",
   flashcardFrontContent: "Zagadnienie",

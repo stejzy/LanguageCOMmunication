@@ -23,7 +23,7 @@ public class TranslationHistoryService {
         this.userRepository = userRepository;
     }
 
-    public void saveSuccess(String sourceText, String translatedText, String sourceLang, String targetLang) {
+    public Translation saveSuccess(String sourceText, String translatedText, String sourceLang, String targetLang) {
         Translation translation = new Translation();
         translation.setSourceText(sourceText);
         translation.setTranslatedText(translatedText);
@@ -38,10 +38,10 @@ public class TranslationHistoryService {
 
         translation.setUser(user);
 
-        translationRepository.save(translation);
+        return translationRepository.save(translation);
     }
 
-    public void saveError(String sourceText, String sourceLang, String targetLang, String errorMessage) {
+    public Translation saveError(String sourceText, String sourceLang, String targetLang, String errorMessage) {
         Translation translation = new Translation();
         translation.setSourceText(sourceText);
         translation.setSourceLanguage(sourceLang);
@@ -56,8 +56,9 @@ public class TranslationHistoryService {
 
         translation.setUser(user);
 
-        translationRepository.save(translation);
+        return translationRepository.save(translation);
     }
+
 
     public List<TranslationDTO> getAllTranslations() {
         Long userId = SecurityUtils.getCurrentUserId();

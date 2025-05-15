@@ -6,6 +6,7 @@ import {
   Platform,
   StyleSheet,
   Pressable,
+  StatusBar,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { useRouter } from "expo-router";
@@ -19,7 +20,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function AuthScreen() {
   const { onLogin, onGoogleLogin } = useContext(AuthContext);
-  const { theme } = useContext(ThemeContext);
+  const { theme, colorScheme } = useContext(ThemeContext);
   const router = useRouter();
   const styles = createStyles(theme);
 
@@ -84,6 +85,10 @@ export default function AuthScreen() {
 
   return (
     <View style={styles.container}>
+      <StatusBar
+        barStyle={colorScheme === "dark" ? "light-content" : "dark-content"}
+        backgroundColor={colorScheme === "dark" ? "black" : "white"}
+      />
       <Text style={styles.title}>Login</Text>
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <TextInput

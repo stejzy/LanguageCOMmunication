@@ -20,8 +20,6 @@ import { ThemeContext } from "@/context/ThemeContext";
 import { useContext } from "react";
 import { useRouter } from "expo-router";
 import { AppLangProvider } from "@/context/AppLangContext";
-import { useRouter } from "expo-router";
-import { AppLangProvider } from "@/context/AppLangContext";
 import { TranslationHistoryProvider } from "@/context/TranslationHistoryContext";
 
 export default function RootLayout() {
@@ -153,6 +151,21 @@ function InnerStack() {
         }}
       />
       <Stack.Screen
+        name="import"
+        options={{
+          ...commonHeaderOptions,
+          headerLeft: () => (
+            <Pressable
+              onPress={() => router.push("/(tabs)/translation")}
+              style={{ paddingLeft: 16 }}
+            >
+              <Ionicons name="arrow-back-outline" size={24} color="#fff" />
+            </Pressable>
+          ),
+          title: "Import Flashcard Folder",
+        }}
+      />
+      <Stack.Screen
         name="flashcard/[id]"
         options={{
           ...commonHeaderOptions,
@@ -164,47 +177,6 @@ function InnerStack() {
               <Ionicons name="arrow-back-outline" size={24} color="#fff" />
             </Pressable>
           ),
-          title: "Flashcard Folder",
-        }}
-      />
-      <Stack.Screen name="settings/index" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="import"
-        options={{
-          ...commonHeaderOptions,
-          headerLeft: undefined,
-          title: "Import Flashcard Folder",
-        }}
-      />
-      <Stack.Screen
-        name="login"
-        options={{ ...commonHeaderOptions, headerLeft: null, title: "Login" }}
-      />
-      <Stack.Screen
-        name="register/index"
-        options={{
-          ...commonHeaderOptions,
-          headerLeft: undefined,
-          title: "Register",
-        }}
-      />
-      <Stack.Screen
-        name="register/verify"
-        options={{ ...commonHeaderOptions, headerLeft: null, title: "Verify" }}
-      />
-      <Stack.Screen
-        name="flashcard/create-folder"
-        options={{
-          ...commonHeaderOptions,
-          headerLeft: undefined,
-          title: "Create Flashcard Folder",
-        }}
-      />
-      <Stack.Screen
-        name="flashcard/[id]"
-        options={{
-          ...commonHeaderOptions,
-          headerLeft: undefined,
           title: "Flashcard Folder",
         }}
       />

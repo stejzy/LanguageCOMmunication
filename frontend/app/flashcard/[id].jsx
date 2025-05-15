@@ -17,6 +17,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  StatusBar,
 } from "react-native";
 import * as flashcardService from "@/api/flashcardService";
 import Toast from "react-native-toast-message";
@@ -158,6 +159,10 @@ function FlashcardFolderDetail() {
 
   return (
     <View style={styles.container}>
+      <StatusBar
+        barStyle={colorScheme === "dark" ? "light-content" : "dark-content"}
+        backgroundColor={colorScheme === "dark" ? "black" : "white"}
+      />
       <View style={styles.folderNameRow}>
         <Text style={styles.folderName}>{folderName}</Text>
         <Pressable style={styles.folderEditIcon} onPress={openEditFolderModal}>

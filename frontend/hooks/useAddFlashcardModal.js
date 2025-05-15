@@ -141,7 +141,6 @@ export function useAddFlashcardModal() {
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === "android" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "android" ? 60 : 0}
           style={{ flex: 1 }}
         >
           <View

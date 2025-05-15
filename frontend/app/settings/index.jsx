@@ -181,6 +181,23 @@ export default function SettingsScreen() {
           </Animated.View>
         </View>
 
+        <View>
+            <Animated.Text style={[styles.themeSwitchText, torqColorAnimation, {marginTop: 30}]}>Translation History</Animated.Text>
+
+            <View style={{alignItems: "center"}}>
+
+              <Pressable style={{ width: "100%"}} onPress={() => router.push("/translationHistory")}>
+                <Animated.View style={[styles.translationHistoryButton, torqBackColorAnimation]}>
+                  <Animated.Text style={[{ fontStyle: "italic", fontSize: 16, fontWeight: "500" }, textAnimation]}>
+                    Show
+                  </Animated.Text>
+                </Animated.View>
+              </Pressable>
+
+
+            </View>
+        </View>
+
       </View>
 
     </Animated.View>
@@ -237,6 +254,15 @@ function createStyles(theme, dark) {
       height: 15,
       backgroundColor: dark.dark_torq,
       borderRadius: 50,
+    },
+    translationHistoryButton: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 7,
+      marginBottom: 3,
+      borderRadius: 25,
+      padding: 10,
     }
   });
 }

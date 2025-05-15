@@ -25,13 +25,16 @@ public class AwsTranslationService {
 
     private final TranslateClient translateClient;
     private final ComprehendClient comprehendClient;
+    private final TranslationHistoryService translationHistoryService;
 
     @Autowired
     public AwsTranslationService
             (TranslateClient translateClient,
-             ComprehendClient comprehendClient) {
+             ComprehendClient comprehendClient,
+             TranslationHistoryService translationHistoryService) {
         this.translateClient = translateClient;
         this.comprehendClient = comprehendClient;
+        this.translationHistoryService = translationHistoryService;
     }
 
     public String translateText(String text, String sourceLang, String targetLang) {
@@ -43,12 +46,17 @@ public class AwsTranslationService {
                     .build();
 
             TranslateTextResponse response = translateClient.translateText(request);
-            return response.translatedText();
+            String translated = response.translatedText();
+            translationHistoryService.saveSuccess(text, translated, sourceLang, targetLang);
+            return translated;
         } catch (UnsupportedLanguagePairException | IllegalArgumentException e) {
+            translationHistoryService.saveError(text, sourceLang, targetLang, e.getMessage());
             throw new TranslationException("Unsupported language pair: " + sourceLang + " to " + targetLang, HttpStatus.BAD_REQUEST);
         } catch (DetectedLanguageLowConfidenceException e) {
+            translationHistoryService.saveError(text, sourceLang, targetLang, e.getMessage());
             throw new TranslationException("Detected language confidence is too low for translation.", HttpStatus.BAD_REQUEST);
         } catch ( Exception e) {
+            translationHistoryService.saveError(text, sourceLang, targetLang, e.getMessage());
             throw new RuntimeException("Unexpected translation failed: " + e.getMessage(), e);
         }
     }

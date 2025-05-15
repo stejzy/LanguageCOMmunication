@@ -11,14 +11,13 @@ export function LanguageProvider({ children }) {
   const [textToTranslate, setTextToTranslate] = useState("");
   const [translatedText, setTranslatedText] = useState("");
 
-  const {authState} = useContext(AuthContext)
+  const {authState} = useContext(AuthContext);
 
   useEffect(() => {
     if(authState.authenticated){
       const fetchSupportedLanguages = async () => {
         try{
           const languages = await getSupportedLanguages();
-          console.log(languages);
 
           const polish = languages.find(lang => lang.languageCode === 'pl');
           const english = languages.find(lang => lang.languageCode === 'en');

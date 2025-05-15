@@ -2,11 +2,11 @@ package org.example.languagecommunication.translation.awstranslation;
 
 import org.example.languagecommunication.translation.awstranslation.DTO.DetectedLanguage;
 import org.example.languagecommunication.translation.awstranslation.DTO.LanguageDTO;
+import org.example.languagecommunication.translation.awstranslation.DTO.Translation;
+import org.example.languagecommunication.translation.awstranslation.DTO.TranslationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,10 +14,13 @@ import java.util.List;
 public class AwsTranslationController {
 
     private final AwsTranslationService awsTranslationService;
+    private final TranslationHistoryService translationHistoryService;
 
     @Autowired
-    public AwsTranslationController(AwsTranslationService awsTranslationService) {
+    public AwsTranslationController(AwsTranslationService awsTranslationService,
+                                    TranslationHistoryService translationHistoryService) {
         this.awsTranslationService = awsTranslationService;
+        this.translationHistoryService = translationHistoryService;
     }
 
     @GetMapping("/translate")
@@ -40,5 +43,22 @@ public class AwsTranslationController {
         return ResponseEntity.ok(supportedLanguages);
     }
 
+    @GetMapping("/translations/all")
+    public ResponseEntity<List<TranslationDTO>> getAllTranslations() {
+        List<TranslationDTO> translations = translationHistoryService.getAllTranslations();
+        return ResponseEntity.ok(translations);
+    }
+
+    @GetMapping("/translations/successful")
+    public ResponseEntity<List<TranslationDTO>> getSuccessfulTranslations() {
+        List<TranslationDTO> successfulTranslations = translationHistoryService.getSuccessfulTranslations();
+        return ResponseEntity.ok(successfulTranslations);
+    }
+
+    @DeleteMapping("/translations/delete/{id}")
+    public ResponseEntity<Void> deleteTranslation(@PathVariable Long id) {
+        translationHistoryService.deleteTranslationById(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }

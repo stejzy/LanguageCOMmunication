@@ -17,6 +17,7 @@ import * as FileSystem from "expo-file-system";
 import { AuthContext } from "@/context/AuthContext";
 import {useRecording} from "@/context/RecordingContext"
 import { useTranslation } from "react-i18next";
+import {TranslationHistoryContext} from "@/context/TranslationHistoryContext";
 
 
 export default function TranslationScreen() {
@@ -26,6 +27,7 @@ export default function TranslationScreen() {
   const {sourceLanguage, targetLanguage, textToTranslate, setTextToTranslate, translatedText, setTranslatedText} = useContext(LanguageContext);
   const {authState} = useContext(AuthContext)
   const {isRecording, setIsRecording} = useRecording();
+  const {history, addAndRefresh, refreshHistory} = useContext(TranslationHistoryContext);
 
   const [disableSrcSpeaker, setDisableSrcSpeaker] = useState(true);
   const [disableTrgtSpeaker, setDisableTrgtSpeaker] = useState(true);
@@ -54,12 +56,21 @@ export default function TranslationScreen() {
 
 
   const handleTranslatePress = async () => {
-    console.log("Parametry: " + textToTranslate + " " + sourceLanguage?.languageCode + " " + targetLanguage?.languageCode);
+    console.log(
+      "Parametry: " +
+        textToTranslate +
+        " " +
+        sourceLanguage?.languageCode +
+        " " +
+        targetLanguage?.languageCode
+    );
+
     try {
       const response = await translate(
         textToTranslate,
         sourceLanguage?.languageCode,
-        targetLanguage?.languageCode
+        targetLanguage?.languageCode,
+        addAndRefresh
       );
       setTranslatedText(response);
     } catch (error) {
@@ -146,7 +157,7 @@ export default function TranslationScreen() {
         <View style = {[styles.viewInnerStyle,
          {flex: hasText ? 0.5 : 1}]}>
           {hasText && !keyboardVisible && (
-            <Text style={styles.upperIndexLanguageName}>{sourceLanguage.languageName}</Text>
+            <Text style={styles.upperIndexLanguageName}>{t(sourceLanguage.languageCode).toUpperCase()}</Text>
           )}
           <TextInput style = {styles.textInputStyle}
           placeholder = {isRecording ? t("saySth") : t("typeSth")}
@@ -176,7 +187,7 @@ export default function TranslationScreen() {
         hasText && (
             <View style = {[styles.viewInnerStyle, {flex: hasText ? 0.5 : 1}]}>
               {hasText && !keyboardVisible && (
-                <Text style={styles.upperIndexLanguageName}>{targetLanguage.languageName}</Text>
+                <Text style={styles.upperIndexLanguageName}>{t(targetLanguage.languageCode).toUpperCase()}</Text>
               )}
               <ScrollView style={{borderBottomLeftRadius: 25, borderBottomRightRadius: 25, marginBottom: 20}}>
                 <Text style = {[styles.textInputStyle]}>
@@ -235,6 +246,7 @@ function createStyles(theme) {
       paddingTop: 5,
       borderBottomLeftRadius: 25,
       borderBottomRightRadius: 25,
+      outlineWidth: 0,
       fontSize: 20,
       color: theme.text,
       // backgroundColor: "blue",

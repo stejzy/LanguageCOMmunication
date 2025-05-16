@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, SectionList } from "react-native";
+import { View, ScrollView, Text, StyleSheet, Pressable, SectionList, Platform } from "react-native";
 import { TranslationHistoryContext } from "@/context/TranslationHistoryContext";
 import { ThemeContext } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
@@ -47,11 +47,20 @@ function AnimatedListItem({ item, onDelete, onDoubleTap, theme, styles }) {
   return (
     <Animated.View style={animatedStyle}>
       <Pressable style={styles.flatListElement} onPress={handlePress}>
-        <View>
-          <Text style={styles.flatListElementText}>
+        <View style={{ width: "90%"}}>
+          <Text
+            style={styles.flatListElementText}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {item.sourceText.replace(/^"+|"+$/g, "")}
           </Text>
-          <Text style={styles.flatListElementText}>
+
+          <Text
+            style={[styles.flatListElementText, { color: "red" }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {item.translatedText?.replace(/^„+|”+$/g, "") ?? ""}
           </Text>
         </View>
@@ -80,14 +89,21 @@ export default function TranslationHistoryScreen() {
     return acc;
   }, {});
 
-  const sections = Object.keys(groupedByDate)
-    .sort((a, b) => new Date(a) - new Date(b))
-    .map((date) => ({
-      title: date,
-      data: groupedByDate[date].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)),
+  console.log(groupedByDate)
+
+  function parsePLDate(dateStr) {
+    const [day, month, year] = dateStr.split('.');
+    return new Date(`${year}-${month}-${day}`);
+  }
+
+ const sections = Object.keys(groupedByDate)
+  .sort((a, b) => parsePLDate(b) - parsePLDate(a))
+  .map((date) => ({
+    title: date,
+    data: groupedByDate[date].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)),
   }));
 
-  console.log(groupedByDate)
+  console.log(sections)
 
   const styles = createStyles(theme);
 
@@ -132,7 +148,6 @@ export default function TranslationHistoryScreen() {
 
       <View style={styles.flatList}>
         <SectionList
-          ref={sectionListRef}
           sections={sections}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
@@ -201,6 +216,7 @@ function createStyles(theme) {
       fontWeight: "500",
       color: theme.text,
       marginBottom: 5,
+      width: "100%",
     },
     bin: {
       padding: 10,

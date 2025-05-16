@@ -52,6 +52,7 @@ function AnimatedListItem({ item, onDelete, onDoubleTap, theme, styles }) {
             style={styles.flatListElementText}
             numberOfLines={1}
             ellipsizeMode="tail"
+            selectable={false} 
           >
             {item.sourceText.replace(/^"+|"+$/g, "")}
           </Text>
@@ -60,6 +61,7 @@ function AnimatedListItem({ item, onDelete, onDoubleTap, theme, styles }) {
             style={[styles.flatListElementText, { color: "red" }]}
             numberOfLines={1}
             ellipsizeMode="tail"
+            selectable={false} 
           >
             {item.translatedText?.replace(/^„+|”+$/g, "") ?? ""}
           </Text>
@@ -115,24 +117,24 @@ export default function TranslationHistoryScreen() {
   };
 
 
-   const sectionListRef = useRef(null);
+  //  const sectionListRef = useRef(null);
 
-    useEffect(() => {
-      if (sections.length > 0 && sectionListRef.current) {
-        const lastSectionIndex = sections.length - 1;
-        const lastItemIndex = sections[lastSectionIndex].data.length - 1;
+  //   useEffect(() => {
+  //     if (sections.length > 0 && sectionListRef.current) {
+  //       const lastSectionIndex = sections.length - 1;
+  //       const lastItemIndex = sections[lastSectionIndex].data.length - 1;
 
-        setTimeout(() => {
-          sectionListRef?.current?.scrollToLocation({
-          sectionIndex: lastSectionIndex,
-          itemIndex: lastItemIndex,
-          animated: false,
-          viewPosition: 1,
-          viewOffset: -500,
-          });
-        }, 100);
-      }
-    }, [sections]);
+  //       setTimeout(() => {
+  //         sectionListRef?.current?.scrollToLocation({
+  //         sectionIndex: lastSectionIndex,
+  //         itemIndex: lastItemIndex,
+  //         animated: false,
+  //         viewPosition: 1,
+  //         viewOffset: -500,
+  //         });
+  //       }, 100);
+  //     }
+  //   }, [sections]);
 
   return (
     <View style={styles.container}>

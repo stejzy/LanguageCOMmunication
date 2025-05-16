@@ -6,12 +6,14 @@ import { useLocalSearchParams } from "expo-router";
 import { verifyEmail } from "@/api/authService";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
+import { useTranslation } from "react-i18next";
 
 export default function verify() {
   const router = useRouter();
   const { colorScheme, theme } = useContext(ThemeContext);
   const styles = createStyles(theme);
   const { email } = useLocalSearchParams();
+  const { t } = useTranslation();
 
   const [code, setCode] = useState(Array(6).fill(""));
   const inputsRef = useRef([]);
@@ -20,23 +22,26 @@ export default function verify() {
   useEffect(() => {
     const allFilled = async () => {
       if (code.every((char) => char !== "")) {
-        const fullCode = code.join("");
+        const fullCode = code.join("").toLowerCase();
         try {
           await verifyEmail({ email, code: fullCode });
           setError("");
           Toast.show({
             type: "success",
-            text1: "Email verified successfully!",
+            text1: t("verify.success"),
           });
           router.push("/login");
         } catch (error) {
-          console.error("Verification error:", error);
           if (error.response?.status === 400) {
-            setError("Invalid verification code. Please try again.");
+            setError(t("verify.invalid"));
+            return;
           } else if (error.response?.status === 409) {
-            setError("Email already verified.");
+            setError(t("verify.already"));
+            return;
           } else {
-            setError("An error occurred. Please try again.");
+            console.error("Verification error:", error);
+            setError(t("verify.unknownError"));
+            return;
           }
         }
       }
@@ -86,9 +91,7 @@ export default function verify() {
   return (
     <View style={styles.outerContainer}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>
-          Enter the verification code sent to your email address.
-        </Text>
+        <Text style={styles.title}>{t("verify.title")}</Text>
       </View>
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <View style={styles.innerContainer}>

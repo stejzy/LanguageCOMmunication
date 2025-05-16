@@ -15,7 +15,7 @@ import { AuthContext } from "@/context/AuthContext";
 import { ThemeContext } from "@/context/ThemeContext";
 import { makeRedirectUri } from "expo-auth-session";
 import { useIdTokenAuthRequest } from "expo-auth-session/providers/google";
-
+import { useTranslation } from "react-i18next";
 WebBrowser.maybeCompleteAuthSession();
 
 export default function AuthScreen() {
@@ -23,6 +23,7 @@ export default function AuthScreen() {
   const { theme, colorScheme } = useContext(ThemeContext);
   const router = useRouter();
   const styles = createStyles(theme);
+  const { t } = useTranslation();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -53,31 +54,31 @@ export default function AuthScreen() {
       const { id_token } = response.params;
       handleGoogleLogin(id_token);
     } else if (response?.type === "error") {
-      Toast.show({ type: "error", text1: "Google sign-in failed." });
+      Toast.show({ type: "error", text1: t("login.googleError") });
     }
   }, [response]);
 
   const handleGoogleLogin = async (idToken) => {
     try {
       await onGoogleLogin(idToken);
-      Toast.show({ type: "success", text1: "Logged in with Google!" });
+      Toast.show({ type: "success", text1: t("login.googleSuccess") });
       router.replace("/(tabs)/translation");
     } catch (err) {
       console.error("Google login error:", err);
-      Toast.show({ type: "error", text1: "Backend Google login failed." });
+      Toast.show({ type: "error", text1: t("login.googleBackendError") });
     }
   };
 
   const handleLogin = async () => {
     try {
       await onLogin(username, password);
-      Toast.show({ type: "success", text1: "Login successful!" });
+      Toast.show({ type: "success", text1: t("login.success") });
       router.replace("/(tabs)/translation");
     } catch (err) {
       if (err.response?.status === 401) {
-        setError("Invalid username or password.");
+        setError(t("login.error"));
       } else {
-        setError("An error occurred. Please try again.");
+        setError(t("login.unknownError"));
         console.error("Login error:", err);
       }
     }
@@ -93,14 +94,14 @@ export default function AuthScreen() {
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <TextInput
         style={styles.input}
-        placeholder="Username"
+        placeholder={t("login.username")}
         value={username}
         onChangeText={setUsername}
         autoCapitalize="none"
       />
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder={t("login.password")}
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -110,17 +111,17 @@ export default function AuthScreen() {
         onPress={() => router.push("/register")}
         style={styles.register}
       >
-        <Text style={styles.registerText}>Create new account.</Text>
+        <Text style={styles.registerText}>{t("login.createAccount")}</Text>
       </Pressable>
       <Pressable onPress={handleLogin} style={styles.button}>
-        <Text style={styles.buttonText}>Login</Text>
+        <Text style={styles.buttonText}>{t("login.button")}</Text>
       </Pressable>
       <Pressable
         onPress={() => promptAsync()}
         style={[styles.button, !request && styles.buttonDisabled]}
         disabled={!request}
       >
-        <Text style={styles.buttonText}>Sign in with Google</Text>
+        <Text style={styles.buttonText}>{t("login.googleButton")}</Text>
       </Pressable>
     </View>
   );

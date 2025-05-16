@@ -10,11 +10,10 @@ import TranslationScreen from "@/app/(tabs)/translation";
 import PhrasesScreen from "./phrases";
 import FlashcardScreen from "./flashcard";
 import useKeyboard from "@/hooks/useKeyboard";
-import i18n from '@/locales/i18n';
+import i18n from "@/locales/i18n";
 // import {useRecording} from "@/context/RecordingContext";
 // import { AntDesign } from "@expo/vector-icons";
-import { useTranslation } from 'react-i18next';
-
+import { useTranslation } from "react-i18next";
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
 
@@ -27,9 +26,10 @@ export default function TabLayout() {
 
   const { t } = useTranslation();
 
-
   return (
-   <SafeAreaView style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.d_gray }}>
+    <SafeAreaView
+      style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.d_gray }}
+    >
       {/* {isRecording && (
         <View style={styles.topBar}>
           <AntDesign name="arrowleft" size={32} color={theme.torq} onPress={() => setIsRecording(false)} />
@@ -50,20 +50,18 @@ export default function TabLayout() {
             height: "100%",
             borderRadius: 25,
             borderColor: theme.dark_torq,
-            borderWidth: 6
+            borderWidth: 6,
           },
           tabBarLabelStyle: {
             fontSize: 13,
-            fontWeight: 'bold',
-            textTransform: 'none',
+            fontWeight: "bold",
+            textTransform: "none",
             color: theme.text,
           },
-          tabBarPressColor: 'transparent',
-          swipeEnabled: Platform.OS !== 'web',
+          tabBarPressColor: "transparent",
+          swipeEnabled: Platform.OS !== "web",
         }}
       >
-
-
         <Screen
           name="translation"
           options={{ title: t("translationNavbar") }}
@@ -71,17 +69,16 @@ export default function TabLayout() {
         />
         <Screen
           name="phrases"
-          options={{ title: t("phrasesNavbar")  }}
+          options={{ title: t("phrasesNavbar") }}
           component={PhrasesScreen}
         />
         <Screen
           name="flashcard"
-          options={{ title: t("flashcardNavbar")  }}
+          options={{ title: t("flashcardNavbar") }}
           component={FlashcardScreen}
         />
       </Navigator>
     </SafeAreaView>
-
   );
 }
 

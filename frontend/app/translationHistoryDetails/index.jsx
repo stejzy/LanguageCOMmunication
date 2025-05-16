@@ -15,23 +15,14 @@ import { AuthContext } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import { useRouter } from "expo-router";
-import { useAddFlashcardModal } from "@/hooks/useAddFlashcardModal";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
+import { useGlobalAddFlashcardModal } from "@/context/AddFlashcardModalContext";
 
 export default function TranslationHistoryDetailsScreen() {
   const { translation } = useLocalSearchParams();
   const router = useRouter();
-
-   const { openModal: openAddFlashcardModal, AddFlashcardModal } =
-    useAddFlashcardModal();
-
-    const handleAddToFlashcard = (original, translated) => {
-        openAddFlashcardModal({
-          frontContent: original,
-          backContent: translated,
-        });
-    };
+  const { openModal } = useGlobalAddFlashcardModal();
 
   const cleanQuotes = (text) =>
     text?.replace(/^"+|"+$/g, "").replace(/^„+|”+$/g, "") ?? "";
@@ -122,8 +113,6 @@ export default function TranslationHistoryDetailsScreen() {
         backgroundColor={colorScheme === "dark" ? "black" : "white"}
       />
 
-       <AddFlashcardModal />
-
       <View style={styles.header}>
         <Pressable style={styles.arrow} onPress={() => router.back()}>
           <Ionicons name="arrow-back-outline" size={24} color={theme.text} />
@@ -160,15 +149,18 @@ export default function TranslationHistoryDetailsScreen() {
             </Pressable>
 
             <Pressable
-                onPress={() => {
-                  handleAddToFlashcard(parsed.sourceText, parsed.translatedText)
-                }}
-                style={[
-                  styles.iconSendStyle,
-                  { position: "absolute", right: 25 },
-                ]}
-              >
-                <FontAwesome name="bookmark-o" size={33} color={theme.torq} />
+              onPress={() => {
+                openModal({
+                  frontContent: parsed.sourceText,
+                  backContent: parsed.translatedText,
+                });
+              }}
+              style={[
+                styles.iconSendStyle,
+                { position: "absolute", right: 25 },
+              ]}
+            >
+              <FontAwesome name="bookmark-o" size={33} color={theme.torq} />
             </Pressable>
           </View>
         </View>
@@ -225,7 +217,7 @@ function createStyles(theme) {
     arrow: {
       position: "absolute",
       left: 15,
-      top: 19
+      top: 19,
     },
     headerTitle: {
       fontSize: 20,

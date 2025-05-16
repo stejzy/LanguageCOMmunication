@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -24,7 +24,8 @@ import LanguageSelector from "@/components/translation/LanguageSelector";
 import useKeyboard from "@/hooks/useKeyboard";
 import { LanguageContext } from "@/context/LanguageContext";
 import { TranslationHistoryContext } from "@/context/TranslationHistoryContext";
-import { useAddFlashcardModal } from "@/hooks/useAddFlashcardModal";
+import { useGlobalAddFlashcardModal } from "@/context/AddFlashcardModalContext";
+import { KeyboardAvoidingView } from "react-native";
 
 export default function PhrasesScreen() {
   const { colorScheme, theme } = useContext(ThemeContext);
@@ -40,8 +41,7 @@ export default function PhrasesScreen() {
     TranslationHistoryContext
   );
 
-  const { openModal: openAddFlashcardModal, AddFlashcardModal } =
-    useAddFlashcardModal();
+  const { openModal } = useGlobalAddFlashcardModal();
 
   const { targetLanguage } = useContext(LanguageContext);
 
@@ -50,12 +50,7 @@ export default function PhrasesScreen() {
   const { t } = useTranslation();
   const keyboardVisible = useKeyboard();
 
-  const handleAddToFlashcard = (original, translated) => {
-    openAddFlashcardModal({
-      frontContent: original,
-      backContent: translated,
-    });
-  };
+  const inputRef = useRef(null);
 
   useEffect(() => {
     const fetchLanguages = async () => {
@@ -75,7 +70,6 @@ export default function PhrasesScreen() {
         ...generatedPhrases,
       ]);
       setTranslatedPhrases(["", ...translatedPhrases]);
-      // setSelectedLanguages(["en", ...selectedLanguages]);
       setInputPhrase("");
     } catch (err) {
       console.error("Generation error:", err);
@@ -104,8 +98,15 @@ export default function PhrasesScreen() {
     Clipboard.setStringAsync(`${original}\n${translated}`);
   };
 
+  const handleAddToFlashcard = (original, translated) => {
+    openModal({
+      frontContent: original,
+      backContent: translated,
+    });
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar
         barStyle={colorScheme === "dark" ? "light-content" : "dark-content"}
         backgroundColor={colorScheme === "dark" ? "black" : "white"}
@@ -156,8 +157,6 @@ export default function PhrasesScreen() {
         })}
       </ScrollView>
 
-      <AddFlashcardModal />
-
       {/*<View style={styles.languageRow}>*/}
       {/*  <Pressable style={styles.langButton}>*/}
       {/*    <Text style={styles.langButtonText}>Auto</Text>*/}
@@ -185,6 +184,7 @@ export default function PhrasesScreen() {
         ]}
       >
         <TextInput
+          ref={inputRef}
           style={styles.input}
           placeholder={t("genPhrase")} //"Wygeneruj frazę..."
           placeholderTextColor={theme.text}
@@ -199,7 +199,7 @@ export default function PhrasesScreen() {
           <AntDesign name="arrowright" size={28} color={theme.d_gray} />
         </Pressable>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

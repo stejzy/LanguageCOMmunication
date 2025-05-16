@@ -23,7 +23,7 @@ import * as flashcardService from "@/api/flashcardService";
 import Toast from "react-native-toast-message";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "@/context/AuthContext";
-import { useAddFlashcardModal } from "@/hooks/useAddFlashcardModal";
+import { useGlobalAddFlashcardModal } from "@/context/AddFlashcardModalContext";
 import { useTranslation } from "react-i18next";
 import QRCode from "react-native-qrcode-svg";
 import * as Clipboard from "expo-clipboard";
@@ -52,8 +52,7 @@ function FlashcardFolderDetail() {
   const [exportModalVisible, setExportModalVisible] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const { openModal: openAddFlashcardModal, AddFlashcardModal } =
-    useAddFlashcardModal();
+  const { openModal } = useGlobalAddFlashcardModal();
 
   const handleAddFlashcardSuccess = useCallback(
     async (newFlashcard) => {
@@ -235,7 +234,7 @@ function FlashcardFolderDetail() {
         <Pressable
           style={styles.addButton}
           onPress={() =>
-            openAddFlashcardModal({
+            openModal({
               defaultFolderId: id,
               onSuccess: handleAddFlashcardSuccess,
               hideFolderPicker: true,
@@ -251,7 +250,6 @@ function FlashcardFolderDetail() {
           <Text style={styles.addButtonText}>{t("flashcardExport")}</Text>
         </Pressable>
       </View>
-      <AddFlashcardModal />
 
       {/* Edit Flashcard Folder Modal */}
       <Modal

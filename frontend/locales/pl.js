@@ -45,6 +45,7 @@ export default {
   darkMode: "Ciemny motyw",
   typeSth: "Wpisz coś...",
   saySth: "Mów coś...",
+  typeSth: "Wpisz język",
 
   translationHistory: "Historia tłumaczeń",
   showTranslationHistory: "Pokaż",

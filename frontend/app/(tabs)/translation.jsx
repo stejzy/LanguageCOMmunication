@@ -201,7 +201,7 @@ export default function TranslationScreen() {
                 <FontAwesome
                   name="volume-up"
                   size={33}
-                  color={disableSrcSpeaker ? theme.info : theme.torq}
+                  color={disableSrcSpeaker ? theme.transcribeDisable : theme.torq}
                 />
               </Pressable>
               <Pressable
@@ -272,7 +272,7 @@ export default function TranslationScreen() {
                 <FontAwesome
                   name="volume-up"
                   size={33}
-                  color={disableTrgtSpeaker ? theme.info : theme.torq}
+                  color={disableTrgtSpeaker ? theme.transcribeDisable : theme.torq}
                 />
               </Pressable>
             </View>

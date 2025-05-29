@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, Platform } from "react-native";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useRef, useState, useEffect } from "react";
 import { ThemeContext } from "@/context/ThemeContext";
 import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -32,6 +32,10 @@ export default function TranslationHistoryDetailsScreen() {
   const source = cleanQuotes(parsed?.sourceText);
   const translated = cleanQuotes(parsed?.translatedText);
 
+  
+  const mobileSoundRef = useRef(null);
+  const webAudioRef = useRef(null);
+
   const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
   const {
     sourceLanguage,
@@ -55,56 +59,64 @@ export default function TranslationHistoryDetailsScreen() {
     return btoa(binary);
   };
 
-  const handleSpeakerPress = async (text, langCode) => {
+   const handleSpeakerPress = async (text, langCode) => {
+    if (!text) return;
+  
     if (Platform.OS === "web") {
-      console.log("Webowka");
-
       try {
+        // Stop previous audio if playing
+        if (webAudioRef.current) {
+          webAudioRef.current.pause();
+          webAudioRef.current.currentTime = 0;
+        }
+  
         const arrayBuffer = await textToSpeech(text, langCode);
-
         if (!arrayBuffer) {
           console.log("Brak danych");
           return;
         }
-
+  
         const base64Audio = bufferToBase64(arrayBuffer);
-
-        const AudioClass = window.Audio;
-        const audio = new AudioClass();
-        audio.src = `data:audio/mp3;base64,${base64Audio}`;
-
+        const audio = new window.Audio(`data:audio/mp3;base64,${base64Audio}`);
+        webAudioRef.current = audio;
+  
         audio.play().catch((error) => {
-          console.error("Błąd odtwarzania dźwięku:", error);
+          console.error("Błąd odtwarzania dźwięku (web):", error);
         });
       } catch (error) {
-        console.error("Text to speech failed", error);
+        console.error("Text to speech failed (web):", error);
       }
     } else {
-      console.log("Mobilki");
-
       try {
+        // Stop previous sound if exists
+        if (mobileSoundRef.current) {
+          await mobileSoundRef.current.stopAsync();
+          await mobileSoundRef.current.unloadAsync();
+          mobileSoundRef.current = null;
+        }
+  
         const arrayBuffer = await textToSpeech(text, langCode);
-
         if (!arrayBuffer) {
           console.log("Brak danych");
           return;
         }
-
+  
         const base64Audio = bufferToBase64(arrayBuffer);
-
         const filePath = FileSystem.cacheDirectory + "tts-audio.mp3";
         await FileSystem.writeAsStringAsync(filePath, base64Audio, {
           encoding: FileSystem.EncodingType.Base64,
         });
-
+  
         const { sound } = await Audio.Sound.createAsync({ uri: filePath });
-
+        mobileSoundRef.current = sound;
+  
         await sound.playAsync();
       } catch (error) {
-        console.error("Text to speech failed" + error);
+        console.error("Text to speech failed (mobile):", error);
       }
     }
   };
+  
 
   return (
     <SafeAreaView style={styles.contentContainer}>

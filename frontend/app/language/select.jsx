@@ -45,16 +45,22 @@ export default function Select() {
     router.back();
   };
 
+ const { i18n } = useTranslation();
+
   useEffect(() => {
+    const currentLang = i18n.language;
+
     if (searchText === "") {
       setFilteredLanguages(parsedLanguages);
       setNoResults(false);
     } else {
-      const filtered = parsedLanguages.filter((language) =>
-        language.languageName.toLowerCase().includes(searchText.toLowerCase())
-      );
-      setFilteredLanguages(filtered);
+      const filtered = parsedLanguages.filter((language) => {
+        const nameToCheck =
+          currentLang === "pl" ? language.languageNamePL : language.languageName;
+        return nameToCheck?.toLowerCase().includes(searchText.toLowerCase());
+      });
 
+      setFilteredLanguages(filtered);
       setNoResults(filtered.length === 0);
     }
   }, [searchText]);
@@ -75,7 +81,7 @@ export default function Select() {
           <View style={styles.searchWrapper}>
             <TextInput
               style={styles.searchInput}
-              placeholder="Wpisz język..."
+              placeholder={t("typeSth")}
               placeholderTextColor={theme.info}
               value={searchText}
               onChangeText={setSearchText}

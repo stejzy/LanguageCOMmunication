@@ -59,20 +59,25 @@ export default function TranslationHistoryDetailsScreen() {
     return btoa(binary);
   };
 
+   const [isPlaying, setIsPlaying] = useState(false);  
+  
    const handleSpeakerPress = async (text, langCode) => {
     if (!text) return;
+    if (isPlaying) return;
+  
+    setIsPlaying(true);
   
     if (Platform.OS === "web") {
       try {
-        // Stop previous audio if playing
         if (webAudioRef.current) {
           webAudioRef.current.pause();
           webAudioRef.current.currentTime = 0;
+          webAudioRef.current = null;
         }
-  
         const arrayBuffer = await textToSpeech(text, langCode);
         if (!arrayBuffer) {
           console.log("Brak danych");
+          setIsPlaying(false);
           return;
         }
   
@@ -82,13 +87,20 @@ export default function TranslationHistoryDetailsScreen() {
   
         audio.play().catch((error) => {
           console.error("Błąd odtwarzania dźwięku (web):", error);
+          setIsPlaying(false);
         });
+  
+        audio.onended = () => {
+          setIsPlaying(false);
+          webAudioRef.current = null;
+        };
+  
       } catch (error) {
         console.error("Text to speech failed (web):", error);
+        setIsPlaying(false);
       }
     } else {
       try {
-        // Stop previous sound if exists
         if (mobileSoundRef.current) {
           await mobileSoundRef.current.stopAsync();
           await mobileSoundRef.current.unloadAsync();
@@ -98,6 +110,7 @@ export default function TranslationHistoryDetailsScreen() {
         const arrayBuffer = await textToSpeech(text, langCode);
         if (!arrayBuffer) {
           console.log("Brak danych");
+          setIsPlaying(false);
           return;
         }
   
@@ -111,8 +124,16 @@ export default function TranslationHistoryDetailsScreen() {
         mobileSoundRef.current = sound;
   
         await sound.playAsync();
+  
+        sound.setOnPlaybackStatusUpdate((status) => {
+          if (!status.isPlaying) {
+            setIsPlaying(false);
+            sound.setOnPlaybackStatusUpdate(null);
+          }
+        });
       } catch (error) {
         console.error("Text to speech failed (mobile):", error);
+        setIsPlaying(false);
       }
     }
   };

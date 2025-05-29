@@ -185,7 +185,7 @@ function createStyles(theme) {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-evenly",
-      width: "50%",
+      width: "45%",
     },
     searchInput: {
       borderBottomWidth: 2,

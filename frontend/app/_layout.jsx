@@ -144,7 +144,7 @@ function InnerStack() {
         name="login"
         options={{
           ...commonHeaderOptions,
-          headerLeft: () => null,
+          headerLeft: () => (null),
           title: "Login",
         }}
       />

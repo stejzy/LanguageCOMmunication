@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, Platform } from "react-native";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { ThemeContext } from "@/context/ThemeContext";
 import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -42,6 +42,9 @@ export default function TranslationScreen() {
 
   const [disableSrcSpeaker, setDisableSrcSpeaker] = useState(true);
   const [disableTrgtSpeaker, setDisableTrgtSpeaker] = useState(true);
+
+  const mobileSoundRef = useRef(null);
+  const webAudioRef = useRef(null);
 
   const keyboardVisible = useKeyboard();
   const styles = createStyles(theme);
@@ -99,55 +102,63 @@ export default function TranslationScreen() {
   };
 
   const handleSpeakerPress = async (text, langCode) => {
-    if (Platform.OS === "web") {
-      console.log("Webowka");
+  if (!text) return;
 
-      try {
-        const arrayBuffer = await textToSpeech(text, langCode);
-
-        if (!arrayBuffer) {
-          console.log("Brak danych");
-          return;
-        }
-
-        const base64Audio = bufferToBase64(arrayBuffer);
-
-        const AudioClass = window.Audio;
-        const audio = new AudioClass();
-        audio.src = `data:audio/mp3;base64,${base64Audio}`;
-
-        audio.play().catch((error) => {
-          console.error("Błąd odtwarzania dźwięku:", error);
-        });
-      } catch (error) {
-        console.error("Text to speech failed", error);
+  if (Platform.OS === "web") {
+    try {
+      // Stop previous audio if playing
+      if (webAudioRef.current) {
+        webAudioRef.current.pause();
+        webAudioRef.current.currentTime = 0;
       }
-    } else {
-      console.log("Mobilki");
 
-      try {
-        const arrayBuffer = await textToSpeech(text, langCode);
-
-        if (!arrayBuffer) {
-          console.log("Brak danych");
-          return;
-        }
-
-        const base64Audio = bufferToBase64(arrayBuffer);
-
-        const filePath = FileSystem.cacheDirectory + "tts-audio.mp3";
-        await FileSystem.writeAsStringAsync(filePath, base64Audio, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-
-        const { sound } = await Audio.Sound.createAsync({ uri: filePath });
-
-        await sound.playAsync();
-      } catch (error) {
-        console.error("Text to speech failed" + error);
+      const arrayBuffer = await textToSpeech(text, langCode);
+      if (!arrayBuffer) {
+        console.log("Brak danych");
+        return;
       }
+
+      const base64Audio = bufferToBase64(arrayBuffer);
+      const audio = new window.Audio(`data:audio/mp3;base64,${base64Audio}`);
+      webAudioRef.current = audio;
+
+      audio.play().catch((error) => {
+        console.error("Błąd odtwarzania dźwięku (web):", error);
+      });
+    } catch (error) {
+      console.error("Text to speech failed (web):", error);
     }
-  };
+  } else {
+    try {
+      // Stop previous sound if exists
+      if (mobileSoundRef.current) {
+        await mobileSoundRef.current.stopAsync();
+        await mobileSoundRef.current.unloadAsync();
+        mobileSoundRef.current = null;
+      }
+
+      const arrayBuffer = await textToSpeech(text, langCode);
+      if (!arrayBuffer) {
+        console.log("Brak danych");
+        return;
+      }
+
+      const base64Audio = bufferToBase64(arrayBuffer);
+      const filePath = FileSystem.cacheDirectory + "tts-audio.mp3";
+      await FileSystem.writeAsStringAsync(filePath, base64Audio, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const { sound } = await Audio.Sound.createAsync({ uri: filePath });
+      mobileSoundRef.current = sound;
+
+      await sound.playAsync();
+    } catch (error) {
+      console.error("Text to speech failed (mobile):", error);
+    }
+  }
+};
+
 
   return (
     <SafeAreaView style={styles.contentContainer}>
@@ -170,6 +181,7 @@ export default function TranslationScreen() {
             multiline
             value={textToTranslate}
             onChangeText={setTextToTranslate}
+            disabled = {isRecording}
           />
           {hasText && (
             <View style={{ height: 50 }}>

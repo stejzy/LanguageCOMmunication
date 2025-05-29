@@ -58,7 +58,7 @@ function AnimatedListItem({ item, onDelete, onDoubleTap, theme, styles }) {
           </Text>
 
           <Text
-            style={[styles.flatListElementText, { color: "red" }]}
+            style={styles.flatListElementText}
             numberOfLines={1}
             ellipsizeMode="tail"
             selectable={false} 

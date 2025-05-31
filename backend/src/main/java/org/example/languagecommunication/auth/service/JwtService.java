@@ -54,19 +54,19 @@ public class JwtService {
 
     public String generateRefreshToken(String username) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("nanos", System.nanoTime());
 
         String refreshToken = Jwts.builder()
-                        .claims()
-                        .add(claims)
-                        .subject(username)
-                        .issuedAt(new Date(System.currentTimeMillis()))
-                        .expiration(new Date(System.currentTimeMillis() + refreshExpirationTime))
-                        .and()
-                        .signWith(getKey())
-                        .compact();
+                .claims()
+                .add(claims)
+                .subject(username)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + refreshExpirationTime))
+                .and()
+                .signWith(getKey())
+                .compact();
 
         RefreshTokenEntity token = new RefreshTokenEntity(username, Hasher.hash(refreshToken), Instant.now().plusMillis(refreshExpirationTime));
-
         tokenRepository.save(token);
 
         return refreshToken;

@@ -72,6 +72,7 @@ class GoogleAuthServiceTest {
 
         User existingUser = new User();
         existingUser.setEmail(email);
+        existingUser.setUsername("googleuser");
         existingUser.setAuthProvider("email");
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
 
@@ -88,9 +89,10 @@ class GoogleAuthServiceTest {
 
         User existingUser = new User();
         existingUser.setEmail(email);
+        existingUser.setUsername("googleuser");
         existingUser.setAuthProvider("google");
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
-        when(jwtService.generateToken(email)).thenReturn("generatedJwt");
+        when(jwtService.generateToken("googleuser")).thenReturn("generatedJwt");
 
         AuthResponse authResponse = googleAuthService.authenticate(validIdToken);
 

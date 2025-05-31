@@ -4,7 +4,9 @@ import org.example.languagecommunication.auth.exceptions.EmailAlreadyExistsExcep
 import org.example.languagecommunication.auth.exceptions.InvalidVerificationCodeException;
 import org.example.languagecommunication.auth.exceptions.UserAlreadyVerifiedException;
 import org.example.languagecommunication.auth.exceptions.VerificationCodeExpiredException;
+import org.example.languagecommunication.auth.model.RefreshTokenEntity;
 import org.example.languagecommunication.auth.model.User;
+import org.example.languagecommunication.auth.repository.RefreshTokenRepository;
 import org.example.languagecommunication.auth.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,9 @@ class AuthServiceTest {
     @Mock
     private EmailService emailService;
 
+    @Mock
+    private RefreshTokenRepository tokenRepository;
+
     @InjectMocks
     private AuthService authService;
 
@@ -43,7 +48,7 @@ class AuthServiceTest {
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        User registeredUser = authService.register(user);
+        authService.register(user);
 
         verify(userRepository).save(userCaptor.capture());
         verify(emailService).sendVerificationEmail(eq("test@example.com"), anyString());
@@ -115,5 +120,44 @@ class AuthServiceTest {
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
 
         assertThrows(UserAlreadyVerifiedException.class, () -> authService.verifyUser("test@example.com", "any"));
+    }
+
+    @Test
+    void register_ShouldThrowWhenUsernameExists() {
+        User user = new User("testuser", "test2@example.com", "password123!");
+        when(userRepository.findByEmail("test2@example.com")).thenReturn(Optional.empty());
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
+
+        assertThrows(EmailAlreadyExistsException.class, () -> authService.register(user));
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void register_ShouldThrowWhenPasswordInvalid() {
+        User user = new User("newuser", "newuser@example.com", "short"); // niepoprawne hasło
+        when(userRepository.findByEmail("newuser@example.com")).thenReturn(Optional.empty());
+        when(userRepository.findByUsername("newuser")).thenReturn(Optional.empty());
+
+        assertThrows(org.example.languagecommunication.auth.exceptions.IncorrectPasswordException.class, () -> authService.register(user));
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void refreshTokens_ShouldThrowAndDelete_WhenTokenExpired() {
+        String refreshToken = "sometoken";
+        String hashed = org.example.languagecommunication.common.utils.Hasher.hash(refreshToken);
+
+        RefreshTokenEntity entity = new RefreshTokenEntity();
+        entity.setTokenHash(hashed);
+        entity.setExpiryDate(java.time.Instant.now().minusSeconds(60)); // expired
+
+        when(tokenRepository.findByTokenHash(hashed)).thenReturn(Optional.of(entity));
+
+        org.springframework.security.authentication.CredentialsExpiredException exception = assertThrows(
+            org.springframework.security.authentication.CredentialsExpiredException.class,
+            () -> authService.refreshTokens(refreshToken)
+        );
+        assertEquals("Refresh token is expired.", exception.getMessage());
+        verify(tokenRepository).delete(entity);
     }
 }

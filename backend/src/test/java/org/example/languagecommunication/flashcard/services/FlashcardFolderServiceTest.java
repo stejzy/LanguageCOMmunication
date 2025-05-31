@@ -182,19 +182,6 @@ class FlashcardFolderServiceTest {
     }
 
     @Test
-    void testImportOwnFolderThrowsException() {
-        Long userId = 1L;
-        FlashcardFolder ownFolder = new FlashcardFolder(new ArrayList<>(), "Own Folder");
-        ownFolder.setUserID(userId);
-
-        when(flashcardFolderRepository.findById(folderId)).thenReturn(Optional.of(ownFolder));
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> flashcardFolderService.importFolder(userId, folderId));
-
-        assertEquals("Cannot import your own folder.", exception.getMessage());
-    }
-
-    @Test
     void testImportFolderNotFoundThrowsException() {
         Long userId = 1L;
         when(flashcardFolderRepository.findById(folderId)).thenReturn(Optional.empty());

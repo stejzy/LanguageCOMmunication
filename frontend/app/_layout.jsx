@@ -9,7 +9,7 @@ import { router, Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import UserMenuButton from "@/components/UserMenuButton";
 import { Pressable } from "react-native";
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider, AuthContext } from "@/context/AuthContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import Toast from "react-native-toast-message";
 import { RecordingProvider } from "@/context/RecordingContext";
@@ -62,6 +62,7 @@ export default function RootLayout() {
 
 function InnerStack() {
   const { colorScheme, theme } = useContext(ThemeContext);
+  const { authState } = useContext(AuthContext);
   const router = useRouter();
   const { t } = useTranslation();
   const styles = StyleSheet.create({
@@ -123,9 +124,11 @@ function InnerStack() {
           });
         }}
       >
-        <View style={{ paddingRight: Platform.OS === "web" ? 16 : 0 }}>
-          <Ionicons name="settings-outline" size={24} color={theme.text} />
-        </View>
+        {authState.authenticated && (
+          <View style={{ paddingRight: Platform.OS === "web" ? 16 : 0 }}>
+            <Ionicons name="settings-outline" size={24} color={theme.text} />
+          </View>
+        )}
         <></>
       </Pressable>
     ),
@@ -141,18 +144,7 @@ function InnerStack() {
         name="login"
         options={{
           ...commonHeaderOptions,
-          headerLeft: () => (
-            <Pressable
-              onPressIn={() => router.push("/(tabs)/translation")}
-              style={{ paddingLeft: Platform.OS === "web" ? 16 : 0 }}
-            >
-              <Ionicons
-                name="arrow-back-outline"
-                size={24}
-                color={theme.text}
-              />
-            </Pressable>
-          ),
+          headerLeft: () => (null),
           title: "Login",
         }}
       />
@@ -160,18 +152,7 @@ function InnerStack() {
         name="register/index"
         options={{
           ...commonHeaderOptions,
-          headerLeft: () => (
-            <Pressable
-              onPressIn={() => router.push("/login")}
-              style={{ paddingLeft: 16 }}
-            >
-              <Ionicons
-                name="arrow-back-outline"
-                size={24}
-                color={theme.text}
-              />
-            </Pressable>
-          ),
+          headerLeft: () => (null),
           title: "Register",
         }}
       />
@@ -179,18 +160,7 @@ function InnerStack() {
         name="register/verify"
         options={{
           ...commonHeaderOptions,
-          headerLeft: () => (
-            <Pressable
-              onPressIn={() => router.push("/login")}
-              style={{ paddingLeft: 16 }}
-            >
-              <Ionicons
-                name="arrow-back-outline"
-                size={24}
-                color={theme.text}
-              />
-            </Pressable>
-          ),
+          headerLeft: () => (null),
           title: "Verify",
         }}
       />

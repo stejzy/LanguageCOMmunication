@@ -199,7 +199,7 @@ export default function MicrophoneButton({ isRecording, setIsRecording }) {
     });
 
     socket.current = new WebSocket(
-      `ws://192.168.1.151:8080/ws/transcription?transcribeLangCode=${
+      `ws://192.168.100.14:8080/ws/transcription?transcribeLangCode=${
         sourceLanguage?.transcribeLangCode || "none"
       }`
     );

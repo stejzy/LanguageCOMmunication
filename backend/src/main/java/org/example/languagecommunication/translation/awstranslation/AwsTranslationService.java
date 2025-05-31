@@ -142,7 +142,7 @@ public class AwsTranslationService {
 
         public List<LanguageDTO> getSupportedLanguages() {
            return  Arrays.stream(SupportedLanguage.values())
-                    .map(language -> new LanguageDTO(language.name(), language.getLanguageCode(), language.getVoiceId(), language.getTranscribeLangCode()))
+                    .map(language -> new LanguageDTO(language.name(), language.getLanguageCode(), language.getVoiceId(), language.getTranscribeLangCode(), language.getLanguageNamePL()))
                     .collect(Collectors.toList());
         }
     }

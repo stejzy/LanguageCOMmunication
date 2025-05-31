@@ -45,6 +45,7 @@ export default {
   typeSth: "Type something...",
   saySth: "Say something...",
   helloMessage: "Hello, ",
+  typeSth: "Enter language",
 
   translationHistory: "Translation History",
   showTranslationHistory: "Show",

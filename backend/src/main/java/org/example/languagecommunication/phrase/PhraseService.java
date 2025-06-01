@@ -1,5 +1,6 @@
 package org.example.languagecommunication.phrase;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.http.*;
 
@@ -16,11 +17,10 @@ public class PhraseService {
 
     private final WebClient webClient;
 
-    private final String apiKey;
+    @Value( "${groq.api.key}")
+    private String apiKey;
 
     public PhraseService() {
-        Dotenv dotenv = Dotenv.load();
-        this.apiKey = dotenv.get("GROQ_API_KEY");
         this.webClient = WebClient.builder()
                 .baseUrl("https://api.groq.com/openai/v1")
                 .defaultHeader("Authorization", "Bearer " + apiKey)

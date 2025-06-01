@@ -41,6 +41,7 @@ jobs:
           SUPPORT_EMAIL: ${{ secrets.SUPPORT_EMAIL }}
           APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
 
   # 2) Build image & push to ECR
   build-and-push:

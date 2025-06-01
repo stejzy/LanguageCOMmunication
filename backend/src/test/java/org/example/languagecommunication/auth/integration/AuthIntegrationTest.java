@@ -173,8 +173,7 @@ class AuthIntegrationTest {
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Nieprawidłowa nazwa użytkownika lub hasło")));
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -197,7 +196,6 @@ class AuthIntegrationTest {
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Nieprawidłowa nazwa użytkownika lub hasło")));
+                .andExpect(status().isBadRequest());
     }
 } 

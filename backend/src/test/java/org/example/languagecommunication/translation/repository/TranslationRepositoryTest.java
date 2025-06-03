@@ -37,8 +37,6 @@ public class TranslationRepositoryTest {
 
     @Test
     public void save_shouldReturnTranslation(){
-
-       // ✅ Successful translation
         Translation translation = Translation.builder()
                 .sourceText("Hello")
                 .translatedText("Cześć")
@@ -56,7 +54,6 @@ public class TranslationRepositoryTest {
         assertEquals("Cześć", saved.getTranslatedText());
         assertEquals("test_user", saved.getUser().getUsername());
 
-        // ❌ Unsuccessful translation
         Translation failedTranslation = Translation.builder()
                 .sourceText("Bonjour")
                 .translatedText(null)

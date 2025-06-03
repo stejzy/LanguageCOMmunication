@@ -25,6 +25,10 @@ public class TranslationHistoryService {
     }
 
     public Translation saveSuccess(String sourceText, String translatedText, String sourceLang, String targetLang) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         Translation translation = new Translation();
         translation.setSourceText(sourceText);
         translation.setTranslatedText(translatedText);
@@ -32,11 +36,6 @@ public class TranslationHistoryService {
         translation.setTargetLanguage(targetLang);
         translation.setTimestamp(LocalDateTime.now());
         translation.setSuccess(true);
-
-        Long userId = SecurityUtils.getCurrentUserId();
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
         translation.setUser(user);
 
         return translationRepository.save(translation);
@@ -106,6 +105,7 @@ public class TranslationHistoryService {
         }
 
         translationRepository.deleteById(id);
+
     }
 
 }

@@ -1,11 +1,12 @@
-package org.example.languagecommunication.translation.awstranslation;
+package org.example.languagecommunication.translation.awstranslation.service;
 
 import org.example.languagecommunication.auth.model.User;
 import org.example.languagecommunication.auth.repository.UserRepository;
 import org.example.languagecommunication.common.utils.SecurityUtils;
 import org.example.languagecommunication.exception.TranslationException;
-import org.example.languagecommunication.translation.awstranslation.DTO.Translation;
+import org.example.languagecommunication.translation.awstranslation.model.Translation;
 import org.example.languagecommunication.translation.awstranslation.DTO.TranslationDTO;
+import org.example.languagecommunication.translation.awstranslation.repository.TranslationRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 

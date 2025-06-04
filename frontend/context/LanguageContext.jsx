@@ -23,7 +23,9 @@ export function LanguageProvider({ children }) {
         const autoLanguage = {
           languageCode: "Auto",
           languageName: "Auto",
-          languageNamePL: "Auto"
+          languageNamePL: "Auto",
+          voiceID: "none",
+          transcribeLangCode: "none"
         };
         const languagesWithAuto = [autoLanguage, ...languages];
 
@@ -33,6 +35,7 @@ export function LanguageProvider({ children }) {
         if (english) setTargetLanguage(english);
 
         setSupportedLanguages(languagesWithAuto);
+        console.log(supportedLanguages)
       } catch (error){
         console.error("Failed to fetch languages:", error);
       }

@@ -24,6 +24,7 @@ public class FlashcardFolder {
             joinColumns = @JoinColumn(referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(referencedColumnName = "id")
     )
+    @Setter
     private List<Flashcard> flashcards = new ArrayList<>();
 
     @Setter

@@ -1,6 +1,7 @@
 package org.example.languagecommunication.flashcard.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.example.languagecommunication.common.annotations.CheckOwnership;
 import org.example.languagecommunication.common.utils.SecurityUtils;
 import org.example.languagecommunication.flashcard.models.Flashcard;
@@ -24,7 +25,7 @@ public class FlashcardController {
     }
 
     @PostMapping
-    public ResponseEntity<Flashcard> addFlashcard(@RequestBody Flashcard flashcard) {
+    public ResponseEntity<Flashcard> addFlashcard(@RequestBody @Valid Flashcard flashcard) {
         Long userId = SecurityUtils.getCurrentUserId();
         flashcard.setUserID(userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(flashcardService.addFlashcard(flashcard));
@@ -66,7 +67,7 @@ public class FlashcardController {
 
     @CheckOwnership
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateFlashcard(@PathVariable Long id, @RequestBody Flashcard updated) {
+    public ResponseEntity<Object> updateFlashcard(@PathVariable Long id, @RequestBody @Valid Flashcard updated) {
         return ResponseEntity.ok(flashcardService.updateFlashcard(id, updated));
     }
 

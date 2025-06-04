@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.languagecommunication.common.annotations.NoHtml;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -20,8 +21,10 @@ public class Flashcard implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Setter
+    @NoHtml
     private String frontContent;
     @Setter
+    @NoHtml
     private String backContent;
     @Setter
     private FlashcardStatus status = FlashcardStatus.ACTIVE;

@@ -2,20 +2,28 @@ package org.example.languagecommunication.flashcard.controllers;
 
 import com.google.zxing.WriterException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import org.example.languagecommunication.common.annotations.CheckOwnership;
+import org.example.languagecommunication.common.annotations.NoHtml;
 import org.example.languagecommunication.common.utils.SecurityUtils;
+import org.example.languagecommunication.flashcard.dto.FlashcardFolderRequest;
 import org.example.languagecommunication.flashcard.dto.FlashcardRequest;
+import org.example.languagecommunication.flashcard.models.Flashcard;
 import org.example.languagecommunication.flashcard.models.FlashcardFolder;
 import org.example.languagecommunication.flashcard.services.FlashcardFolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+@Validated
 @RestController
 @RequestMapping("/api/flashcard-folders")
 public class FlashcardFolderController {
@@ -27,14 +35,22 @@ public class FlashcardFolderController {
     }
 
     @PostMapping
-    public ResponseEntity<FlashcardFolder> createFolder(@RequestBody FlashcardFolder folder) {
+    public ResponseEntity<FlashcardFolder> createFolder(@RequestBody @Valid FlashcardFolderRequest folderRequest) {
+        FlashcardFolder folder = new FlashcardFolder();
+        folder.setName(folderRequest.getName());
         folder.setUserID(SecurityUtils.getCurrentUserId());
+        if (folderRequest.getFlashcards() != null) {
+            for (Flashcard flashcard : folderRequest.getFlashcards()) {
+                flashcard.setUserID(folder.getUserID());
+            }
+            folder.getFlashcards().addAll(folderRequest.getFlashcards());
+        }
         return ResponseEntity.ok(flashcardFolderService.createFlashcardFolder(folder));
     }
 
     @CheckOwnership
     @PutMapping("/{id}")
-    public ResponseEntity<Object> editFolder(@PathVariable UUID id, @RequestParam String name) {
+    public ResponseEntity<Object> editFolder(@PathVariable UUID id, @RequestParam @NoHtml String name) {
         return ResponseEntity.ok(flashcardFolderService.editFlashcardFolder(id, name));
     }
 
@@ -100,5 +116,15 @@ public class FlashcardFolderController {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDenied(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation failure");
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<String> handleConstraintViolation(ConstraintViolationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation failure");
     }
 }

@@ -1,6 +1,6 @@
-package org.example.languagecommunication.translation.awstranslation;
+package org.example.languagecommunication.translation.awstranslation.repository;
 
-import org.example.languagecommunication.translation.awstranslation.DTO.Translation;
+import org.example.languagecommunication.translation.awstranslation.model.Translation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

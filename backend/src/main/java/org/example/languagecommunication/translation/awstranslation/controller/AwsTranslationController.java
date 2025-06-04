@@ -1,9 +1,10 @@
-package org.example.languagecommunication.translation.awstranslation;
+package org.example.languagecommunication.translation.awstranslation.controller;
 
 import org.example.languagecommunication.translation.awstranslation.DTO.DetectedLanguage;
 import org.example.languagecommunication.translation.awstranslation.DTO.LanguageDTO;
-import org.example.languagecommunication.translation.awstranslation.DTO.Translation;
 import org.example.languagecommunication.translation.awstranslation.DTO.TranslationDTO;
+import org.example.languagecommunication.translation.awstranslation.service.AwsTranslationService;
+import org.example.languagecommunication.translation.awstranslation.service.TranslationHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

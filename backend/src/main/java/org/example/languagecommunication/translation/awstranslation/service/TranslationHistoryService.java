@@ -1,11 +1,12 @@
-package org.example.languagecommunication.translation.awstranslation;
+package org.example.languagecommunication.translation.awstranslation.service;
 
 import org.example.languagecommunication.auth.model.User;
 import org.example.languagecommunication.auth.repository.UserRepository;
 import org.example.languagecommunication.common.utils.SecurityUtils;
 import org.example.languagecommunication.exception.TranslationException;
-import org.example.languagecommunication.translation.awstranslation.DTO.Translation;
+import org.example.languagecommunication.translation.awstranslation.model.Translation;
 import org.example.languagecommunication.translation.awstranslation.DTO.TranslationDTO;
+import org.example.languagecommunication.translation.awstranslation.repository.TranslationRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,10 @@ public class TranslationHistoryService {
     }
 
     public Translation saveSuccess(String sourceText, String translatedText, String sourceLang, String targetLang) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         Translation translation = new Translation();
         translation.setSourceText(sourceText);
         translation.setTranslatedText(translatedText);
@@ -31,11 +36,6 @@ public class TranslationHistoryService {
         translation.setTargetLanguage(targetLang);
         translation.setTimestamp(LocalDateTime.now());
         translation.setSuccess(true);
-
-        Long userId = SecurityUtils.getCurrentUserId();
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
         translation.setUser(user);
 
         return translationRepository.save(translation);
@@ -105,6 +105,7 @@ public class TranslationHistoryService {
         }
 
         translationRepository.deleteById(id);
+
     }
 
 }

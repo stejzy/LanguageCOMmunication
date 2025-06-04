@@ -1,4 +1,4 @@
-package org.example.languagecommunication.translation.awstranslation;
+package org.example.languagecommunication.translation.awstranslation.model;
 
 import lombok.Getter;
 

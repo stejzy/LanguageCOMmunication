@@ -117,6 +117,7 @@ export default {
 
   chooseLanguage: "Wybierz język:",
   notValidChosenLang: "Brak pasujących języków dla",
+  languageDetectError: "Nie wykryto języka",
 
   af: "Afrykański",
   sq: "Albański",

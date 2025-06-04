@@ -84,4 +84,14 @@ export const deleteTranslationById = async (id, deleteAndRefresh) => {
 };
 
 
-  
+  export const detectLanguage = async (text) => {
+  try {
+    const { data } = await api.get('/detectLanguage', {
+      params: { text }
+    });
+    return data;
+  } catch (error) {
+    console.error('Language detection failed:', error);
+    return null;
+  }
+};

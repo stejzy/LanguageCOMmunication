@@ -10,13 +10,16 @@ import { Ionicons } from "@expo/vector-icons";
 import UserMenuButton from "@/components/UserMenuButton";
 import { Pressable } from "react-native";
 import { AuthProvider, AuthContext } from "@/context/AuthContext";
-import { LanguageProvider } from "@/context/LanguageContext";
+import { LanguageProvider, LanguageContext } from "@/context/LanguageContext";
 import Toast from "react-native-toast-message";
-import { RecordingProvider } from "@/context/RecordingContext";
+import {
+  RecordingProvider,
+  RecordingContext,
+} from "@/context/RecordingContext";
 import { ThemeContext } from "@/context/ThemeContext";
 import { useContext } from "react";
 import { useRouter } from "expo-router";
-import { AppLangProvider } from "@/context/AppLangContext";
+import { AppLangProvider, AppLangContext } from "@/context/AppLangContext";
 import { TranslationHistoryProvider } from "@/context/TranslationHistoryContext";
 import { useTranslation } from "react-i18next";
 import Animated from "react-native-reanimated";
@@ -26,6 +29,7 @@ import { useSharedValue, withTiming } from "react-native-reanimated";
 import { useEffect } from "react";
 import { Colors } from "@/constans/Colors";
 import { AddFlashcardModalProvider } from "@/context/AddFlashcardModalContext";
+import { ActivityIndicator } from "react-native";
 
 export default function RootLayout() {
   const insets = useSafeAreaInsets();
@@ -34,11 +38,11 @@ export default function RootLayout() {
     <AuthProvider>
       <SafeAreaProvider>
         <ThemeProvider>
-          <RecordingProvider>
-            <AppLangProvider>
-              <TranslationHistoryProvider>
-                <AddFlashcardModalProvider>
-                  <LanguageProvider>
+          <LanguageProvider>
+            <RecordingProvider>
+              <AppLangProvider>
+                <TranslationHistoryProvider>
+                  <AddFlashcardModalProvider>
                     <SafeAreaView
                       style={{
                         flex: 1,
@@ -46,18 +50,48 @@ export default function RootLayout() {
                         paddingBottom: insets.bottom,
                       }}
                     >
-                      <InnerStack />
+                      <AppLoaderWrapper />
                     </SafeAreaView>
                     <Toast />
-                  </LanguageProvider>
-                </AddFlashcardModalProvider>
-              </TranslationHistoryProvider>
-            </AppLangProvider>
-          </RecordingProvider>
+                  </AddFlashcardModalProvider>
+                </TranslationHistoryProvider>
+              </AppLangProvider>
+            </RecordingProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </AuthProvider>
   );
+}
+
+function AppLoaderWrapper() {
+  const { authState } = useContext(AuthContext);
+  const { isLoading: themeLoading } = useContext(ThemeContext);
+  const { isLoading: langLoading } = useContext(LanguageContext);
+  const { isLoading: appLangLoading } = useContext(AppLangContext);
+  const { theme } = useContext(ThemeContext);
+  const { t } = useTranslation();
+
+  const isAnyLoading =
+    authState.loading || themeLoading || langLoading || appLangLoading;
+
+  if (isAnyLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: theme.dark_torq,
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.text} />
+        <Text style={{ color: theme.text, marginTop: 16 }}>{t("loading")}</Text>
+      </View>
+    );
+  }
+
+  return <InnerStack />;
 }
 
 function InnerStack() {
@@ -65,6 +99,7 @@ function InnerStack() {
   const { authState } = useContext(AuthContext);
   const router = useRouter();
   const { t } = useTranslation();
+
   const styles = StyleSheet.create({
     header: {
       flexDirection: "row",
@@ -144,7 +179,7 @@ function InnerStack() {
         name="login"
         options={{
           ...commonHeaderOptions,
-          headerLeft: () => (null),
+          headerLeft: () => null,
           title: "Login",
         }}
       />
@@ -152,7 +187,7 @@ function InnerStack() {
         name="register/index"
         options={{
           ...commonHeaderOptions,
-          headerLeft: () => (null),
+          headerLeft: () => null,
           title: "Register",
         }}
       />
@@ -160,7 +195,7 @@ function InnerStack() {
         name="register/verify"
         options={{
           ...commonHeaderOptions,
-          headerLeft: () => (null),
+          headerLeft: () => null,
           title: "Verify",
         }}
       />

@@ -17,10 +17,7 @@ public class PhraseService {
 
     private final WebClient webClient;
 
-    @Value( "${groq.api.key}")
-    private String apiKey;
-
-    public PhraseService() {
+    public PhraseService(@Value("${groq.api.key}") String apiKey) {
         this.webClient = WebClient.builder()
                 .baseUrl("https://api.groq.com/openai/v1")
                 .defaultHeader("Authorization", "Bearer " + apiKey)

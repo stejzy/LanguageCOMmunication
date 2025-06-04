@@ -182,10 +182,35 @@
             <artifactId>owasp-java-html-sanitizer</artifactId>
             <version>20240325.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-junit5-plugin</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.19.4</version>
+                <configuration>
+                    <targetClasses>
+                        <param>org.example.languagecommunication.auth.service.*</param>
+                        <param>org.example.languagecommunication.flashcard.services.*</param>
+                        <param>org.example.languagecommunication.translation.awstranslation.service.*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>org.example.languagecommunication.auth.service.*</param>
+                        <param>org.example.languagecommunication.flashcard.services.*</param>
+                        <param>org.example.languagecommunication.translation.unitTests.*</param>
+                    </targetTests>
+                    <mutators>
+                        <mutator>STRONGER</mutator>
+                    </mutators>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

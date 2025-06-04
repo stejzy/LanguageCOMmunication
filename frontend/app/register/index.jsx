@@ -98,7 +98,11 @@ export default function register() {
         secureTextEntry={true}
         autoCapitalize="none"
       />
-      <Pressable style={styles.registerButton} onPress={handleRegister}>
+      <Pressable
+        style={styles.registerButton}
+        onPress={handleRegister}
+        testID="register-btn"
+      >
         <Text style={styles.registerText}>{t("register.button")}</Text>
       </Pressable>
     </View>

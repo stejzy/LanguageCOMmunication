@@ -83,7 +83,7 @@ export default function ConversationScreen() {
           style={styles.textInput}
           value={translatedToSource}
           onChangeText={setTranslatedToSource}
-          placeholder="..."
+          placeholder={isRecording ? t("saySth") : t("typeSth")}
           placeholderTextColor={theme.info}
           multiline
         />

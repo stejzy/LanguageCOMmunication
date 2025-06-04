@@ -150,6 +150,7 @@ const CreateFolder = () => {
             {t("flashcardCreateFolderDesc")}
           </Text>
           <TextInput
+            testID="flashcard-folder-name-input"
             mode="flat"
             label={t("flashcardFolderName")}
             placeholder={t("flashcardFolderNamePlaceholder")}
@@ -199,6 +200,7 @@ const CreateFolder = () => {
                   )}
                 </View>
                 <TextInput
+                  testID={`flashcard-front-content-${index}`}
                   label={t("flashcardFrontContent")}
                   placeholder={t("flashcardFrontContentPlaceholder")}
                   value={card.frontContent}
@@ -215,6 +217,7 @@ const CreateFolder = () => {
                   {t("flashcardFieldRequired")}
                 </HelperText>
                 <TextInput
+                  testID={`flashcard-back-content-${index}`}
                   label={t("flashcardBackContent")}
                   placeholder={t("flashcardBackContentPlaceholder")}
                   value={card.backContent}
@@ -235,7 +238,11 @@ const CreateFolder = () => {
           </ScrollView>
         </View>
         <Animated.View style={[styles.footer, { bottom: footerBottom }]}>
-          <Pressable onPressIn={addFlashcard} style={styles.addButton}>
+          <Pressable
+            onPressIn={addFlashcard}
+            style={styles.addButton}
+            testID="add-flashcard-button"
+          >
             <Ionicons
               name="add-circle"
               size={28}
@@ -247,6 +254,7 @@ const CreateFolder = () => {
             </Text>
           </Pressable>
           <Pressable
+            testID="create-folder-button"
             style={[
               styles.createButton,
               !isFormValid && styles.createButtonDisabled,

@@ -138,4 +138,10 @@ public class AuthService implements IAuthService {
 
         return matcher.matches();
     }
+
+    public String getVerificationCodeForEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(User::getVerificationCode)
+                .orElse(null);
+    }
 }

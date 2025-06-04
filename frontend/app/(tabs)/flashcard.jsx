@@ -139,7 +139,7 @@ export default function FlashcardScreen() {
             <Text style={[styles.addText, { marginTop: -10 }]}>↓</Text>
           </Pressable>
           <Link href="/flashcard/create-folder" asChild>
-            <Pressable style={styles.addButton}>
+            <Pressable style={styles.addButton} testID="add-folder-button">
               <Text style={styles.addText}>+</Text>
             </Pressable>
           </Link>

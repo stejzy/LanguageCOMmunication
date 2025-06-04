@@ -45,12 +45,10 @@ export default {
   darkMode: "Ciemny motyw",
   typeSth: "Wpisz coś...",
   saySth: "Mów coś...",
-  typeSth: "Wpisz język",
 
   translationHistory: "Historia tłumaczeń",
   showTranslationHistory: "Pokaż",
   history: "Historia",
-
 
   flashcardAdd: "Dodaj fiszkę",
   flashcardEdit: "Edytuj fiszkę",
@@ -114,6 +112,7 @@ export default {
   flashcardFillBackField: "Uzupełnij definicję",
   flashcardFillFolderField: "Podaj nazwę folderu",
   flashcardFillAllFields: "Uzupełnij wszystkie pola",
+  loading: "Ładowanie...",
 
   chooseLanguage: "Wybierz język:",
   notValidChosenLang: "Brak pasujących języków dla",

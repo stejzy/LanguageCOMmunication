@@ -45,7 +45,6 @@ export default {
   typeSth: "Type something...",
   saySth: "Say something...",
   helloMessage: "Hello, ",
-  typeSth: "Enter language",
 
   translationHistory: "Translation History",
   showTranslationHistory: "Show",
@@ -111,6 +110,7 @@ export default {
   flashcardFillBackField: "Please fill in the definition",
   flashcardFillFolderField: "Please enter the folder name",
   flashcardFillAllFields: "Please fill all fields",
+  loading: "Loading...",
 
   chooseLanguage: "Choose language:",
   notValidChosenLang: "No matching languages for",

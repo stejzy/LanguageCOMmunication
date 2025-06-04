@@ -94,7 +94,7 @@ export default function verify() {
         <Text style={styles.title}>{t("verify.title")}</Text>
       </View>
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      <View style={styles.innerContainer}>
+      <View style={styles.innerContainer} testID="verify-inputs">
         {code.map((char, index) => (
           <TextInput
             key={index}

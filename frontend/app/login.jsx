@@ -113,7 +113,7 @@ export default function AuthScreen() {
       >
         <Text style={styles.registerText}>{t("login.createAccount")}</Text>
       </Pressable>
-      <Pressable onPress={handleLogin} style={styles.button}>
+      <Pressable onPress={handleLogin} style={styles.button} testID="login-btn">
         <Text style={styles.buttonText}>{t("login.button")}</Text>
       </Pressable>
       <Pressable

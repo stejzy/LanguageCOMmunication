@@ -121,8 +121,12 @@ export default function Select() {
         </View>
       )}
 
-      <FlatList
-        data={filteredLanguages}
+     <FlatList
+        data={
+          type !== "source"
+            ? filteredLanguages.filter(lang => lang.languageCode !== "Auto")
+            : filteredLanguages
+        }
         keyExtractor={(item) => item.languageCode}
         renderItem={({ item }) => {
           const isSelected = language?.languageCode === item.languageCode;

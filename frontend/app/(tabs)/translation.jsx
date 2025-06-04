@@ -19,8 +19,12 @@ import { useRecording } from "@/context/RecordingContext";
 import { useTranslation } from "react-i18next";
 import { TranslationHistoryContext } from "@/context/TranslationHistoryContext";
 import { useGlobalAddFlashcardModal } from "@/context/AddFlashcardModalContext";
+import { detectLanguage } from "@/api/translationService";
 
 export default function TranslationScreen() {
+
+
+
   const { t } = useTranslation();
 
   const { openModal } = useGlobalAddFlashcardModal();
@@ -28,6 +32,7 @@ export default function TranslationScreen() {
   const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
   const {
     sourceLanguage,
+    setSourceLanguage,
     targetLanguage,
     textToTranslate,
     setTextToTranslate,
@@ -68,6 +73,8 @@ export default function TranslationScreen() {
     }
   }, [authState.authenticated, sourceLanguage, targetLanguage]);
 
+  const { supportedLanguages } = useContext(LanguageContext); // dodaj do destrukturyzacji
+
   const handleTranslatePress = async () => {
     console.log(
       "Parametry: " +
@@ -78,10 +85,32 @@ export default function TranslationScreen() {
         targetLanguage?.languageCode
     );
 
+    let srcLangCode = sourceLanguage?.languageCode;
+
+    if (srcLangCode === "Auto") {
+      const detected = await detectLanguage(textToTranslate);
+      console.log(detected)
+      if (detected && detected.languageCode && detected.confidenceScore >= 0.75) {
+        srcLangCode = detected.languageCode;
+        const foundLang = supportedLanguages.find(
+          (lang) => lang.languageCode === detected.languageCode
+        );
+        if (foundLang) {
+          setSourceLanguage(foundLang);
+        } else {
+          setTranslatedText(t("languageDetectError") || "Nie udało się wykryć języka.");
+          return;
+        }
+      } else {
+        setTranslatedText(t("languageDetectError") || "Nie udało się wykryć języka.");
+        return;
+      }
+    }
+
     try {
       const response = await translate(
         textToTranslate,
-        sourceLanguage?.languageCode,
+        srcLangCode,
         targetLanguage?.languageCode,
         addAndRefresh
       );

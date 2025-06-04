@@ -1,7 +1,10 @@
 package org.example.languagecommunication.translation.awstranslation.DTO;
 
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 
+@Builder
 public record TranslationDTO(
         Long id,
         String sourceText,

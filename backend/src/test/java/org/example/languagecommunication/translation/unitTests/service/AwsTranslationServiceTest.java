@@ -1,4 +1,4 @@
-package org.example.languagecommunication.translation.service;
+package org.example.languagecommunication.translation.unitTests.service;
 
 import org.example.languagecommunication.exception.LanguageDetectionException;
 import org.example.languagecommunication.translation.awstranslation.DTO.DetectedLanguage;

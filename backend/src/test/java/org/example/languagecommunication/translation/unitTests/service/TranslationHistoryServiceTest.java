@@ -1,4 +1,4 @@
-package org.example.languagecommunication.translation.service;
+package org.example.languagecommunication.translation.unitTests.service;
 
 import org.example.languagecommunication.auth.model.User;
 import org.example.languagecommunication.auth.repository.UserRepository;

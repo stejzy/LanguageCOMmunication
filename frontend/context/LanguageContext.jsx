@@ -1,48 +1,59 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect } from "react";
 import { getSupportedLanguages } from "@/api/translationService";
 import { AuthContext } from "@/context/AuthContext";
-import { SourceTextModule } from 'vm';
 
 export const LanguageContext = createContext();
 
 export function LanguageProvider({ children }) {
-  const [supportedLanguages, setSupportedLanguages] = useState([])
+  const [supportedLanguages, setSupportedLanguages] = useState([]);
   const [sourceLanguage, setSourceLanguage] = useState(null);
   const [targetLanguage, setTargetLanguage] = useState(null);
   const [textToTranslate, setTextToTranslate] = useState("");
   const [translatedText, setTranslatedText] = useState("");
 
-  const {authState} = useContext(AuthContext);
+  const { authState } = useContext(AuthContext);
 
   useEffect(() => {
-  if(authState.authenticated){
-    const fetchSupportedLanguages = async () => {
-      try{
-        const languages = await getSupportedLanguages();
+    if (authState.authenticated) {
+      const fetchSupportedLanguages = async () => {
+        try {
+          const languages = await getSupportedLanguages();
 
-        const autoLanguage = {
-          languageCode: "Auto",
-          languageName: "Auto",
-          languageNamePL: "Auto"
-        };
-        const languagesWithAuto = [autoLanguage, ...languages];
+          const autoLanguage = {
+            languageCode: "Auto",
+            languageName: "Auto",
+            languageNamePL: "Auto",
+          };
+          const languagesWithAuto = [autoLanguage, ...languages];
 
-        const polish = languages.find(lang => lang.languageCode === 'pl');
-        const english = languages.find(lang => lang.languageCode === 'en');
-        if (polish) setSourceLanguage(polish);
-        if (english) setTargetLanguage(english);
+          const polish = languages.find((lang) => lang.languageCode === "pl");
+          const english = languages.find((lang) => lang.languageCode === "en");
+          if (polish) setSourceLanguage(polish);
+          if (english) setTargetLanguage(english);
 
-        setSupportedLanguages(languagesWithAuto);
-      } catch (error){
-        console.error("Failed to fetch languages:", error);
-      }
-    };
-    fetchSupportedLanguages();
-  }
-}, [authState.authenticated])
+          setSupportedLanguages(languagesWithAuto);
+        } catch (error) {
+          console.error("Failed to fetch languages:", error);
+        }
+      };
+      fetchSupportedLanguages();
+    }
+  }, [authState.authenticated]);
 
   return (
-    <LanguageContext.Provider value={{ supportedLanguages ,sourceLanguage, setSourceLanguage, targetLanguage, setTargetLanguage, textToTranslate,  setTextToTranslate, translatedText, setTranslatedText}}>
+    <LanguageContext.Provider
+      value={{
+        supportedLanguages,
+        sourceLanguage,
+        setSourceLanguage,
+        targetLanguage,
+        setTargetLanguage,
+        textToTranslate,
+        setTextToTranslate,
+        translatedText,
+        setTranslatedText,
+      }}
+    >
       {children}
     </LanguageContext.Provider>
   );

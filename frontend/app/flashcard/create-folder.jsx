@@ -188,7 +188,7 @@ const CreateFolder = () => {
                   </Text>
                   {flashcards.length > 1 && (
                     <Pressable
-                      onPressIn={() => removeFlashcard(index)}
+                      onPress={() => removeFlashcard(index)}
                       style={styles.removeButton}
                     >
                       <Ionicons
@@ -239,7 +239,7 @@ const CreateFolder = () => {
         </View>
         <Animated.View style={[styles.footer, { bottom: footerBottom }]}>
           <Pressable
-            onPressIn={addFlashcard}
+            onPress={addFlashcard}
             style={styles.addButton}
             testID="add-flashcard-button"
           >

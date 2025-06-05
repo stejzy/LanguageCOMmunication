@@ -7,6 +7,7 @@ import { useRecording } from "@/context/RecordingContext";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { translate } from "@/api/translationService";
+import { TranslationHistoryContext } from "@/context/TranslationHistoryContext";
 
 export default function ConversationScreen() {
   const { theme } = useContext(ThemeContext);
@@ -18,6 +19,7 @@ export default function ConversationScreen() {
     translatedText,
     setTranslatedText,
   } = useContext(LanguageContext);
+  const { addAndRefresh } = useContext(TranslationHistoryContext);
   const [isRecording, setIsRecording] = useState(false);
 
   const [translatedToSource, setTranslatedToSource] = useState("");
@@ -34,12 +36,14 @@ export default function ConversationScreen() {
         const translatedSrc = await translate(
           textToTranslate,
           "auto",
-          sourceLanguage.languageCode
+          sourceLanguage.languageCode,
+          addAndRefresh
         );
         const translatedTrg = await translate(
           textToTranslate,
           "auto",
-          targetLanguage.languageCode
+          targetLanguage.languageCode,
+          addAndRefresh
         );
 
         setTranslatedToSource(translatedSrc);

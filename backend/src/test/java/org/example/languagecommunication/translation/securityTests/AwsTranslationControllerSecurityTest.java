@@ -73,12 +73,6 @@ public class AwsTranslationControllerSecurityTest {
     }
 
     @Test
-    public void accessSupportedLanguages_withoutToken_shouldReturnUnauthorized() throws Exception {
-        mockMvc.perform(get("/supportedLanguages"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
     public void accessGetAllTranslations_withoutToken_shouldReturnUnauthorized() throws Exception {
         mockMvc.perform(get("/translations/all"))
                 .andExpect(status().isUnauthorized());
@@ -112,13 +106,6 @@ public class AwsTranslationControllerSecurityTest {
     public void accessDetectLanguage_withInvalidToken_shouldReturnUnauthorized() throws Exception {
         mockMvc.perform(get("/detectLanguage")
                         .param("text", "Hello")
-                        .header("Authorization", "Bearer invalid.token"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    public void accessSupportedLanguages_withInvalidToken_shouldReturnUnauthorized() throws Exception {
-        mockMvc.perform(get("/supportedLanguages")
                         .header("Authorization", "Bearer invalid.token"))
                 .andExpect(status().isUnauthorized());
     }

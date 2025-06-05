@@ -87,9 +87,11 @@ export default function MenuTranslationBar() {
 
         <Pressable
           onPress={handleSwapLanguages}
+          disabled={sourceLanguage?.languageCode === "Auto"}
           style={({ pressed }) => [
             styles.swapButton,
             pressed && { backgroundColor: "rgba(224, 224, 224, 0.5)" },
+            sourceLanguage?.languageCode === "Auto" && { opacity: 0.5 },
           ]}
         >
           <Entypo

@@ -23,6 +23,8 @@ export function LanguageProvider({ children }) {
             languageCode: "Auto",
             languageName: "Auto",
             languageNamePL: "Auto",
+            voiceID: "none",
+            transcribeLangCode: "none"
           };
           const languagesWithAuto = [autoLanguage, ...languages];
 
@@ -38,7 +40,7 @@ export function LanguageProvider({ children }) {
       };
       fetchSupportedLanguages();
     }
-  }, [authState.authenticated]);
+}, [authState.authenticated])
 
   return (
     <LanguageContext.Provider

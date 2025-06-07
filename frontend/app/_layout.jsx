@@ -82,11 +82,10 @@ function AppLoaderWrapper() {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: theme.dark_torq,
+          backgroundColor: "#095641",
         }}
       >
-        <ActivityIndicator size="large" color={theme.text} />
-        <Text style={{ color: theme.text, marginTop: 16 }}>{t("loading")}</Text>
+        <ActivityIndicator size="large" color="#FFFFFF" />
       </View>
     );
   }

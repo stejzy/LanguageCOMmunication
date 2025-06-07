@@ -44,7 +44,10 @@ export default function FlashcardTestScreen() {
         const folder = await flashcardService.getFlashcardOneFolder(id);
         if (!folder.flashcards || folder.flashcards.length === 0) {
           Toast.show({ type: "error", text1: t("flashcardNoFolders") });
-          router.back();
+          const didGoBack = router.back();
+          if (!didGoBack) {
+            router.replace("/(tabs)/flashcard");
+          }
           return;
         }
         setFlashcards(folder.flashcards);
@@ -133,12 +136,14 @@ export default function FlashcardTestScreen() {
         <Pressable
           style={[styles.actionButton, styles.wrongButton]}
           onPress={() => handleReview(false)}
+          testID="wrong-button"
         >
           <Text style={styles.actionButtonText}>✗</Text>
         </Pressable>
         <Pressable
           style={[styles.actionButton, styles.correctButton]}
           onPress={() => handleReview(true)}
+          testID="correct-button"
         >
           <Text style={styles.actionButtonText}>✓</Text>
         </Pressable>
@@ -160,7 +165,7 @@ const createStyles = (theme, colorScheme) =>
       minWidth: 260,
       minHeight: 120,
       maxWidth: 400,
-      maxHeight: 300,
+      maxHeight: 600,
       backgroundColor: theme.dark_torq,
       borderRadius: 18,
       justifyContent: "center",
@@ -185,6 +190,8 @@ const createStyles = (theme, colorScheme) =>
       color: theme.text,
       fontSize: 22,
       textAlign: "center",
+      flexWrap: "wrap",
+      width: "100%",
     },
     buttonRow: {
       flexDirection: "row",

@@ -135,6 +135,7 @@ export default function FlashcardScreen() {
               setImportError("");
               setImportSuccess("");
             }}
+            testID="import-folder-button"
           >
             <Text style={[styles.addText, { marginTop: -10 }]}>↓</Text>
           </Pressable>
@@ -211,6 +212,7 @@ export default function FlashcardScreen() {
                   placeholderTextColor={theme.text}
                   autoCapitalize="none"
                   autoCorrect={false}
+                  testID="import-folder-input"
                 />
                 {importError ? (
                   <Text
@@ -272,6 +274,7 @@ export default function FlashcardScreen() {
                       opacity: importLoading ? 0.7 : 1,
                     }}
                     disabled={importLoading}
+                    testID="folder-import-button"
                   >
                     <Text
                       style={{

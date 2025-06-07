@@ -52,6 +52,7 @@ export default function FlashcardFolder({ folder, onDelete }) {
             onPress={handleOpen}
             onLongPress={openMenu}
             onContextMenu={Platform.OS === "web" ? openMenu : undefined}
+            testID="flashcard-folder"
           >
             <View style={styles.flashcardFolder}>
               <View style={[styles.tab, styles.tabTopLeft]}></View>
@@ -90,8 +91,10 @@ const createStyles = (theme) => {
       textAlign: "left",
       color: theme.text,
       textAlign: "center",
-      fontSize: 24 * scaling,
+      fontSize: 18 * scaling,
       marginTop: 5 * scaling,
+      maxWidth: "100%",
+      overflow: "hidden",
     },
     tabTopLeft: {
       width: 70 * scaling,

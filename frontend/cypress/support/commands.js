@@ -13,3 +13,26 @@ Cypress.Commands.add("login", (username, password) => {
     .first()
     .click({ force: true });
 });
+
+// Global delay after selected Cypress commands for debugging
+const COMMANDS_TO_DELAY = [
+  "click",
+  "type",
+  "clear",
+  "check",
+  "uncheck",
+  "select",
+  "trigger",
+  "dblclick",
+  "rightclick",
+  "focus",
+  "blur",
+];
+
+COMMANDS_TO_DELAY.forEach((command) => {
+  Cypress.Commands.overwrite(command, (originalFn, ...args) => {
+    return originalFn(...args).then((result) => {
+      return Cypress.Promise.delay(50).then(() => result);
+    });
+  });
+});

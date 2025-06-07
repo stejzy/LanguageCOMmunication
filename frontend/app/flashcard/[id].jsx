@@ -217,12 +217,14 @@ function FlashcardFolderDetail() {
               <Pressable
                 style={styles.editButton}
                 onPress={() => openEditModal(flashcard)}
+                testID={`edit-flashcard-${flashcard.id}`}
               >
                 <Ionicons name="create-outline" size={20} color={theme.torq} />
               </Pressable>
               <Pressable
                 style={styles.deleteButton}
                 onPress={() => handleDelete(flashcard.id)}
+                testID={`delete-flashcard-${flashcard.id}`}
               >
                 <Ionicons name="trash-outline" size={20} color="#FF5A5F" />
               </Pressable>
@@ -240,12 +242,14 @@ function FlashcardFolderDetail() {
               hideFolderPicker: true,
             })
           }
+          testID="add-flashcard-button"
         >
           <Text style={styles.addButtonText}>{t("flashcardAdd")}</Text>
         </Pressable>
         <Pressable
           style={[styles.addButton]}
           onPress={() => setExportModalVisible(true)}
+          testID="export-folder-modal"
         >
           <Text style={styles.addButtonText}>{t("flashcardExport")}</Text>
         </Pressable>
@@ -446,6 +450,7 @@ function FlashcardFolderDetail() {
                     }}
                     numberOfLines={2}
                     ellipsizeMode="middle"
+                    testID="export-folder-code"
                   >
                     {`${id}`}
                   </Text>

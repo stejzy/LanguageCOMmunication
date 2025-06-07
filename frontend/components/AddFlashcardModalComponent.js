@@ -181,6 +181,7 @@ export default function AddFlashcardModalComponent({
               placeholderTextColor={theme.text}
               editable={!saving}
               maxLength={200}
+              testID="flashcard-front-content-input"
             />
             {frontError ? (
               <Text style={styles.error}>{frontError}</Text>
@@ -197,6 +198,7 @@ export default function AddFlashcardModalComponent({
               placeholderTextColor={theme.text}
               editable={!saving}
               maxLength={200}
+              testID="flashcard-back-content-input"
             />
             {backError ? (
               <Text style={styles.error}>{backError}</Text>

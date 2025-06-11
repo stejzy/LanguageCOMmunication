@@ -25,8 +25,16 @@
           "valueFrom": "arn:aws:ssm:eu-central-1:<ACCOUNT_ID>:parameter/APP_PASSWORD"
         },
         {
-          "name": "GOOGLE_CLIENT_ID",
-          "valueFrom": "arn:aws:ssm:eu-central-1:<ACCOUNT_ID>:parameter/GOOGLE_CLIENT_ID"
+          "name": "GOOGLE_CLIENT_WEB_ID",
+          "valueFrom": "arn:aws:ssm:eu-central-1:<ACCOUNT_ID>:parameter/GOOGLE_CLIENT_WEB_ID"
+        },
+        {
+          "name": "GOOGLE_CLIENT_ANDROID_ID",
+          "valueFrom": "arn:aws:ssm:eu-central-1:<ACCOUNT_ID>:parameter/GOOGLE_CLIENT_ANDROID_ID"
+        },
+        {
+          "name": "GROQ_API_KEY",
+          "valueFrom": "arn:aws:ssm:eu-central-1:<ACCOUNT_ID>:parameter/GROQ_API_KEY"
         },
         {
           "name": "JWT_SECRET_KEY",

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Frontend",
-    "slug": "Frontend",
+    "name": "Flashlingo",
+    "slug": "Flashlingo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -14,7 +14,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#222222"
       },
       "package": "com.lancom.flashlingo",
       "permissions": [
@@ -35,7 +35,7 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#222222"
         }
       ],
       "expo-secure-store",
@@ -51,7 +51,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "fee1e0a5-4358-4e3d-8a03-6982923f2995"
+        "projectId": "b65dc52d-b437-443f-a8b0-948656efcae2"
       }
     },
     "owner": "ioad2_2"

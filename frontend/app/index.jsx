@@ -5,10 +5,6 @@ import { useContext } from "react";
 export default function Index() {
   const { authState } = useContext(AuthContext);
 
-  if (authState.loading) {
-    return null;
-  }
-
   return authState?.authenticated ? (
     <Redirect href="/(tabs)/phrases" />
   ) : (

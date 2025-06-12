@@ -167,7 +167,10 @@ export default function PhrasesScreen() {
       {/*</View>*/}
 
       <View
-        style={[styles.background, { height: keyboardVisible ? "15%" : "16%" }]}
+        style={[
+          styles.background,
+          { height: keyboardVisible ? "15%" : "16%", marginBottom: 20 },
+        ]}
       >
         <View style={styles.languageButtonsRow}>
           <LanguageSelector type="target" />

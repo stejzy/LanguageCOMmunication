@@ -112,7 +112,7 @@ export default function MicrophoneButton({ isRecording, setIsRecording }) {
       console.log("Siema:");
       console.log(transcribeLangCode);
       socket.current = new WebSocket(
-        `ws://localhost:8080/ws/transcription?transcribeLangCode=${
+        `wss://api.flashlingo.app/ws/transcription?transcribeLangCode=${
           sourceLanguage?.transcribeLangCode || "none"
         }`
       );
@@ -199,7 +199,7 @@ export default function MicrophoneButton({ isRecording, setIsRecording }) {
     });
 
     socket.current = new WebSocket(
-      `ws://api.flashlingo.app/ws/transcription?transcribeLangCode=${
+      `wss://api.flashlingo.app/ws/transcription?transcribeLangCode=${
         sourceLanguage?.transcribeLangCode || "none"
       }`
     );

@@ -9,17 +9,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
 import java.util.Map;
 
-import io.github.cdimascio.dotenv.Dotenv;
-
-
 @Service
 public class PhraseService {
 
     private final WebClient webClient;
 
-    public PhraseService(@Value("${groq.api.key}") String apiKey) {
+    public PhraseService(@Value("${openai.api.key}") String apiKey) {
         this.webClient = WebClient.builder()
-                .baseUrl("https://api.groq.com/openai/v1")
+                .baseUrl("https://api.openai.com/v1")
                 .defaultHeader("Authorization", "Bearer " + apiKey)
                 .defaultHeader("Content-Type", "application/json")
                 .build();
@@ -27,7 +24,7 @@ public class PhraseService {
 
     public String getResponse(String phrase) {
         Map<String, Object> requestBody = Map.of(
-                "model", "llama3-70b-8192",
+                "model", "gpt-4.1-nano-2025-04-14",
                 "messages", List.of(
                         Map.of(
                                 "role", "user",

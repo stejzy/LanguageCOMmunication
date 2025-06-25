@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,18 +39,32 @@ public class AuthService implements IAuthService {
 
     @Override
     public User register(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new EmailAlreadyExistsException("Email " + user.getEmail() + " is already registered.");
+        Optional<User> existingUserOpt = userRepository.findByEmail(user.getEmail());
+        if (existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+
+            if (existingUser.isEnabled()) {
+                throw new EmailAlreadyExistsException("Email " + user.getEmail() + " is already registered.");
+            }
+
+            validateUser(user);
+
+            String verificationCode = java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 6);
+            existingUser.setVerificationCode(verificationCode);
+            existingUser.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
+
+            existingUser.setUsername(user.getUsername());
+            existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            try {
+                emailService.sendVerificationEmail(existingUser.getEmail(), verificationCode);
+            } catch (MailSendException err) {
+                throw new MailSendFailedException("Mail server connection failed. Couldn't connect to host.");
+            }
+
+            return userRepository.save(existingUser);
         }
 
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new EmailAlreadyExistsException("Username " + user.getUsername() + " is already taken.");
-        }
-
-        if (!isValidPassword(user.getPassword())) {
-            throw new IncorrectPasswordException("Password must be at least 8 characters long, " +
-                    "contain at least one letter, one digit, and one special character.");
-        }
+        validateUser(user);
 
         String verificationCode = java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 6);
         user.setVerificationCode(verificationCode);
@@ -63,8 +78,18 @@ public class AuthService implements IAuthService {
             throw new MailSendFailedException("Mail server connection failed. Couldn't connect to host.");
         }
 
-
         return userRepository.save(user);
+    }
+
+    private void validateUser(User user) {
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new EmailAlreadyExistsException("Username " + user.getUsername() + " is already taken.");
+        }
+
+        if (!isValidPassword(user.getPassword())) {
+            throw new IncorrectPasswordException("Password must be at least 8 characters long, " +
+                    "contain at least one letter, one digit, and one special character.");
+        }
     }
 
     @Override

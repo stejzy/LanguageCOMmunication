@@ -1,9 +1,8 @@
-import { View, TextInput, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useContext, useState } from "react";
 import { ThemeContext } from "@/context/ThemeContext";
 import { LanguageContext } from "@/context/LanguageContext";
 import MicrophoneButton from "../../components/translation/MicrophoneButton";
-import { useRecording } from "@/context/RecordingContext";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { translate } from "@/api/translationService";
@@ -58,18 +57,18 @@ export default function ConversationScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.bubble}>
+      <View style={[styles.bubble, { transform: [{ rotate: "180deg" }] }]}>
         <Text style={styles.langLabel}>
           {t(targetLanguage?.languageCode).toUpperCase()}
         </Text>
-        <TextInput
-          style={styles.textInput}
-          value={translatedToTarget}
-          onChangeText={setTranslatedToTarget}
-          placeholder={isRecording ? t("saySth") : t("typeSth")}
-          placeholderTextColor={theme.info}
-          multiline
-        />
+        <Text
+            style={[
+              styles.textInput,
+              !translatedToTarget && { color: theme.info },
+            ]}
+        >
+          {translatedToTarget || ("Try clicking the microphone :)")}
+        </Text>
       </View>
 
       <View style={styles.micWrapper}>
@@ -83,14 +82,16 @@ export default function ConversationScreen() {
         <Text style={styles.langLabel}>
           {t(sourceLanguage?.languageCode).toUpperCase()}
         </Text>
-        <TextInput
-          style={styles.textInput}
-          value={translatedToSource}
-          onChangeText={setTranslatedToSource}
-          placeholder={isRecording ? t("saySth") : t("typeSth")}
-          placeholderTextColor={theme.info}
-          multiline
-        />
+
+        <Text
+            style={[
+              styles.textInput,
+              !translatedToTarget && { color: theme.info },
+            ]}
+        >
+          {translatedToSource || ("Try clicking the microphone :)")}
+        </Text>
+
       </View>
     </View>
   );

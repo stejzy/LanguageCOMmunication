@@ -86,7 +86,7 @@ function FlashcardFolderDetail() {
     try {
       await flashcardService.deleteFlashcard(flashcardId);
       setFlashcards((prev) => prev.filter((f) => f.id !== flashcardId));
-      Toast.show({ type: "success", text1: t("flashcardDeleteSuccess") });
+      // Toast.show({ type: "success", text1: t("flashcardDeleteSuccess") });
     } catch (error) {
       Toast.show({ type: "error", text1: t("flashcardDeleteError") });
     }
@@ -122,7 +122,7 @@ function FlashcardFolderDetail() {
       });
       const folder = await flashcardService.getFlashcardOneFolder(id);
       setFlashcards(folder.flashcards);
-      Toast.show({ type: "success", text1: t("flashcardUpdateSuccess") });
+      // Toast.show({ type: "success", text1: t("flashcardUpdateSuccess") });
       closeEditModal();
     } catch (error) {
       Toast.show({ type: "error", text1: t("flashcardUpdateError") });
@@ -144,7 +144,7 @@ function FlashcardFolderDetail() {
     try {
       await flashcardService.editFolderName(id, newFolderName);
       setFolderName(newFolderName);
-      Toast.show({ type: "success", text1: t("flashcardFolderUpdateSuccess") });
+      // Toast.show({ type: "success", text1: t("flashcardFolderUpdateSuccess") });
       closeEditFolderModal();
     } catch (error) {
       Toast.show({ type: "error", text1: t("flashcardFolderUpdateError") });
@@ -173,6 +173,7 @@ function FlashcardFolderDetail() {
         style={[
           styles.addButton,
           {
+            width: "60%",
             marginBottom: 10,
             backgroundColor: theme.mint,
             alignSelf: "center",

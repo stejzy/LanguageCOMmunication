@@ -8,7 +8,6 @@ import {
   Pressable,
   StatusBar,
 } from "react-native";
-import Toast from "react-native-toast-message";
 import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { AuthContext } from "@/context/AuthContext";
@@ -53,30 +52,35 @@ export default function AuthScreen() {
     if (response?.type === "success") {
       const { id_token } = response.params;
       handleGoogleLogin(id_token);
-    } else if (response?.type === "error") {
-      Toast.show({ type: "error", text1: t("login.googleError") });
     }
   }, [response]);
 
   const handleGoogleLogin = async (idToken) => {
     try {
       await onGoogleLogin(idToken);
-      Toast.show({ type: "success", text1: t("login.googleSuccess") });
+      // Toast.show({ type: "success", text1: t("login.googleSuccess") });
       router.replace("/(tabs)/translation");
     } catch (err) {
+      if (err.response?.status === 409) {
+        setError(t("login.googleAlreadyExists"));
+      } else {
+        setError(t("login.unknownError"));
+      }
+
       console.error("Google login error:", err);
-      Toast.show({ type: "error", text1: t("login.googleBackendError") });
     }
   };
 
   const handleLogin = async () => {
     try {
       await onLogin(username, password);
-      Toast.show({ type: "success", text1: t("login.success") });
+      // Toast.show({ type: "success", text1: t("login.success") });
       router.replace("/(tabs)/translation");
     } catch (err) {
       if (err.response?.status === 401) {
         setError(t("login.error"));
+      } else if (err.response?.status === 400) {
+        setError(t("login.invalidCredentials"));
       } else {
         setError(t("login.unknownError"));
         console.error("Login error:", err);

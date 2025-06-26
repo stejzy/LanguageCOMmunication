@@ -169,7 +169,10 @@ export default function PhrasesScreen() {
       <View
         style={[
           styles.background,
-          { height: keyboardVisible ? "15%" : "16%", marginBottom: 20 },
+          {
+            height: keyboardVisible ? "15%" : "15%",
+            marginBottom: keyboardVisible ? 0 : 20,
+          },
         ]}
       >
         <View style={styles.languageButtonsRow}>

@@ -133,6 +133,16 @@ class AuthIntegrationTest {
                 .content(objectMapper.writeValueAsString(registerDTO)))
                 .andExpect(status().isOk());
 
+        //Verify user
+        User user = userRepository.findByEmail("integration2@email.com").get();
+        VerificationRequest verifyReq = new VerificationRequest();
+        verifyReq.setEmail("integration2@email.com");
+        verifyReq.setCode(user.getVerificationCode());
+        mockMvc.perform(post("/api/auth/verify")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(verifyReq)))
+                .andExpect(status().isOk());
+
         // Second registration with same email
         RegisterDTO registerDTO2 = new RegisterDTO();
         registerDTO2.setUsername("integrationuser3");
@@ -143,6 +153,32 @@ class AuthIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerDTO2)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Register with duplicate email before verification shouldnt fail")
+    void register_duplicateEmail_beforeVerification() throws Exception {
+        RegisterDTO registerDTO = new RegisterDTO();
+        registerDTO.setUsername("integrationuser2");
+        registerDTO.setEmail("integration2@email.com");
+        registerDTO.setPassword("Password1!");
+
+        // First registration
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerDTO)))
+                .andExpect(status().isOk());
+
+        // Second registration with same email
+        RegisterDTO registerDTO2 = new RegisterDTO();
+        registerDTO2.setUsername("integrationuser3");
+        registerDTO2.setEmail("integration2@email.com");
+        registerDTO2.setPassword("Password1!");
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerDTO2)))
+                .andExpect(status().isOk());
     }
 
     @Test

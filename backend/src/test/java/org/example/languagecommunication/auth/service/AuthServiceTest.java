@@ -65,6 +65,7 @@ class AuthServiceTest {
     @Test
     void register_ShouldThrowWhenEmailExists() {
         User user = new User("testuser", "test@example.com", "password");
+        user.setEnabled(true);
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
 
         assertThrows(EmailAlreadyExistsException.class, () -> authService.register(user));

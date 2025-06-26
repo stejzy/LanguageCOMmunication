@@ -4,6 +4,7 @@ import { AppLangContext } from "@/context/AppLangContext";
 import { useContext, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { Switch } from "react-native";
+import { AuthContext } from "@/context/AuthContext";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -17,6 +18,7 @@ export default function SettingsScreen() {
   const { t } = useTranslation();
   const { setColorScheme, colorScheme } = useContext(ThemeContext);
   const { language, setLanguage } = useContext(AppLangContext);
+  const { authState } = useContext(AuthContext);
   const router = useRouter();
 
   const light = Colors.light;
@@ -32,14 +34,22 @@ export default function SettingsScreen() {
 
   const animatedColors = useAnimatedStyle(() => {
     return {
-      backgroundColor: interpolateColor(progress.value, [0, 1], [light.d_gray, dark.d_gray]),
+      backgroundColor: interpolateColor(
+        progress.value,
+        [0, 1],
+        [light.d_gray, dark.d_gray]
+      ),
     };
   });
 
   const getAnimatedColor = (lightColor, darkColor) => {
     return useAnimatedStyle(() => {
       return {
-        color: interpolateColor(progress.value, [0, 1], [lightColor, darkColor]),
+        color: interpolateColor(
+          progress.value,
+          [0, 1],
+          [lightColor, darkColor]
+        ),
       };
     });
   };
@@ -47,7 +57,11 @@ export default function SettingsScreen() {
   const getAnimatedBackground = (lightColor, darkColor) => {
     return useAnimatedStyle(() => {
       return {
-        backgroundColor: interpolateColor(progress.value, [0, 1], [lightColor, darkColor]),
+        backgroundColor: interpolateColor(
+          progress.value,
+          [0, 1],
+          [lightColor, darkColor]
+        ),
       };
     });
   };
@@ -59,8 +73,12 @@ export default function SettingsScreen() {
   const visibilityPL = useSharedValue(language == "pl" ? 1 : 0);
   const visibilityEN = useSharedValue(language == "en" ? 1 : 0);
 
-  const showChoosenButtonPL = useAnimatedStyle(() => ({ opacity: visibilityPL.value }));
-  const showChoosenButtonEN = useAnimatedStyle(() => ({ opacity: visibilityEN.value }));
+  const showChoosenButtonPL = useAnimatedStyle(() => ({
+    opacity: visibilityPL.value,
+  }));
+  const showChoosenButtonEN = useAnimatedStyle(() => ({
+    opacity: visibilityEN.value,
+  }));
 
   const handleChangeLang = (lang) => {
     if (lang !== language) {
@@ -79,7 +97,9 @@ export default function SettingsScreen() {
           {t("themeSwitch")}
         </Animated.Text>
 
-        <Animated.View style={[styles.themeSwitchBackground, torqBackColorAnimation]}>
+        <Animated.View
+          style={[styles.themeSwitchBackground, torqBackColorAnimation]}
+        >
           <Animated.Text style={[styles.italicLabel, textAnimation]}>
             {t("darkMode")}
           </Animated.Text>
@@ -93,37 +113,73 @@ export default function SettingsScreen() {
           />
         </Animated.View>
 
-        <Animated.Text style={[styles.themeSwitchText, torqColorAnimation, { marginTop: 30 }]}>  
+        <Animated.Text
+          style={[
+            styles.themeSwitchText,
+            torqColorAnimation,
+            { marginTop: 30 },
+          ]}
+        >
           {t("appLangOpt")}
         </Animated.Text>
 
         {["pl", "en"].map((lang) => (
-          <Animated.View key={lang} style={[styles.themeSwitchBackground, torqBackColorAnimation]}>
+          <Animated.View
+            key={lang}
+            style={[styles.themeSwitchBackground, torqBackColorAnimation]}
+          >
             <Animated.Text style={[styles.italicLabel, textAnimation]}>
               {t(lang)}
             </Animated.Text>
 
-            <Pressable style={styles.radioButton} onPress={() => handleChangeLang(lang)}>
+            <Pressable
+              style={styles.radioButton}
+              onPress={() => handleChangeLang(lang)}
+            >
               {language === lang && (
                 <Animated.View
-                  style={[styles.checkedButton, lang === "pl" ? showChoosenButtonPL : showChoosenButtonEN]}
+                  style={[
+                    styles.checkedButton,
+                    lang === "pl" ? showChoosenButtonPL : showChoosenButtonEN,
+                  ]}
                 />
               )}
             </Pressable>
           </Animated.View>
         ))}
 
-        <Animated.Text style={[styles.themeSwitchText, torqColorAnimation, { marginTop: 30 }]}>  
-          {t("translationHistory")}
-        </Animated.Text>
+        {authState.authenticated && (
+          <>
+            <Animated.Text
+              style={[
+                styles.themeSwitchText,
+                torqColorAnimation,
+                { marginTop: 30 },
+              ]}
+            >
+              {t("translationHistory")}
+            </Animated.Text>
 
-        <View style={{ alignItems: "center" }}>
-          <Pressable style={{ width: "100%" }} onPress={() => router.push("/translationHistory")}>
-            <Animated.View style={[styles.translationHistoryButton, torqBackColorAnimation]}>
-              <Animated.Text style={[styles.italicLabel, textAnimation]}> {t("showTranslationHistory")}</Animated.Text>
-            </Animated.View>
-          </Pressable>
-        </View>
+            <View style={{ alignItems: "center" }}>
+              <Pressable
+                style={{ width: "100%" }}
+                onPress={() => router.push("/translationHistory")}
+              >
+                <Animated.View
+                  style={[
+                    styles.translationHistoryButton,
+                    torqBackColorAnimation,
+                  ]}
+                >
+                  <Animated.Text style={[styles.italicLabel, textAnimation]}>
+                    {" "}
+                    {t("showTranslationHistory")}
+                  </Animated.Text>
+                </Animated.View>
+              </Pressable>
+            </View>
+          </>
+        )}
       </View>
     </Animated.View>
   );

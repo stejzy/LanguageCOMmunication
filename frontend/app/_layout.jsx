@@ -158,11 +158,10 @@ function InnerStack() {
           });
         }}
       >
-        {authState.authenticated && (
-          <View style={{ paddingRight: Platform.OS === "web" ? 16 : 0 }}>
-            <Ionicons name="settings-outline" size={24} color={theme.text} />
-          </View>
-        )}
+        <View style={{ paddingRight: Platform.OS === "web" ? 16 : 0 }}>
+          <Ionicons name="settings-outline" size={24} color={theme.text} />
+        </View>
+
         <></>
       </Pressable>
     ),

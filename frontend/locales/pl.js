@@ -9,11 +9,14 @@ export default {
     username: "Nazwa użytkownika",
     password: "Hasło",
     button: "Zaloguj się",
+    invalidCredentials: "Nieprawidłowa nazwa użytkownika lub hasło.",
     createAccount: "Utwórz nowe konto.",
     googleButton: "Zaloguj się przez Google",
     googleError: "Logowanie Google nie powiodło się.",
     googleSuccess: "Zalogowano przez Google!",
-    googleBackendError: "Błąd backendu przy logowaniu Google.",
+    googleBackendError: "Błąd przy logowaniu Google.",
+    googleAlreadyExists:
+      "To konto zostało zarejestrowane bez użycia Google. Zaloguj się tradycyjnie przy użyciu nazwy użytkownika i hasła.",
     success: "Zalogowano pomyślnie!",
     error: "Nieprawidłowa nazwa użytkownika lub hasło.",
     unknownError: "Wystąpił błąd. Spróbuj ponownie.",
@@ -113,6 +116,7 @@ export default {
   flashcardFillFolderField: "Podaj nazwę folderu",
   flashcardFillAllFields: "Uzupełnij wszystkie pola",
   loading: "Ładowanie...",
+  flashcardTestInstruction: "Dotknij fiszki, aby zobaczyć odpowiedź.",
 
   chooseLanguage: "Wybierz język:",
   notValidChosenLang: "Brak pasujących języków dla",

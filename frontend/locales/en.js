@@ -8,11 +8,14 @@ export default {
     username: "Username",
     password: "Password",
     button: "Login",
+    invalidCredentials: "Invalid username or password.",
     createAccount: "Create new account.",
     googleButton: "Sign in with Google",
     googleError: "Google sign-in failed.",
     googleSuccess: "Logged in with Google!",
-    googleBackendError: "Backend Google login failed.",
+    googleBackendError: "Google login failed.",
+    googleAlreadyExists:
+      "This account was registered without using Google. Please log in with your username and password.",
     success: "Login successful!",
     error: "Invalid username or password.",
     unknownError: "An error occurred. Please try again.",
@@ -110,6 +113,7 @@ export default {
   flashcardFillBackField: "Please fill in the definition",
   flashcardFillFolderField: "Please enter the folder name",
   flashcardFillAllFields: "Please fill all fields",
+  flashcardTestInstruction: "Tap the flashcard to see the answer.",
   loading: "Loading...",
 
   chooseLanguage: "Choose language:",

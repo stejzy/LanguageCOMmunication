@@ -121,6 +121,7 @@ export default function FlashcardTestScreen() {
 
   return (
     <View style={styles.centered}>
+      <Text style={styles.instruction}>{t("flashcardTestInstruction")}</Text>
       <Text style={styles.counter}>
         {current + 1} / {order.length}
       </Text>
@@ -160,6 +161,12 @@ const createStyles = (theme, colorScheme) =>
       alignItems: "center",
       backgroundColor: theme.d_gray,
       padding: 16,
+    },
+    instruction: {
+      fontSize: 14,
+      color: "gray",
+      marginBottom: 8,
+      textAlign: "center",
     },
     card: {
       minWidth: 260,

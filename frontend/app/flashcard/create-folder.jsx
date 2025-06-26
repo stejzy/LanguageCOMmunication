@@ -13,13 +13,15 @@ import { useTranslation } from "react-i18next";
 import { Colors } from "@/constans/Colors";
 import { Keyboard, Animated } from "react-native";
 import { Platform } from "react-native";
+import useKeyboard from "@/hooks/useKeyboard";
 
 import * as flashcardService from "@/api/flashcardService";
 
 const CreateFolder = () => {
   const { width } = useWindowDimensions();
   const { colorScheme, theme } = useContext(ThemeContext);
-  const styles = createStyles(theme, colorScheme, width);
+  const keyboardVisible = useKeyboard();
+  const styles = createStyles(theme, colorScheme, width, keyboardVisible);
   const router = useRouter();
   const { t } = useTranslation();
 
@@ -53,10 +55,10 @@ const CreateFolder = () => {
         name: flashcardName,
         flashcards,
       });
-      Toast.show({
-        type: "success",
-        text1: t("flashcardCreateFolderSuccess"),
-      });
+      // Toast.show({
+      //   type: "success",
+      //   text1: t("flashcardCreateFolderSuccess"),
+      // });
       setTouchedName(false);
       setFlashcardName("");
       setFlashcards([
@@ -104,29 +106,6 @@ const CreateFolder = () => {
     flashcards[i].touchedFront && flashcards[i].frontContent.trim() === "";
   const isBackError = (i) =>
     flashcards[i].touchedBack && flashcards[i].backContent.trim() === "";
-
-  const footerBottom = React.useRef(new Animated.Value(0)).current;
-
-  React.useEffect(() => {
-    const showSub = Keyboard.addListener("keyboardDidShow", (e) => {
-      Animated.timing(footerBottom, {
-        toValue: e.endCoordinates.height,
-        duration: 0,
-        useNativeDriver: false,
-      }).start();
-    });
-    const hideSub = Keyboard.addListener("keyboardDidHide", () => {
-      Animated.timing(footerBottom, {
-        toValue: 0,
-        duration: 0,
-        useNativeDriver: false,
-      }).start();
-    });
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, [footerBottom]);
 
   return (
     <PaperProvider
@@ -237,7 +216,7 @@ const CreateFolder = () => {
             ))}
           </ScrollView>
         </View>
-        <Animated.View style={[styles.footer, { bottom: footerBottom }]}>
+        <View style={[styles.footer]}>
           <Pressable
             onPress={addFlashcard}
             style={styles.addButton}
@@ -263,19 +242,21 @@ const CreateFolder = () => {
           >
             <Text style={styles.createText}>{t("flashcardCreate")}</Text>
           </Pressable>
-        </Animated.View>
+        </View>
       </View>
     </PaperProvider>
   );
 };
 
-const createStyles = (theme, colorScheme, screenWidth) => {
+const createStyles = (theme, colorScheme, screenWidth, keyboardVisible) => {
   const isWide = screenWidth > 600;
   return StyleSheet.create({
     footer: {
+      display: keyboardVisible ? "none" : "flex",
       position: "absolute",
       left: 0,
       right: 0,
+      bottom: 0,
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",

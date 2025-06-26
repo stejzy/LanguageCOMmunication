@@ -126,7 +126,7 @@ export default function AddFlashcardModalComponent({
             },
           ],
         });
-        Toast.show({ type: "success", text1: t("flashcardAddSuccess") });
+        // Toast.show({ type: "success", text1: t("flashcardAddSuccess") });
         if (onSuccessRef.current && res.flashcards && res.flashcards[0])
           onSuccessRef.current(res.flashcards[0]);
         closeModal();
@@ -142,7 +142,7 @@ export default function AddFlashcardModalComponent({
         selectedFolderId,
         newFlashcard.id
       );
-      Toast.show({ type: "success", text1: t("flashcardAddSuccess") });
+      // Toast.show({ type: "success", text1: t("flashcardAddSuccess") });
       if (onSuccessRef.current) onSuccessRef.current(newFlashcard);
       closeModal();
     } catch (e) {

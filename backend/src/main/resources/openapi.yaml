@@ -1,0 +1,1162 @@
+openapi: 3.1.0
+info:
+  title: Flashlingo API
+  description: |
+    # Flashlingo - Language Learning Application API
+
+    ## Overview
+    Flashlingo is a comprehensive language learning application that helps users learn new languages through various interactive features including flashcards, translation services, text detection, speech synthesis, and AI-powered phrase generation.
+
+    ## Key Features
+    - **Authentication & Authorization**: Secure user registration, login, and JWT-based authentication
+    - **Flashcard Management**: Create, organize, and study flashcards with spaced repetition
+    - **Translation Services**: Real-time text translation using AWS Translate
+    - **Text Detection**: Extract text from images using AWS Textract
+    - **Speech Services**: Text-to-speech and speech-to-text conversion
+    - **AI Phrase Generation**: Generate contextual phrases from keywords
+
+    ## Authentication
+    Most endpoints require authentication. Include the JWT token in the Authorization header:
+    ```
+    Authorization: Bearer <your-jwt-token>
+    ```
+
+    ## Rate Limiting
+    Please be mindful of API usage. Some services (AWS) have rate limits.
+
+    ## Error Handling
+    The API returns standard HTTP status codes and detailed error messages in JSON format.
+  version: 1.0.0
+  contact:
+    name: Flashlingo Team
+    email: support@flashlingo.com
+    url: https://flashlingo.app
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080
+    description: Development Server
+  - url: https://api.flashlingo.app
+    description: Production Server
+
+security:
+  - Bearer Authentication: []
+
+components:
+  securitySchemes:
+    Bearer Authentication:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "Enter your JWT token in the format: Bearer <token>"
+
+  schemas:
+    RegisterDTO:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          description: Username for the account
+          example: john_doe
+        email:
+          type: string
+          format: email
+          description: Email address for account verification
+          example: john.doe@example.com
+        password:
+          type: string
+          description: Password for the account (minimum 6 characters)
+          example: securePassword123
+
+    UserDTO:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: Username for login
+          example: john_doe
+        password:
+          type: string
+          description: Password for login
+          example: securePassword123
+
+    VerificationRequest:
+      type: object
+      required:
+        - email
+        - code
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email address to verify
+          example: john.doe@example.com
+        code:
+          type: string
+          description: Verification code sent to email
+          example: "123456"
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: JWT refresh token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    AuthResponse:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+      properties:
+        accessToken:
+          type: string
+          description: JWT access token for API authentication
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: JWT refresh token for obtaining new access tokens
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    Flashcard:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the flashcard
+          example: 1
+        userID:
+          type: integer
+          description: User ID who owns this flashcard
+          example: 1
+        frontContent:
+          type: string
+          description: Front content of the flashcard (question/prompt)
+          example: Hello
+        backContent:
+          type: string
+          description: Back content of the flashcard (answer/translation)
+          example: Cześć
+        status:
+          type: string
+          enum: [ACTIVE, INACTIVE, MASTERED]
+          description: Current status of the flashcard
+          example: ACTIVE
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the flashcard was created
+          example: "2024-01-15T10:30:00"
+        lastReviewedAt:
+          type: string
+          format: date-time
+          description: Timestamp of the last review
+          example: "2024-01-15T10:30:00"
+        correctResponses:
+          type: integer
+          description: Number of correct responses
+          example: 5
+        incorrectResponses:
+          type: integer
+          description: Number of incorrect responses
+          example: 2
+
+    FlashcardFolder:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the folder
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        name:
+          type: string
+          description: Name of the folder
+          example: Basic Vocabulary
+        userID:
+          type: integer
+          description: User ID who owns this folder
+          example: 1
+        flashcards:
+          type: array
+          items:
+            $ref: "#/components/schemas/Flashcard"
+          description: List of flashcards in the folder
+
+    FlashcardFolderRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Name of the folder
+          example: Basic Vocabulary
+        flashcards:
+          type: array
+          items:
+            $ref: "#/components/schemas/Flashcard"
+          description: Initial flashcards to add to the folder
+
+    FlashcardRequest:
+      type: object
+      required:
+        - flashcardIds
+      properties:
+        flashcardIds:
+          type: array
+          items:
+            type: integer
+          description: List of flashcard IDs
+          example: [1, 2, 3]
+
+    TranslationDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the translation record
+          example: 1
+        sourceText:
+          type: string
+          description: Original text that was translated
+          example: Hello, how are you?
+        translatedText:
+          type: string
+          description: Translated text
+          example: Cześć, jak się masz?
+        sourceLanguage:
+          type: string
+          description: Source language code
+          example: en
+        targetLanguage:
+          type: string
+          description: Target language code
+          example: pl
+        success:
+          type: boolean
+          description: Whether the translation was successful
+          example: true
+        errorMessage:
+          type: string
+          nullable: true
+          description: Error message if translation failed
+          example: null
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the translation was performed
+          example: "2024-01-15T10:30:00"
+
+    DetectedLanguage:
+      type: object
+      properties:
+        languageCode:
+          type: string
+          description: Detected language code
+          example: en
+        confidence:
+          type: number
+          format: float
+          description: Confidence score of the detection
+          example: 0.95
+
+    LanguageDTO:
+      type: object
+      properties:
+        languageCode:
+          type: string
+          description: Language code
+          example: en
+        languageName:
+          type: string
+          description: Language name
+          example: English
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: Resource not found
+        status:
+          type: integer
+          description: HTTP status code
+          example: 404
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+          example: "2024-01-15T10:30:00"
+
+paths:
+  /api/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Creates a new user account with email verification. The user will receive a verification code via email.
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterDTO"
+      responses:
+        "200":
+          description: User registered successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: User registered successfully. Please check your email for verification.
+        "400":
+          description: Registration failed
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Registration failed. Please try again.
+
+  /api/auth/verify:
+    post:
+      tags:
+        - Authentication
+      summary: Verify user email
+      description: Verifies the user's email address using the verification code sent during registration.
+      operationId: verifyEmail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerificationRequest"
+      responses:
+        "200":
+          description: Email verified successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Email verified successfully!
+        "400":
+          description: Verification failed
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid verification code.
+
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticates a user and returns JWT access and refresh tokens.
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserDTO"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Login failed
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid username or password.
+
+  /api/auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Generates a new access token using a valid refresh token.
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshTokenRequest"
+      responses:
+        "200":
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid refresh token
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid refresh token.
+
+  /api/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: Invalidates the refresh token and logs out the user.
+      operationId: logoutUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshTokenRequest"
+      responses:
+        "204":
+          description: Logout successful
+
+  /api/flashcards:
+    post:
+      tags:
+        - Flashcards
+      summary: Create a new flashcard
+      description: Creates a new flashcard for the authenticated user. The flashcard will be automatically associated with the current user.
+      operationId: createFlashcard
+      security:
+        - Bearer Authentication: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Flashcard"
+      responses:
+        "201":
+          description: Flashcard created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flashcard"
+        "400":
+          description: Invalid flashcard data
+        "401":
+          description: Unauthorized
+
+    get:
+      tags:
+        - Flashcards
+      summary: Get user's flashcards
+      description: Retrieves all flashcards belonging to the authenticated user.
+      operationId: getUserFlashcards
+      security:
+        - Bearer Authentication: []
+      responses:
+        "200":
+          description: User's flashcards retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Flashcard"
+        "401":
+          description: Unauthorized
+
+  /api/flashcards/{id}:
+    get:
+      tags:
+        - Flashcards
+      summary: Get a specific flashcard
+      description: Retrieves a specific flashcard by ID. Only the owner can access their flashcards.
+      operationId: getFlashcard
+      security:
+        - Bearer Authentication: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Flashcard ID
+      responses:
+        "200":
+          description: Flashcard retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flashcard"
+        "403":
+          description: Access denied - not the owner of the flashcard
+        "404":
+          description: Flashcard not found
+        "401":
+          description: Unauthorized
+
+    put:
+      tags:
+        - Flashcards
+      summary: Update a flashcard
+      description: Updates the content of a flashcard. Only the owner can update their flashcards.
+      operationId: updateFlashcard
+      security:
+        - Bearer Authentication: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Flashcard ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Flashcard"
+      responses:
+        "200":
+          description: Flashcard updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flashcard"
+        "400":
+          description: Invalid flashcard data
+        "403":
+          description: Access denied - not the owner of the flashcard
+        "404":
+          description: Flashcard not found
+        "401":
+          description: Unauthorized
+
+    delete:
+      tags:
+        - Flashcards
+      summary: Delete a flashcard
+      description: Permanently deletes a flashcard. Only the owner can delete their flashcards.
+      operationId: deleteFlashcard
+      security:
+        - Bearer Authentication: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Flashcard ID
+      responses:
+        "204":
+          description: Flashcard deleted successfully
+        "403":
+          description: Access denied - not the owner of the flashcard
+        "404":
+          description: Flashcard not found
+        "401":
+          description: Unauthorized
+
+  /api/flashcards/{id}/status:
+    patch:
+      tags:
+        - Flashcards
+      summary: Update flashcard status
+      description: Updates the status of a flashcard (ACTIVE, INACTIVE, MASTERED). Only the owner can update their flashcards.
+      operationId: updateFlashcardStatus
+      security:
+        - Bearer Authentication: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Flashcard ID
+        - name: status
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [ACTIVE, INACTIVE, MASTERED]
+          description: New status
+      responses:
+        "200":
+          description: Status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flashcard"
+        "403":
+          description: Access denied - not the owner of the flashcard
+        "404":
+          description: Flashcard not found
+        "401":
+          description: Unauthorized
+
+  /api/flashcards/{id}/review:
+    post:
+      tags:
+        - Flashcards
+      summary: Review a flashcard
+      description: Marks a flashcard as reviewed and updates the correct/incorrect response counters. This is used for spaced repetition learning.
+      operationId: reviewFlashcard
+      security:
+        - Bearer Authentication: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Flashcard ID
+        - name: correct
+          in: query
+          required: true
+          schema:
+            type: boolean
+          description: Whether the answer was correct
+      responses:
+        "200":
+          description: Review recorded successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flashcard"
+        "403":
+          description: Access denied - not the owner of the flashcard
+        "404":
+          description: Flashcard not found
+        "401":
+          description: Unauthorized
+
+  /api/flashcard-folders:
+    post:
+      tags:
+        - Flashcard Folders
+      summary: Create a new flashcard folder
+      description: Creates a new folder to organize flashcards. Optionally includes initial flashcards in the folder.
+      operationId: createFlashcardFolder
+      security:
+        - Bearer Authentication: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlashcardFolderRequest"
+      responses:
+        "200":
+          description: Folder created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlashcardFolder"
+        "400":
+          description: Invalid folder data
+        "401":
+          description: Unauthorized
+
+    get:
+      tags:
+        - Flashcard Folders
+      summary: Get user's folders
+      description: Retrieves all flashcard folders belonging to the authenticated user.
+      operationId: getUserFolders
+      security:
+        - Bearer Authentication: []
+      responses:
+        "200":
+          description: User's folders retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FlashcardFolder"
+        "401":
+          description: Unauthorized
+
+  /api/flashcard-folders/{id}:
+    get:
+      tags:
+        - Flashcard Folders
+      summary: Get a specific folder
+      description: Retrieves a specific flashcard folder by ID with all its flashcards. Only the owner can access their folders.
+      operationId: getFlashcardFolder
+      security:
+        - Bearer Authentication: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Folder ID
+      responses:
+        "200":
+          description: Folder retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlashcardFolder"
+        "403":
+          description: Access denied - not the owner of the folder
+        "404":
+          description: Folder not found
+        "401":
+          description: Unauthorized
+
+    put:
+      tags:
+        - Flashcard Folders
+      summary: Edit folder name
+      description: Updates the name of a flashcard folder. Only the owner can edit their folders.
+      operationId: editFlashcardFolder
+      security:
+        - Bearer Authentication: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Folder ID
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+          description: New folder name
+      responses:
+        "200":
+          description: Folder name updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlashcardFolder"
+        "400":
+          description: Invalid folder name
+        "403":
+          description: Access denied - not the owner of the folder
+        "404":
+          description: Folder not found
+        "401":
+          description: Unauthorized
+
+    delete:
+      tags:
+        - Flashcard Folders
+      summary: Delete a folder
+      description: Permanently deletes a flashcard folder and all its contents. Only the owner can delete their folders.
+      operationId: deleteFlashcardFolder
+      security:
+        - Bearer Authentication: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Folder ID
+      responses:
+        "200":
+          description: Folder deleted successfully
+        "403":
+          description: Access denied - not the owner of the folder
+        "404":
+          description: Folder not found
+        "401":
+          description: Unauthorized
+
+  /api/flashcard-folders/{id}/flashcards:
+    post:
+      tags:
+        - Flashcard Folders
+      summary: Add flashcards to folder
+      description: Adds existing flashcards to a folder. Only the owner can modify their folders.
+      operationId: addFlashcardsToFolder
+      security:
+        - Bearer Authentication: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Folder ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlashcardRequest"
+      responses:
+        "200":
+          description: Flashcards added to folder successfully
+        "400":
+          description: Invalid flashcard IDs
+        "403":
+          description: Access denied - not the owner of the folder
+        "404":
+          description: Folder not found
+        "401":
+          description: Unauthorized
+
+    delete:
+      tags:
+        - Flashcard Folders
+      summary: Remove flashcards from folder
+      description: Removes flashcards from a folder. The flashcards themselves are not deleted, only removed from the folder. Only the owner can modify their folders.
+      operationId: removeFlashcardsFromFolder
+      security:
+        - Bearer Authentication: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Folder ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlashcardRequest"
+      responses:
+        "200":
+          description: Flashcards removed from folder successfully
+        "400":
+          description: Invalid flashcard IDs
+        "403":
+          description: Access denied - not the owner of the folder
+        "404":
+          description: Folder not found
+        "401":
+          description: Unauthorized
+
+  /api/flashcard-folders/{id}/export-qr:
+    get:
+      tags:
+        - Flashcard Folders
+      summary: Export folder as QR code
+      description: Generates a QR code containing the folder data for easy sharing and importing.
+      operationId: exportFolderToQR
+      security:
+        - Bearer Authentication: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Folder ID
+      responses:
+        "200":
+          description: QR code generated successfully
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        "403":
+          description: Access denied - not the owner of the folder
+        "404":
+          description: Folder not found
+        "401":
+          description: Unauthorized
+
+  /api/flashcard-folders/{id}/import:
+    post:
+      tags:
+        - Flashcard Folders
+      summary: Import folder from QR code
+      description: Imports a folder from a shared QR code. Creates a copy of the folder for the current user.
+      operationId: importFolder
+      security:
+        - Bearer Authentication: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Folder ID from QR code
+      responses:
+        "200":
+          description: Folder imported successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlashcardFolder"
+        "400":
+          description: Invalid QR code data
+        "404":
+          description: Folder not found
+        "401":
+          description: Unauthorized
+
+  /translate:
+    get:
+      tags:
+        - Translation
+      summary: Translate text
+      description: Translates text from one language to another using AWS Translate service. The translation is automatically saved to history.
+      operationId: translateText
+      parameters:
+        - name: text
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Text to translate
+          example: Hello, how are you?
+        - name: sourceLang
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Source language code
+          example: en
+        - name: targetLang
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Target language code
+          example: pl
+      responses:
+        "200":
+          description: Translation successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranslationDTO"
+        "400":
+          description: Invalid translation request
+        "500":
+          description: Translation service error
+
+  /detectLanguage:
+    get:
+      tags:
+        - Translation
+      summary: Detect language
+      description: Automatically detects the language of the provided text using AWS Comprehend service.
+      operationId: detectLanguage
+      parameters:
+        - name: text
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Text to detect language for
+          example: Hello, how are you?
+      responses:
+        "200":
+          description: Language detected successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetectedLanguage"
+        "400":
+          description: Invalid text for language detection
+        "500":
+          description: Language detection service error
+
+  /supportedLanguages:
+    get:
+      tags:
+        - Translation
+      summary: Get supported languages
+      description: Retrieves a list of all supported languages for translation.
+      operationId: getSupportedLanguages
+      responses:
+        "200":
+          description: Supported languages retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LanguageDTO"
+        "500":
+          description: Service error
+
+  /translations/all:
+    get:
+      tags:
+        - Translation
+      summary: Get all translations
+      description: Retrieves all translation history records.
+      operationId: getAllTranslations
+      responses:
+        "200":
+          description: All translations retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TranslationDTO"
+
+  /translations/successful:
+    get:
+      tags:
+        - Translation
+      summary: Get successful translations
+      description: Retrieves only successful translation history records.
+      operationId: getSuccessfulTranslations
+      responses:
+        "200":
+          description: Successful translations retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TranslationDTO"
+
+  /translations/delete/{id}:
+    delete:
+      tags:
+        - Translation
+      summary: Delete translation record
+      description: Deletes a specific translation record from history.
+      operationId: deleteTranslation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Translation record ID
+      responses:
+        "204":
+          description: Translation record deleted successfully
+        "404":
+          description: Translation record not found
+
+  /detectText:
+    post:
+      tags:
+        - Text Detection
+      summary: Extract text from image
+      description: Uses AWS Textract to extract text from uploaded images. Supports various image formats including JPEG, PNG, and PDF.
+      operationId: detectText
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: "Image file to extract text from. Supported formats: JPEG, PNG, PDF"
+      responses:
+        "200":
+          description: Text extracted successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Hello, this is the extracted text from the image.
+        "400":
+          description: Invalid file format or corrupted file
+        "500":
+          description: Text extraction service error
+
+  /text-to-speech:
+    get:
+      tags:
+        - Text-to-Speech
+      summary: Convert text to speech
+      description: Converts text to speech using AWS Polly service. Returns audio data in MP3 format.
+      operationId: convertTextToSpeech
+      parameters:
+        - name: text
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Text to convert to speech
+          example: Hello, how are you?
+        - name: langCode
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Language code for speech synthesis
+          example: en-US
+      responses:
+        "200":
+          description: Audio generated successfully
+          content:
+            audio/mpeg:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Invalid text or language code
+        "500":
+          description: Text-to-speech service error
+
+  /api/phrases/generate:
+    post:
+      tags:
+        - Phrases
+      summary: Generate contextual phrases
+      description: Uses AI to generate contextual phrases and sentences from provided keywords. The AI creates natural, contextually appropriate sentences that can be used for language learning.
+      operationId: generatePhrase
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+            example: hello
+      responses:
+        "200":
+          description: Phrases generated successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                Here are some phrases using the keyword "hello":
+
+                1. Hello, how are you today?
+                2. Hello there! Nice to meet you.
+                3. Hello, could you help me with something?
+                4. Hello, I'd like to order a coffee please.
+                5. Hello, what time is the meeting?
+        "400":
+          description: Invalid keyword or generation failed
+        "500":
+          description: AI service error

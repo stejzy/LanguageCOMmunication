@@ -128,10 +128,41 @@ cp .env.example .env
 ./mvnw spring-boot:run
 ```
 
+4. **Set up AWS account and configure CLI**  
+   The application uses AWS services for features such as OCR, translation, speech synthesis, transcription, and text analysis.  
+   You need to have an AWS account with **full access** to the following services:
+
+   - **Amazon Textract** – for extracting text from documents
+   - **Amazon Translate** – for translating text
+   - **Amazon Polly** – for text-to-speech conversion
+   - **Amazon Transcribe** – for speech-to-text conversion
+   - **Amazon Comprehend** – for natural language processing
+
+   **Steps:**
+
+   - Create an AWS account at [https://aws.amazon.com](https://aws.amazon.com)
+   - Install the AWS CLI: [Installation guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+   - Configure the CLI with your credentials:
+
+     ```bash
+     aws configure
+     ```
+
+   > ⚠️ Make sure your AWS IAM user has **full access** to:
+   >
+   > - `Comprehend`
+   > - `Polly`
+   > - `Textract`
+   > - `Transcribe`
+   > - `Translate`
+
 ### Important Notes
 
 - The backend requires PostgreSQL to be installed and running
+- For OAuth2 to be working you need to setup a GOOGLE_CLIENT_WEB_ID and GOOGLE_CLIENT_ANDROID_ID
+- For phrase generation to be working you need to set up an OPEN_API_KEY
 - For email verification to work, you need to set up an app-specific password for your mail
+- For OCR, translation, speech synthesis, transcription, and text analysis you need to set up AWS CLI.
 
 ## 🌐 API Integration
 
